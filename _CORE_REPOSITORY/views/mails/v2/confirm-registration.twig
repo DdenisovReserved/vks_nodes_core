@@ -1,0 +1,16 @@
+{% extends "mails/base.twig" %}
+{% block body %}
+        <tr class="table-head">
+            <td><h2> Благодарим вас за регистрацию в АС ВКС</h2></td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <p>Просим подтвердить вашу регистрацию в АС ВКС,
+                    для этого перейдите по
+                    <a href='{{ appHttpPath }}?route=User/approveToken/{{ user.token }}'>ссылке</a>
+                    или скопируйте ссылку в адресную строку браузера:
+                <blockquote>{{ appHttpPath }}?route=User/approveToken/{{ user.token }}</blockquote>
+                </p>
+            </td>
+        </tr>
+{% endblock %}

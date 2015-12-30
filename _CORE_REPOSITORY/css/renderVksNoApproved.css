@@ -1,0 +1,29 @@
+.vks-container {
+    width: 90%;
+    border: 1px solid #eee;
+    /*border-top: 1px solid #ccc;*/
+    /* border-bottom: 1px solid black;*/
+    position: relative;
+    display: block;
+
+    padding: 5px;
+    /*padding-left: 100px;*/
+    /*min-height: 260px;*/
+
+    margin:  15px auto;
+    /*overflow: auto;*/
+    font-family: verdana, arial, helvetica, sans-serif;
+    font-size: 12px;
+}
+.vks-container:hover {
+    background-color: #f4f4f4;
+}
+.vhp {
+    /*width: 80px;*/
+    float: left;
+    padding: 10px;
+}
+.icon {
+    width: 35px;
+    margin: 5px;
+}

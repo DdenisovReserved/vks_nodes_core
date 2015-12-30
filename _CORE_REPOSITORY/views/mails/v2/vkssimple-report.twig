@@ -1,0 +1,74 @@
+{% extends "mails/base.twig" %}
+{% block body %}
+    <tr class="table-head">
+        <td colspan="2">
+            <h2>Ваша ВКС #{{ vks.id }} успешно создана</h2>
+        </td>
+    </tr>
+    <tr >
+        <td width="30%">
+            Параметр
+        </td>
+        <td>
+            Значение
+        </td>
+    </tr>
+    <tr>
+        <td>Название</td>
+        <td>{{ vks.title }}</td>
+    </tr>
+    <tr >
+        <td>Вирт. комната (код подключения)</td>
+        <td>
+            {% for code in vks.connection_codes %}
+                <p>
+                <span class="code-connect-font">{{ code.value_raw }}
+                    {% if  code.tip|length %}
+                        ({{ code.tip }})
+                    {% endif %}
+                    </span>
+                </p>
+            {% endfor %}
+        </td>
+
+
+    </tr>
+    <tr >
+        <td>Дата начала</td>
+        <td>{{ vks.humanized.date }}</td>
+    </tr>
+    <tr>
+        <td>Время</td>
+        <td>{{ vks.humanized.startTime }}-{{ vks.humanized.endTime }}</td>
+    </tr>
+
+    <tr>
+        <td>Участники
+            {#<span class="badge">{{ vks.participants|length + vks.in_place_participants_count }}</span>#}
+        </td>
+        <td class="small-td">
+            C рабочих мест (IP телефон, Lynс, CMA Desktop и т.д.): {{ vks.in_place_participants_count }}
+
+        </td>
+    </tr>
+    <tr>
+        <td>Запись ВКС</td>
+        <td>
+            {% if  vks.record_required %}
+                Да
+            {% else %}
+                Нет
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td>Владелец</td>
+        <td>
+            {% if  vks.owner %}
+                {{ vks.owner.login }} ({{ vks.owner.fio }}, {{ vks.owner.phone }})
+            {% else %}
+                -
+            {% endif %}
+        </td>
+    </tr>
+{% endblock %}

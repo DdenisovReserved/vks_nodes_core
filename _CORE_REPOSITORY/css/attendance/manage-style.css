@@ -1,0 +1,39 @@
+.tbl-manage-points {
+    width: 100%;
+    border: 1px dotted #ccc;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+.tbl-manage-points td, .tbl-manage-points th {
+    text-align: left;
+    padding: 10px;
+    border: 1px dotted #ccc
+
+}
+.cam-tr {
+    background-color: #dafcae !important;
+}
+.tbl-manage-points tr:hover {
+    background-color: #ffcd46;
+}
+.tr-trigger {
+    cursor: pointer;
+}
+.no-cursor {
+    cursor: default !important;
+    background-color: #f7f7f7;
+}
+.no-cursor:hover {
+    cursor: default !important;
+    /*background-color: #f7f7f7 !important;*/
+}
+.breadcrumbs {
+    margin: 5px;
+    padding: 5px;
+}
+.point-breadcrumb {
+    background-color: #c9302c;
+    color: #000000;
+    padding: 7px;
+    margin: 3px;
+    cursor: pointer;
+}

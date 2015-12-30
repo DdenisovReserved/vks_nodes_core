@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<root>
+    <color name="local_default" description="Вкс локальная, по-умолчанию"  backgroundColor="#3a87ad" borderColor="#3a87ad" textColor="#fff"/>
+    <color name="local_simple" description="Вкс локальная, по упрощенной форме"  backgroundColor="#3a87ad" borderColor="#3a87ad" textColor="#fff"/>
+    <color name="local_pending" description="Вкс на согласовании"  backgroundColor="#E6E6E6" borderColor="#fff" textColor="#3B3B3B"/>
+
+    <color name="fromca_with_flag" description="Вкс из ЦА с флагом ЦА"  backgroundColor="#E8152E" borderColor="#E8152E" textColor="#fff"/>
+    <color name="fromca_no_local_linked" description="Вкс из ЦА без локальных ВКС"  backgroundColor="#787878" borderColor="#787878" textColor="#fff"/>
+    <color name="fromca_local_linked"  description="Вкс из ЦА c локальными ВКС"  backgroundColor="#E87012" borderColor="#E87012" textColor="#fff"/>
+    <color name="local_with_flag" description="Вкс локальная с флагом"  backgroundColor="#E81500" borderColor="#E81500" textColor="#fff"/>
+    <color name="local_im_owner" description="Вкс локальная, я владелец" backgroundColor="#E65C00" borderColor="#E65C00" textColor="#fff"/>
+
+
+</root>

@@ -1,0 +1,41 @@
+#custom-bootstrap-menu.navbar-default .navbar-brand {
+    color: #ffffff;
+}
+#custom-bootstrap-menu.navbar-default {
+    font-size: 14px;
+    background-color: #5cb83b;
+    border-bottom-width: 0px;
+
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a {
+    color: #ffffff;
+    /*background-color: #2ff800;*/
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:hover,
+#custom-bootstrap-menu.navbar-default .navbar-nav>li>a:focus {
+    color: #000000;
+    background-color: #ffffff;
+}
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a,
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:hover,
+#custom-bootstrap-menu.navbar-default .navbar-nav>.active>a:focus {
+    color: #555555;
+    background-color: #ffffff;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle {
+    border-color: #ffffff;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle:hover,
+#custom-bootstrap-menu.navbar-default .navbar-toggle:focus {
+    background-color: #ffffff;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle .icon-bar {
+    background-color: #ffffff;
+}
+#custom-bootstrap-menu.navbar-default .navbar-toggle:hover .icon-bar,
+#custom-bootstrap-menu.navbar-default .navbar-toggle:focus .icon-bar {
+    background-color: #5cb83b;
+}
+#custom-bootstrap-menu .navbar-nav .active {
+    background-color: #fff;
+}

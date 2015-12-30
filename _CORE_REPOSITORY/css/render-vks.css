@@ -1,0 +1,135 @@
+.vks_table {
+    font-size: 11px;
+}
+.vks_table th, .vks_table td {
+    padding: 5px;
+    border: 1px solid #333;
+}
+
+.vks_table ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+.vks-container {
+    width: 95%;
+    border-top: 1px solid #ccc;
+    /* border-bottom: 1px solid black;*/
+    position: relative;
+    display: block;
+    /*   margin: 5px;*/
+    padding: 5px;
+    min-height: 150px;
+    margin: 0 auto;
+    /*overflow: auto;*/
+}
+.vhp {
+    width: 80px;
+    float: left;
+    padding: 10px;
+}
+
+.vks-container-head {
+    width: 95%;
+    border-top: 1px solid #ccc;
+    /*border-bottom: 1px solid #ccc;*/
+    position: relative;
+    display: block;
+    /*margin: 5px;*/
+    padding: 6px;
+    margin: 0 auto;
+    margin-bottom: 15px;
+    /*  border: 1px solid gray;*/
+}
+.initiator-block, .start-time-block, .end-time-block, .branches-block, .code-block, .orderer-block, .rule-block{
+    position: relative;
+    display: block;
+    float: left;
+    padding: 6px;
+    /*   margin: 5px;*/
+    width: 15%;
+    /*text-align: center;*/
+
+    /*border: 1px solid gray;
+    */
+}
+.initiator-block {
+    width: 16%;
+}
+.start-time-block, .end-time-block {
+    width: 10%;
+    font-weight: bold;
+
+}
+.branches-block {
+    width: 20%;
+    word-spacing: none;
+    word-wrap: break-word;
+}
+
+.orderer-block {
+    width: 22%;
+    /*margin-left: 5px;*/
+}
+.rule-block {
+    width: 5%;
+}
+/*for-head-block*/
+.initiator-block-head, .start-time-block-head, .end-time-block-head, .branches-block-head, .code-block-head, .orderer-block-head{
+    position: relative;
+    display: block;
+    float: left;
+    padding: 6px;
+    /*   margin: 5px;*/
+    width: 15%;
+    /*text-align: center;*/
+
+    /*border: 1px solid gray;
+    */
+}
+.initiator-block-head {
+    width: 16%;
+}
+.start-time-block-head, .end-time-block-head {
+    width: 10%;
+
+}
+.branches-block-head {
+    width: 20%;
+}
+
+.orderer-block-head {
+    width: 22%;
+    /*margin-left: 10px;*/
+}
+.table-head {
+    background-color: #dedede;
+    font-weight: bold;
+}
+.hov-img img{
+    width: 30px;
+}
+.date {
+    color: gray;
+    font-size: 12px;
+}
+
+
+/*apporal page css*/
+.vks-approve-view-container {
+    padding: 15px;
+    /*border: 1px solid #333;*/
+}
+.vks-approve-view-container-sub-block {
+    padding: 5px;
+    background-color: #eee;
+    margin: 1px;
+    padding-left: 10px;
+}
+
+
+/*approval page css end*/
+
+.fc-content {
+    cursor: pointer !important;
+}

@@ -1,0 +1,7 @@
+<root>
+<option name='pause_gap' value='30' description='Технологическая пауза между ВКС, мин. Используется при проверке кодов'/>
+<option name='help-phone' value='' description='Телефон поддержки ВКС'/>
+<option name='attendance_check_enable' value='1' description='Проверять точки ВКС на занятость в других ВКС'/>
+<option name='attendance_strict' value='0' description='Строгий режим проверки занятости точек ВКС'/>
+<option name='notify_admins' value='1' description='Уведомлять админов по почте о новых ВКС'/>
+</root>

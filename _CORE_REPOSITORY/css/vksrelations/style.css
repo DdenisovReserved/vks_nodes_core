@@ -1,0 +1,22 @@
+.vhp {
+    margin: 5px;
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+.approve-participation {
+    margin-top: 15px;
+}
+.table-response th,.table-response td {
+    padding: 10px;
+    border: 1px solid #eee;
+    text-align: center;
+}
+.tr-success {
+    background-color: #c6efc0;
+}
+.tr-wait {
+    background-color: #ccc;
+}
+.tr-decline {
+    background-color: #cc897e;
+}

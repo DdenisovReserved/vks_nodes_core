@@ -1,0 +1,11 @@
+{
+    "require": {
+        "twig/twig": "~1.0",
+        "symfony/http-foundation": "*",
+        "symfony/var-dumper": "*",
+        "alexgarrett/violin": "*",
+        "illuminate/database": "5.*",
+        "laravel/lumen-installer":"~1.0",
+        "matthiasmullie/minify": "*"
+    }
+}

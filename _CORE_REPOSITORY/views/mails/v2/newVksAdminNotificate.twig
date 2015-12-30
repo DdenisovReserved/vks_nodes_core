@@ -1,0 +1,106 @@
+{% extends "mails/base.twig" %}
+{% block body %}
+    <tr class="table-head">
+        <td colspan="2">
+            <h2>Создана новая ВКС #{{ vks.id }}</h2>
+        </td>
+    </tr>
+    <tr>
+        <td width="30%">Название</td>
+        <td>{{ vks.title }}</td>
+    </tr>
+    <tr>
+        <td>Дата начала</td>
+        <td>{{ vks.humanized.date }}</td>
+    </tr>
+    <tr>
+        <td>Время</td>
+        <td>{{ vks.humanized.startTime }}-{{ vks.humanized.endTime }}</td>
+    </tr>
+    <tr  >
+        <td>Ответственный</td>
+        <td>{{ vks.init_customer_fio }}, тел. {{ vks.init_customer_phone }}</td>
+    </tr>
+    <tr>
+        <td>Подразделение</td>
+        <td>{{ vks.department_rel.prefix }}. {{ vks.department_rel.name }}</td>
+    </tr>
+    {% if vks.other_tb_required is defined and vks.other_tb_required != 0 %}
+        <tr style="background-color: #FFC6A3; font-size: 20px;">
+            <td>Подключать другой ТБ/ЦА</td>
+            <td>Да</td>
+        </tr>
+    {% endif %}
+    <tr>
+        <td>Комментарий пользователю</td>
+        <td>
+            {% if  vks.comment_for_user|length %}
+                {{ vks.comment_for_user }}
+            {% else %}
+                -
+            {% endif %}
+
+        </td>
+    </tr>
+
+    <tr>
+        <td>Участники
+            {#<span class="badge">{{ vks.participants|length + vks.in_place_participants_count }}</span>#}
+        </td>
+        <td class="small-td">
+            <ul>
+                {% if vksCa %}
+                    <li class="list-group-item-text">Кол-во участников в ЦА: <span
+                                class="label label-as-badge label-warning">{{ vksCa.ca_participants }}</span>
+                    </li>
+                    {% for parp in vksCa.participants %}
+                        <li class="list-group-item-text">{{ parp.full_path }}</li>
+                    {% endfor %}
+                {% endif %}
+                <li class="list-group-item">C рабочих мест (IP телефон, Lynс, CMA Desktop и
+                    т.д.): {{ vks.in_place_participants_count }}</li>
+                <li>Точки ВКС:
+                    {% if  vks.participants|length %}
+                        {% for parp in vks.participants %}
+                            <ul>
+                                <li class="list-group-item">{{ parp.full_path }}</li>
+                            </ul>
+                        {% endfor %}
+                    {% else %}
+                        0
+                    {% endif %}
+                </li>
+            </ul>
+        </td>
+    </tr>
+    <tr >
+        <td>Комментарий администратору</td>
+        <td>
+            {% if  vks.comment_for_admin|length %}
+                {{ vks.comment_for_admin }}
+            {% else %}
+                -
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td>Запись ВКС</td>
+        <td>
+            {% if  vks.record_required %}
+                Да
+            {% else %}
+                Нет
+            {% endif %}
+        </td>
+    </tr>
+    <tr>
+        <td>Владелец</td>
+        <td>
+            {% if  vks.owner %}
+                {{ vks.owner.login }} ({{ vks.owner.fio }}, {{ vks.owner.phone }})
+            {% else %}
+               -
+            {% endif %}
+        </td>
+    </tr>
+{% endblock %}

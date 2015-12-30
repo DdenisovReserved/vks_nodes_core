@@ -1,0 +1,61 @@
+<ol class="">
+    {% if sortedEvents|length == 0 %}
+        <h4>Нет вкс</h4>
+    {% else %}
+        {% for vks in sortedEvents %}
+            <li>
+                {% if vks.fromCa %}
+                    <a target="_blank" href="{{ coreHttpAddress }}?route=vks/show/{{ vks.id }}">
+            <span class="label label-info label-as-badge" data-type='ca-was' data-id='{{ vks.id }}'>
+                 #{{ vks.id }}
+            </span>
+                    </a>
+                {% else %}
+                    <a target="_blank" href="{{ nodeHttpAddress }}?route=vks/show/{{ vks.id }}">
+            <span class="label label-success label-as-badge show-as-modal" data-type='local' data-id='{{ vks.id }}'>
+                 #{{ vks.id }}
+            </span>
+                    </a>
+                {% endif %}
+                &nbsp;{{ vks.titleCustom|raw }}
+                <br>
+                <span style="margin: 4px; display: block;">{{ vks.start_time }} - {{ vks.end_time }}</span>
+
+                {% if vks.fromCa == false %}
+                    {% if vks.connection_codes|length %}
+                        {% for code in vks.connection_codes %}
+                            <p>
+                                <span class="connection-code-highlighter-compact">
+                                   {{ code.value }}
+                                    {% if code.tip|length %}
+                                        <sup>{{ code.tip }}</sup>
+                                    {% endif %}
+                                    </span>
+                                {% if vks.flag %}
+                                    &nbsp<span class="label label-as-badge label-danger">flag</span>
+                                {% endif %}
+                            </p>
+                        {% endfor %}
+                    {% else %}
+                        <p>
+                            <span class="connection-code-highlighter-compact">Код подключения не выдан</span>
+                            {% if vks.flag %}
+                                <span class="label label-as-badge label-danger">flag</span>
+                            {% endif %}
+                        </p>
+                    {% endif %}
+
+                {% else %}
+                    <p>
+                        {#{{ vks }}#}
+                       <span class="connection-code-highlighter-compact"> ЦА: {{ vks.connection_code.value }}</span>
+                        {% if vks.flag %}
+                            <span class="label label-as-badge label-danger">flag</span>
+                        {% endif %}
+                    </p>
+                {% endif %}
+
+            </li>
+        {% endfor %}
+    {% endif %}
+</ol>

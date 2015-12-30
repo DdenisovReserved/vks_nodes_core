@@ -1,0 +1,554 @@
+<?xml version="1.0"?>
+<root>
+
+    <route>
+        <controller>index</controller>
+        <action>*</action>
+        <methods>POST, GET</methods>
+        <ajax>false</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>help</controller>
+        <action>*</action>
+        <methods>POST, GET</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>Gateways</controller>
+        <action>*</action>
+        <methods>POST, GET</methods>
+        <ajax>false</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>ModalWindow</controller>
+        <action>pull, generate</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>Search</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>Security</controller>
+        <action>CheckCaptcha</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+
+    <route>
+        <controller>MailStack</controller>
+        <action>show, showMessage</action>
+        <methods>*</methods>
+        <ajax>false</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+    <route>
+        <controller>AdminSchedule</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+    <route>
+        <controller>settings</controller>
+        <action>getOther</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>settings</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+    <route>
+        <controller>index</controller>
+        <action>*</action>
+        <methods>POST, GET</methods>
+        <ajax>false</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>settings</controller>
+        <action>*</action>
+        <methods>POST, GET</methods>
+        <ajax>false</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+    <route>
+        <controller>test</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>AuthNew</controller>
+        <action>login, register, showRecallPwd</action>
+        <methods>get</methods>
+        <ajax>false</ajax>
+        <access>*</access>
+    </route>
+
+
+    <route>
+        <controller>LocalStorage</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>@</access>
+    </route>
+
+
+    <route>
+        <controller>AuthNew</controller>
+        <action>processRecallpwd</action>
+        <methods>post</methods>
+        <ajax>false</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>AuthNew</controller>
+        <action>logout, changePwd, savePwd</action>
+        <methods>*</methods>
+        <ajax>false</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>Dashboard</controller>
+        <action>*</action>
+        <methods>POST, GET</methods>
+        <ajax>false</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>AuthNew</controller>
+        <action>loginprocess</action>
+        <methods>post</methods>
+        <ajax>false</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>User</controller>
+        <action>RegWelcome</action>
+        <methods>GET</methods>
+        <ajax>false</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>User</controller>
+        <action>store</action>
+        <methods>POST</methods>
+        <ajax>false</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>User</controller>
+        <action>editMyData, storeMyData, editColors, storeColors, restoreDefaultsColors</action>
+        <methods>*</methods>
+        <ajax>false</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>User</controller>
+        <action>index, approve, edit, update, find, ban, unban, apiFind</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+
+    <route>
+        <controller>log</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+
+    <route>
+        <controller>Reporter</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+
+
+    <route>
+        <controller>Vks</controller>
+        <action>select, index, show, test</action>
+        <methods>get</methods>
+        <ajax>false</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>Vks</controller>
+        <action>apiGet, hasLocalVks, showlocalvks</action>
+        <methods>get, post</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>Vks</controller>
+        <action>edit, create, buildGraph, update, checkout, makeClone, cancel, joinCaCreate, createSimple, reSubmitFromResults, publicStatusChange</action>
+        <methods>get</methods>
+        <ajax>false</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>Vks</controller>
+        <action>store, update, joinCaStore, storeSimple, dropByAdmin</action>
+        <methods>POST</methods>
+        <ajax>false</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>Vks</controller>
+        <action>ajaxFileUpload, dropFile, backPackDispatcher</action>
+        <methods>POST</methods>
+        <ajax>true</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>Vks</controller>
+        <action>mark, unmark, notApproved, showNaVks, adminCreate, annulate</action>
+        <methods>get</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+    <route>
+        <controller>Vks</controller>
+        <action>adminUpdate, process, storeFromAdmin, adminStore</action>
+        <methods>post</methods>
+        <ajax>false</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+
+    <route>
+        <controller>VksNoSupport</controller>
+        <action>show, apiGet, index</action>
+        <methods>GET</methods>
+        <ajax>false</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>VksNoSupport</controller>
+        <action>calendar</action>
+        <methods>get</methods>
+        <ajax>false</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>VksNoSupport</controller>
+        <action>create, edit, changePublicStatus</action>
+        <methods>get</methods>
+        <ajax>false</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>VksNoSupport</controller>
+        <action>store, update</action>
+        <methods>post</methods>
+        <ajax>false</ajax>
+        <access>@</access>
+    </route>
+
+
+    <route>
+        <controller>noticeobs</controller>
+        <action>pull</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>calendarfeed</controller>
+        <action>feedns, feedmain</action>
+        <methods>get</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>calendarfeed</controller>
+        <action>adminSchedule, holydays</action>
+        <methods>get</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+    <route>
+        <controller>Holydays</controller>
+        <action>apiGetOverAllDays, apiDayStatus</action>
+        <methods>get, post</methods>
+        <ajax>true</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>Holydays</controller>
+        <action>index, change, store</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+    <route>
+        <controller>ReservedVks</controller>
+        <action>create, clearMyReserved</action>
+        <methods>POST, GET</methods>
+        <ajax>true</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>BatchedVks</controller>
+        <action>*</action>
+        <methods>POST, GET</methods>
+        <ajax>true</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>AttendanceNew</controller>
+        <action>isContainer, getTbs, makeFullPath, containersList, fullParentInfo, isLocationString, apiGetTree, apiSearchTree, makeStackName, getStackData, getStackArray, makePathString, apiGetTbs, isImportant, apiGetFastTree, apiGetFastChilds, apiSearchFastTree</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>AttendanceNew</controller>
+        <action>browseLocation, browseParticipants, browseForSecretary, fillStackWithData, clearStackData, isFree, apiGetPointBusyAt</action>
+        <methods>POST, GET</methods>
+        <ajax>true</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>TechSupportMail</controller>
+        <action>findTechMail, apiGetTechMail</action>
+        <methods>POST, GET</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>TechSupportMail</controller>
+        <action>sendTechMail</action>
+        <methods>POST, GET</methods>
+        <ajax>true</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>AttendanceNew</controller>
+        <action>create, store, edit, update, delete, show</action>
+        <methods>POST, GET</methods>
+        <ajax>false</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+    <route>
+        <controller>Load</controller>
+        <action>get, showJsLoadGraph</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>Load</controller>
+        <action>show, showOverAll</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+    <route>
+        <controller>Lk</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>Events</controller>
+        <action>index</action>
+        <methods>GET</methods>
+        <ajax>false</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+
+    <route>
+        <controller>Verificators</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+
+    <route>
+        <controller>PhoneCodes</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+    <route>
+        <controller>VRoomTemplates</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+
+    <route>
+        <controller>VksVersion</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+
+    <route>
+        <controller>VksRelations</controller>
+        <action>addParticipans, showmy</action>
+        <methods>get</methods>
+        <ajax>false</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>VksRelations</controller>
+        <action>storeParticipants</action>
+        <methods>post</methods>
+        <ajax>false</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>NotesCa</controller>
+        <action>apiCheckFlag</action>
+        <methods>get</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>NotesCa</controller>
+        <action>mark, unmark</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+    <route>
+        <controller>ConnectionCode</controller>
+        <action>isCodeInUse</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+
+    <route>
+        <controller>Departments</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>*</access>
+    </route>
+    <route>
+        <controller>BlockedTime</controller>
+        <action>askAtDate, askAtDateTime</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>@</access>
+    </route>
+
+
+    <route>
+        <controller>BlockedTime</controller>
+        <action>*</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+    <route>
+        <controller>OutlookCalendarRequest</controller>
+        <action>pushToStack</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>@</access>
+    </route>
+
+    <route>
+        <controller>OutlookCalendarRequest</controller>
+        <action>setOutlookRequestStatus</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+
+    <!--<route>-->
+    <!--<controller>Modules</controller>-->
+    <!--<action>edit, store</action>-->
+    <!--<methods>POST, GET</methods>-->
+    <!--<ajax>true</ajax>-->
+    <!--<access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>-->
+    <!--</route>-->
+
+</root>

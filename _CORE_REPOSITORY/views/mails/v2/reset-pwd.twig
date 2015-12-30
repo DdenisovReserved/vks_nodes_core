@@ -1,0 +1,22 @@
+{% extends "mails/base.twig" %}
+{% block body %}
+        <tr class="table-head">
+            <td><h2>Запрос на сброс пароля</h2></td>
+        </tr>        <tr class="">
+            <td>
+                {% if user.fio is defined %}
+                    Уважаемый {{ user.fio }}
+                {% else %}
+                    Сообщение от системы ВКС
+                {% endif %}
+        </tr>
+        <tr>
+            <td>Кто-то c ip адресом {{ ip }} запросил сброс пароля для вашей учетной записи {{ user.login }} в АС ВКС</td>
+        </tr>
+        <tr>
+            <td>Если это вы, то <a target="_blank" href="{{ linkToReset }}">перейдите по ссылке для сброса пароля</a></td>
+        </tr>
+        <tr>
+            <td>Если вы не запрашивали смену пароля, сообщите об этом администратору системы</td>
+        </tr>
+{% endblock %}
