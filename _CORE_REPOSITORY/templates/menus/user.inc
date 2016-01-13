@@ -79,6 +79,9 @@ global $_TB_IDENTITY;
                     </ul>
                 </li>
             <?php endif; ?>
+            <li class='<?= ST::ifActiveMarkIt(['AttendanceNew/showSchedule'], []) ?>'>
+                <a class="" href="<?= ST::route("AttendanceNew/showSchedule/0/".date_create()->format("Y-m-d")."/1") ?>">Расписания</a>
+            </li>
             <li class='<?= ST::ifActiveMarkIt([], ['search']) ?>'>
                 <a class="" id="search-vks" href="<?= ST::route("Search/index") ?>">Поиск</a>
             </li>

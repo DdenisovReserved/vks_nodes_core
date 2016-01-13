@@ -267,7 +267,12 @@ function getModalVks(vksId) {
                 });
                 fancyContent += "</td>";
             } else {
-                fancyContent += "<td><span class='connection-code-highlighter'>Код подключения не выдан</span></td>";
+                if (vks.status == 0) {
+                    fancyContent += "<td><span class='connection-code-highlighter-wait'>Заявка находится на согласовании администратором ВКС, пожалуйста, подождите</span></td>";
+                } else {
+                    fancyContent += "<td><span class='connection-code-highlighter'>Код подключения не выдан</span></td>";
+                }
+
             }
 
             if (!vks.is_simple) {
@@ -351,7 +356,7 @@ function getModalVks(vksId) {
                     overlay: true
                 }
 
-            })
+            });
 
             return false;
         },

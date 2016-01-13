@@ -13,9 +13,22 @@ $vks = ST::lookAtBackPack();
 $vks = $vks->request;
 ST::setUserJs('users/search.js');
 ST::setUserJs('vks/approve/in_direct_insertion.js');
-
+ST::setUserJs('codes/askFreeCodes.js');
 ?>
+<script>
+    function localAskFreeCodes() {
+        var date = $("#date-with-support").val();
+        var start_time = $("#start_time").val();
+        var end_time = $("#end_time").val();
 
+        if (!date || !start_time || !end_time) {
+            alert("Заполните поля: дата, время начала/окончания");
+            return false;
+        }
+
+        askFreeCodes('#askCodes', date + " " + start_time, date + " " + end_time);
+    }
+</script>
 <div class="container">
     <div class="col-md-2">
 
@@ -65,11 +78,12 @@ ST::setUserJs('vks/approve/in_direct_insertion.js');
 
             <div class="form-step-container">
                 <div class="form-group">
-                    <label><h4>Подразделение</h4></label>
+                    <label><h4>Подразделение </h4></label>
                     <select name="department" class="form-control">
                         <option value="">--Выберите подразделение--</option>
                         <?php foreach ($departments as $department) : ?>
-                            <option value="<?= $department->id ?>"><?= $department->prefix ?>
+                            <option
+                                value="<?= $department->id ?>" <?= $vks->get('department') == $department->id ? 'selected' : false ?>><?= $department->prefix ?>
                                 . <?= $department->name ?></option>
                         <?php endforeach; ?>
                     </select>
@@ -77,10 +91,13 @@ ST::setUserJs('vks/approve/in_direct_insertion.js');
                 <div class="form-group alert alert-info">
                     <div class="checkbox">
                         <label>
-                            <input type='checkbox' name='needTB' date-checked='0'> Подключить другой ТБ/ЦА
+                            <input type='checkbox' name='needTB'
+                                   data-checked='<?= $vks->get('needTB') ? '1' : '0' ?>' <?= $vks->get('needTB') ? 'checked' : '' ?>>Подключить
+                            другой ТБ/ЦА
                         </label>
                     </div>
                 </div>
+
                 <div class="col-lg-6">
                     <div class="form-group hidden alert alert-info" id="tbs">
                         <label>Выберите ТБ с которыми хотите связаться</label>
@@ -89,7 +106,14 @@ ST::setUserJs('vks/approve/in_direct_insertion.js');
                                 <li>
                                     <div class="checkbox">
                                         <label>
-                                            <input type='checkbox' name='participants[]'
+                                            <input type='checkbox'
+                                                   name='participants[]'
+                                                <?php if ($vks->get('participants')) {
+                                                    foreach ($vks->get('participants') as $parp) {
+                                                        if ($parp == $tb->id) echo " checked ";
+                                                    }
+                                                }
+                                                ?>
                                                    value="<?= $tb->id ?>"> <?= $tb->name ?>
                                         </label>
                                     </div>
@@ -105,15 +129,18 @@ ST::setUserJs('vks/approve/in_direct_insertion.js');
                             <option value="0">0</option>
                             <?php $range = range(1, 10); ?>
                             <?php foreach ($range as $variant) : ?>
-                                <option value="<?= $variant ?>"><?= $variant ?></option>
+                                <option
+                                    value="<?= $variant ?>" <?php if ($vks->get('ca_participants') && intval($vks->get('ca_participants')) == intval($variant)) {
+                                    echo 'selected';
+                                } ?>><?= $variant ?></option>
                             <?php endforeach; ?>
                         </select>
                         <label>Ожидаемое кол-во участников в ЦА</label>
                     </div>
 
                 </div>
-                <div class="clearfix"></div>
             </div>
+            <div class="clearfix"></div>
             <!--    <block end -->
             <!--    <block start -->
             <div class="form-step-container">
@@ -146,26 +173,28 @@ ST::setUserJs('vks/approve/in_direct_insertion.js');
             <!--    <block start -->
             <div class="form-step-container" data-step="3">
                 <div class="form-group">
-                <div class="col-lg-6">
-                    <label class="control-label"><h4>Список участников ВКС</h4></label>
+                    <div class="col-lg-6">
+                        <label class="control-label"><h4>Список участников ВКС</h4></label>
 
-                    <div class="loader2" style="display: none;"><img src="images/loading.gif"/> Загрузка</div>
-                    <br>
-                    <button class="btn btn-info col-lg-8" type="button" id="participants_inside_open_popup"><span
-                            class="glyphicon glyphicon-list"></span> Выбрать
-                        участников
-                    </button>
+                        <div class="loader2" style="display: none;"><img
+                                src="<?= CORE_REPOSITORY_HTTP_PATH ?>images/loading.gif"/> Загрузка
+                        </div>
+                        <br>
+                        <button class="btn btn-info col-lg-8" type="button" id="participants_inside_open_popup"><span
+                                class="glyphicon glyphicon-list"></span> Выбрать
+                            участников
+                        </button>
 
 
+                    </div>
+                    <div class="col-lg-6 hidden">
+
+                        <label class="control-label">Кол-во участников с рабочих мест (IP телефон, Lynс, CMA Desktop и
+                            т.д.)</label>
+                        <input name="in_place_participants_count" class="form-control" value="0"/>
+
+                    </div>
                 </div>
-                <div class="col-lg-6 hidden">
-
-                    <label class="control-label">Кол-во участников с рабочих мест (IP телефон, Lynс, CMA Desktop и
-                        т.д.)</label>
-                    <input name="in_place_participants_count" class="form-control" value="0"/>
-
-                </div>
-            </div>
                 <div class="form-group">
                     <div class="vks-points-list-display"><i>Список участников пуст</i></div>
                 </div>
@@ -188,8 +217,21 @@ ST::setUserJs('vks/approve/in_direct_insertion.js');
                     </select>
                 </div>
                 <div class="form-group">
-                    <h4>Код подключения</h4>
-                    <button type="button" class="btn btn-sm btn-success" name="add">+ код из шаблона</button><button type="button" class="btn btn-sm btn-info" name="manual">+ код вручную</button><br><br>
+                    <h4>Код подключения
+                        <button class="btn btn-default btn-sm" id="askCodes" onclick="localAskFreeCodes()"
+                                type="button">
+                            <span class="glyphicon glyphicon-question-sign"></span> <span class="text">Показать таблицу занятости кодов</span>
+                        </button>
+                    </h4>
+
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-sm btn-success" name="add">+ код из шаблона</button>
+                        <button type="button" class="btn btn-sm btn-info" name="manual">+ код вручную</button>
+
+
+                    </div>
+
+                    <br><br>
                     <table class="code-table table table-striped" data-rows="1">
                         <th style="width: 25px;"></th>
                         <th class="col-lg-2">Шаблон</th>
@@ -197,18 +239,10 @@ ST::setUserJs('vks/approve/in_direct_insertion.js');
                         <th class="col-lg-1">Постфикс</th>
                         <th style="width: 125px;">Подсказка для пользователя</th>
                         <th style="width: 25px;"></th>
-                        <tr><td colspan="6" class="emptyly"><i>Нет ни одного кода, выберите что-нибудь</i></td></tr>
+                        <tr>
+                            <td colspan="6" class="emptyly"><i>Нет ни одного кода, выберите что-нибудь</i></td>
+                        </tr>
                     </table>
-
-                    <!--                    <div class="col-lg-4">-->
-                    <!--                        <button type="button" class="manual-code btn btn-info"-->
-                    <!--                            >Ввести вручную-->
-                    <!--                        </button>-->
-                    <!---->
-                    <!--                    </div>-->
-
-                    <!--                    build it-->
-
                     </ul>
                 </div>
                 <div class="form-group alert alert-warning">
@@ -231,7 +265,9 @@ ST::setUserJs('vks/approve/in_direct_insertion.js');
                         <div class="checkbox">
 
                             <label>
-                                <input name="is_private" type="checkbox" <?= $vks->has('is_private') ? $vks->get('is_private') ? 'checked' : '' : '' ?>/>&nbsp<b>Приватная ВКС</b>
+                                <input name="is_private"
+                                       type="checkbox" <?= $vks->has('is_private') ? $vks->get('is_private') ? 'checked' : '' : '' ?>/>&nbsp<b>Приватная
+                                    ВКС</b>
                             </label>
                         <span style="font-size: 18px;" data-file="help_standart" data-element="is_private"
                               class="glyphicon glyphicon-question-sign text-muted pointer get_help_button"

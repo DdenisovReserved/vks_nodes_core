@@ -38,13 +38,9 @@
 
         </td>
     </tr>
-    <tr >
-        <td>Дата начала</td>
-        <td>{{ vks.humanized.date }}</td>
-    </tr>
     <tr>
-        <td>Время</td>
-        <td>{{ vks.humanized.startTime }}-{{ vks.humanized.endTime }}</td>
+        <td>Дата/Время</td>
+        <td>{{ vks.humanized.date }}, {{ vks.humanized.startTime }} - {{ vks.humanized.endTime }}</td>
     </tr>
     <tr >
         <td>Ответственный</td>
@@ -54,10 +50,6 @@
         <td>Подразделение</td>
         <td>{{ vks.department_rel.prefix }}. {{ vks.department_rel.name }}</td>
     </tr>
-    {#<tr >#}
-        {#<td>Инициатор:</td>#}
-        {#<td>{{ vks.initiator_rel.name }}</td>#}
-    {#</tr>#}
     <tr >
         <td>Участники
             {#<span class="badge">{{ vks.participants|length + vks.in_place_participants_count }}</span>#}

@@ -2,6 +2,9 @@
 
 class AttendanceNew_controller extends Controller
 {
+    const SHOW_SCHEDULE_AS_LIST = 0;
+    const SHOW_SCHEDULE_AS_GRAPH = 1;
+
     use sorterTrait;
 
     //show branch, start from $rootId
@@ -153,7 +156,7 @@ class AttendanceNew_controller extends Controller
     public static function fullParentInfo($startId)
     {
 
-        $cacheName = "att.".App::$instance->tbId.".parentInfo.{$startId}";
+        $cacheName = "att." . App::$instance->tbId . ".parentInfo.{$startId}";
         $result = App::$instance->cache->get($cacheName);
 
         if (!$result) {
@@ -172,7 +175,7 @@ class AttendanceNew_controller extends Controller
 
             $cachedObj = new CachedObject($result, ['tag.' . $cacheName]);
 
-            App::$instance->cache->set($cacheName, $cachedObj, 3600*24*7);
+            App::$instance->cache->set($cacheName, $cachedObj, 3600 * 24 * 7);
         }
 
         return array_reverse($result);
@@ -195,7 +198,7 @@ class AttendanceNew_controller extends Controller
 
     public function apiGetTree($cid = 1, $cOrder = 'name_to_asc', $pOrder = 'name_to_asc')
     {
-        $cacheName = "att.".App::$instance->tbId.".tree.{$cid}.{$cOrder}.{$pOrder}";
+        $cacheName = "att." . App::$instance->tbId . ".tree.{$cid}.{$cOrder}.{$pOrder}";
 
         $result = App::$instance->cache->get($cacheName);
         if (!$result) {
@@ -213,7 +216,7 @@ class AttendanceNew_controller extends Controller
             $result['pOrder'] = $pOrder;
 
 
-            $cachedObj = new CachedObject($result, ['tag.' . $cacheName, 'tag.att.tree', "tag.att.".App::$instance->tbId.".tree"]);
+            $cachedObj = new CachedObject($result, ['tag.' . $cacheName, 'tag.att.tree', "tag.att." . App::$instance->tbId . ".tree"]);
             App::$instance->cache->set($cacheName, $cachedObj, 3600 * 24 * 3);
         }
 
@@ -249,20 +252,19 @@ class AttendanceNew_controller extends Controller
         if ($render) {
             $resp['html'] = "<div><h3>Вкс в которых участвует <b>{$point->name}</b></h3><ul>";
             $vc = new Vks_controller();
-            foreach($result as $resset) {
-                foreach($resset as $vks) {
+            foreach ($result as $resset) {
+                foreach ($resset as $vks) {
                     $vc->humanize($vks);
-                    $resp['html'] .= "<li>".ST::linkToVksPage($vks->id, true)." {$vks->title} <br>{$vks->humanized->date} c {$vks->humanized->startTime} до {$vks->humanized->endTime}</li>";
+                    $resp['html'] .= "<li>" . ST::linkToVksPage($vks->id, true) . " {$vks->title} <br>{$vks->humanized->date} c {$vks->humanized->startTime} до {$vks->humanized->endTime}</li>";
                 }
             }
 
             $resp['html'] .= '</ul></div>';
 //            print $resp['html'];
             print json_encode($resp['html']);
-        } else{
+        } else {
             print json_encode($result);
         }
-
 
 
     }
@@ -276,7 +278,7 @@ class AttendanceNew_controller extends Controller
         $strict_option = intval(Settings_controller::getOther('attendance_strict'));
         $result['path'] = $this->fullParentInfo($cid);
 
-        $cacheName = "tag.att.".App::$instance->tbId.".tree.{$cid}.".implode(",", $except);
+        $cacheName = "tag.att." . App::$instance->tbId . ".tree.{$cid}." . implode(",", $except);
 
         $points = App::$instance->cache->get($cacheName);
 
@@ -289,10 +291,9 @@ class AttendanceNew_controller extends Controller
                 ->orderBy('name', 'asc')
                 ->get();
 
-            $cachedObj = new CachedObject($points, ['tag.' . $cacheName, "tag.att.".App::$instance->tbId.".tree"]);
-            App::$instance->cache->set($cacheName, $cachedObj, 3600*24*3);
+            $cachedObj = new CachedObject($points, ['tag.' . $cacheName, "tag.att." . App::$instance->tbId . ".tree"]);
+            App::$instance->cache->set($cacheName, $cachedObj, 3600 * 24 * 3);
         }
-
 
 
         foreach ($points as $point) {
@@ -351,11 +352,11 @@ class AttendanceNew_controller extends Controller
         $strict_option = intval(Settings_controller::getOther('attendance_strict'));
 
         $result = [];
-        $points = Attendance::where("name", "like", "%{$phrase}%")
+
+        $points = Attendance::where("name", "like", "%".$phrase."%")
             ->where('active', 1)
             ->whereNotIn("id", $except)
             ->take(500)->get();
-
 
         foreach ($points as $point) {
             $point->free = true;
@@ -481,7 +482,7 @@ class AttendanceNew_controller extends Controller
 
     public static function makeFullPath($startAttendanceId)
     {
-        $cacheName = "att.".App::$instance->tbId.".fullpath.{$startAttendanceId}";
+        $cacheName = "att." . App::$instance->tbId . ".fullpath.{$startAttendanceId}";
         $path = App::$instance->cache->get($cacheName);
 
         if (!$path) {
@@ -556,4 +557,82 @@ class AttendanceNew_controller extends Controller
 
         return $result;
     }
+
+
+    public function showSchedule($showType, $date, $attendance_id)
+    {
+
+        try {
+            $attendance = Attendance::findOrFail($attendance_id);
+        } catch (Exception $e) {
+            $this->error('404');
+        }
+
+        $filename = NODE_REAL_PATH . 'storage/user_' . md5(App::$instance->user->ip) . '.txt';
+
+        if (is_file($filename)) {
+            $last_seen_stored = json_decode(file_get_contents($filename), JSON_PRETTY_PRINT);
+        } else {
+            $last_seen_stored = array();
+        }
+//        if (isset($_COOKIE['last_seen_stored'])) {
+//            $last_seen_stored = json_decode($_COOKIE['last_seen_stored'], JSON_PRETTY_PRINT);
+//        } else {
+//            $last_seen_stored = array();
+//        }
+
+
+
+        $last_seen = $last_seen_stored; //to view
+
+        $last_seen = array_reverse($last_seen);
+
+        if (count($last_seen_stored) > 15) {
+            array_shift($last_seen_stored);
+        }
+
+        $key = array_search($attendance->toArray(), $last_seen_stored);
+
+        if (is_numeric($key)) {
+            unset($last_seen_stored[$key]);
+        }
+
+        array_push($last_seen_stored, $attendance->toArray());
+
+//        setrawcookie('last_seen_stored', json_encode($last_seen_stored, JSON_FORCE_OBJECT), 60 * 60 * 24 * 90);
+
+        file_put_contents($filename, json_encode($last_seen_stored));
+
+        if ($showType == self::SHOW_SCHEDULE_AS_LIST) {
+            $vc = new Vks_controller();
+            $start = date_create($date)->setTime(0, 0);
+            $end = date_create($date)->setTime(23, 59);
+            $requested_participant_id = intval($attendance_id);
+
+            $vkses = Vks::where('start_date_time', ">=", $start)
+                ->where('start_date_time', '<=', $end)
+                ->whereIn('status', [VKS_STATUS_PENDING, VKS_STATUS_APPROVED])
+                ->notSimple()
+                ->with('participants')
+                ->orderBy("start_date_time", 'desc')
+                ->get();
+            $filtered_vkses = array();
+            if (count($vkses))
+                foreach ($vkses as $vks) {
+                    if (count($vks->participants)) {
+                        foreach ($vks->participants as $participant) {
+                            if ($participant->id === $requested_participant_id)
+                                $filtered_vkses[] = $vc->humanize($vks);
+                        }
+                    }
+                }
+
+            return $this->render('attendance/schedule_list', compact('attendance', 'filtered_vkses', 'date', 'last_seen'));
+        } else {
+            return $this->render('attendance/schedule_graph', compact('date', 'attendance', 'last_seen'));
+        }
+
+
+    }
+
 }

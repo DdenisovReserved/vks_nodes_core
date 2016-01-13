@@ -94,7 +94,11 @@ ST::setVarPhptoJS(HTTP_BASE_PATH, 'base_http_path');
                                 </p>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <span class="connection-code-highlighter-compact">Код подключения не выдан</span>
+                            <?php if($vks->status == VKS_STATUS_PENDING): ?>
+                                <span class="connection-code-highlighter-compact-wait">Заявка находится на согласовании администратором ВКС, пожалуйста, подождите</span>
+                            <?php else: ?>
+                                <span class="connection-code-highlighter-compact">Код подключения не выдан</span>
+                            <?php endif ?>
                         <?php endif ?>
 
 

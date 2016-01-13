@@ -105,7 +105,7 @@ RenderEngine::MenuChanger();
                                                                                          title="Подсказка"></span></h4>
                             </label>
 
-                            <div class="loader2" style="display: none;"><img src="images/loading.gif"/> Загрузка</div>
+                            <div class="loader2" style="display: none;"><img src="<?=CORE_REPOSITORY_HTTP_PATH ?>images/loading.gif"/> Загрузка</div>
                             <br>
                             <button class="btn btn-info col-lg-8" type="button"
                                     id="participants_inside_open_popup"><span

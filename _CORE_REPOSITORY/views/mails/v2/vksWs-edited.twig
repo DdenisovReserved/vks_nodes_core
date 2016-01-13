@@ -1,15 +1,15 @@
 {% extends "mails/base.twig" %}
 {% block body %}
-<tr class="table-head">
+    <tr class="table-head">
         <td colspan="2">
             <h2>Ваша ВКС #{{ vks.id }} отредактирована администратором</h2>
         </td>
     </tr>
-    <tr >
+    <tr>
         <td width="30%">Название</td>
         <td>{{ vks.title }}</td>
     </tr>
-    <tr >
+    <tr>
         <td>Вирт. комната (код подключения)</td>
         {% if vks.connection_codes is defined and vks.connection_codes|length %}
             <td>
@@ -32,7 +32,7 @@
         <td>
             {% if vks.approver is defined %}
                 {{ vks.approver.login }}{% if vks.approver.phone|length %}, тел.{{ vks.approver.phone }}
-                {% endif %}
+            {% endif %}
             {% else %}
                 Аднистратор пока не назначен
             {% endif %}
@@ -49,15 +49,12 @@
 
         </td>
     </tr>
-    <tr >
-        <td>Дата начала</td>
-        <td>{{ vks.humanized.date }}</td>
+    <tr>
+        <td>Дата/Время | <a href="{{ appHttpPath }}?route=OutlookCalendarRequest/pushToStack/{{ vks.id }}/forced">Отправить
+                в календарь Outlook</a></td>
+        <td>{{ vks.humanized.date }}, {{ vks.humanized.startTime }} - {{ vks.humanized.endTime }}</td>
     </tr>
     <tr>
-        <td>Время</td>
-        <td>{{ vks.humanized.startTime }}-{{ vks.humanized.endTime }}</td>
-    </tr>
-    <tr >
         <td>Ответственный</td>
         <td>{{ vks.init_customer_fio }}, тел. {{ vks.init_customer_phone }}</td>
     </tr>
@@ -73,7 +70,8 @@
     {% endif %}
     {% if vksCa %}
         <tr style="background-color: #FFC6A3; font-size: 20px;">
-            <td>Ссылка-приглашение на ВКС</td>
+            <td>Ссылка-приглашение на ВКС<br><span style="color: #e82000  ;">Пожалуйста, перешлите эту ссылку в другие ТБ</span>
+            </td>
             <td>
                 <b><a href='{{ http_path }}i.php?r={{ vksCa.referral }}'>{{ http_path }}i.php?r={{ vksCa.referral }}</a></b>
             </td>
@@ -81,7 +79,7 @@
 
     {% endif %}
 
-    <tr >
+    <tr>
         <td>Участники
             {#<span class="badge">{{ vks.participants|length + vks.in_place_participants_count }}</span>#}
         </td>
@@ -130,8 +128,8 @@
         </td>
     </tr>
     {#<tr >#}
-        {#<td>Прямая ссылка на ВКС:</td>#}
-        {#<td>{{ vks.link }}</td>#}
+    {#<td>Прямая ссылка на ВКС:</td>#}
+    {#<td>{{ vks.link }}</td>#}
     {#</tr>#}
     <tr>
         <td>Владелец</td>

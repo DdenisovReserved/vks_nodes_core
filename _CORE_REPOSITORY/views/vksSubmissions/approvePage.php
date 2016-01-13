@@ -8,7 +8,7 @@ $p = new ParticipationsV3Assert();
 $p->init();
 $asrt = new FlotGraphAssert();
 $asrt->init();
-
+ST::setUserJs('codes/askFreeCodes.js');
 ?>
 <script type='text/javascript'>
     <?php
@@ -60,7 +60,6 @@ $asrt->init();
                 <?php endif ?>
             <?php endif ?>
         <?php endif ?>
-
         <?php if ($vks->other_tb_required): ?>
             <div class="alert alert-info">В этой ВКС заявлены участники из других ТБ, ВКС в ЦА создана автоматически
                 из нашего пула адресов
@@ -269,19 +268,6 @@ $asrt->init();
 
         </table>
 
-        <table class="table table-bordered" id="codes-free-table">
-            <th class="col-lg-2">Код</th>
-            <th>Занятость с <?= $vks->humanized->startTime ?> - <?= $vks->humanized->endTime ?></th>
-            <?php foreach ($codesLoadSet as $code => $vacant) : ?>
-                <tr>
-                    <td><span class="text-primary"><?= $code ?></span></td>
-                    <td><?= $vacant ? "<span class='text-danger'>Занят в ВКС {
-                    $vacant
-                    }</span>" : "<span class='text-success'>Свободен</span>" ?></td>
-                </tr>
-            <?php endforeach; ?>
-        </table>
-
 
     </div>
     <!--    submission form -->
@@ -350,7 +336,7 @@ $asrt->init();
 
             <div class="form-group">
                 <h4>Код подключения
-                    <button class="btn btn-default btn-sm" id="show-free-codes-table" type="button" data-checked="0">
+                    <button class="btn btn-default btn-sm" id="askCodes" onclick="askFreeCodes('#askCodes','<?= $vks->start_date_time ?>', '<?= $vks->end_date_time ?>')" type="button">
                         <span class="glyphicon glyphicon-question-sign"></span> <span class="text">Показать таблицу занятости кодов</span>
                     </button>
                 </h4>

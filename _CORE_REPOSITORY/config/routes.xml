@@ -308,7 +308,7 @@
 
     <route>
         <controller>calendarfeed</controller>
-        <action>feedns, feedmain</action>
+        <action>feedns, feedmain, feedAtParticipant</action>
         <methods>get</methods>
         <ajax>true</ajax>
         <access>*</access>
@@ -356,7 +356,7 @@
 
     <route>
         <controller>AttendanceNew</controller>
-        <action>isContainer, getTbs, makeFullPath, containersList, fullParentInfo, isLocationString, apiGetTree, apiSearchTree, makeStackName, getStackData, getStackArray, makePathString, apiGetTbs, isImportant, apiGetFastTree, apiGetFastChilds, apiSearchFastTree</action>
+        <action>isContainer, getTbs, makeFullPath, containersList, fullParentInfo, isLocationString, apiGetTree, apiSearchTree, makeStackName, getStackData, getStackArray, makePathString, apiGetTbs, isImportant, apiGetFastTree, apiGetFastChilds, apiSearchFastTree, showSchedule</action>
         <methods>*</methods>
         <ajax>true</ajax>
         <access>*</access>
@@ -501,6 +501,16 @@
         <ajax>true</ajax>
         <access>*</access>
     </route>
+
+    <route>
+        <controller>ConnectionCode</controller>
+        <action>apiGetCodesInUse</action>
+        <methods>*</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
+
+
 
     <route>
         <controller>Departments</controller>

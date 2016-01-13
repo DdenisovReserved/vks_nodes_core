@@ -14,15 +14,13 @@ class Vks_controller extends Controller
 
         if (!isset($date) || !($date instanceof DateTime)) ST::routeToErrorPage('500');
 
-        $vkses = Vks::approved()
-            ->full()
+        $vkses = Vks::full()
             ->where('date', $date)
             ->take($this->getQlimit(30))
             ->skip($this->getQOffset())
             ->orderBy($this->getQOrder(), $this->getQVector())
             ->get();
-        $recordsCount = Vks::approved()
-            ->where('date', $date)
+        $recordsCount = Vks::where('date', $date)
             ->count();
         //pages
         foreach ($vkses as $vks) {
@@ -209,7 +207,7 @@ class Vks_controller extends Controller
         //any participants required
         if (!intval($request->get('in_place_participants_count')) && !count($request->get('inner_participants'))) {
             $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage('Вы не выбрали участников для ВКС', 'danger');
+            App::$instance->MQ->setMessage('Вы не выбрали внутренних участников (в вашем ТБ) для ВКС', 'danger');
             ST::redirect("back");
         }
 
@@ -1096,7 +1094,6 @@ class Vks_controller extends Controller
                         }
                     }
                 }
-
             }
         }
         $vks->humanized->presentation = $vks->presentation ? "Да" : "Нет";
@@ -1234,7 +1231,7 @@ class Vks_controller extends Controller
         $versionCtrl = new VksVersion_controller();
         $load = new Load_controller();
         $sc = new Settings_controller();
-        $connCtrl = new ConnectionCode_controller();
+
 
         $vks = Vks::NotSimple()->full()->findOrFail($id);
         $vks = $this->humanize($vks);
@@ -1251,11 +1248,8 @@ class Vks_controller extends Controller
             }
         }
 
-        $codesLoadSet = [];
-        foreach ($sc->getCodesPostfixSet() as $postfixCode) {
-            $vksSearch = $connCtrl->isCodeInUse($postfixCode, $vks->start_date_time, $vks->end_date_time);
-            $codesLoadSet[$postfixCode] = isset($vksSearch->id) ? ST::linkToVksPage($vksSearch->id, true) : false;
-        }
+
+
         if (!self::isVksCanBeApproved($vks))
             throw new Exception('this VKS can\'t be approved or declined,change it status to PENDING first');
 //        $graphUrl = $load->drawLoadImage($vks->date);
@@ -1297,7 +1291,7 @@ class Vks_controller extends Controller
 
 
 //        dump($caVks);
-        $this->render('vksSubmissions/approvePage', compact('vks', 'graphUrl', 'caVks', 'versions', 'codes', 'codesLoadSet', 'last_version','graph'));
+        $this->render('vksSubmissions/approvePage', compact('vks', 'graphUrl', 'caVks', 'versions', 'codes', 'last_version','graph'));
     }
 
     function process($vksId)

@@ -1,25 +1,5 @@
 $(document).ready(function () {
 
-    $("#codes-free-table").hide();
-
-    $(document).on("click", "#show-free-codes-table", function () {
-
-        if ($(this).data('checked') == 0) {
-            $(this).find('.text').text('Показать информацию по ВКС');
-            $("#vks-info-table").hide();
-            $("#codes-free-table").show('fast');
-            $(this).data('checked', 1)
-        } else {
-            $(this).find('.text').text('Показать таблицу занятости кодов');
-            $("#codes-free-table").hide();
-            $("#vks-info-table").show('fast');
-
-            $(this).data('checked', 0)
-        }
-
-    })
-
-
     var modal = new Modal();
 
     $(document).on("change", ".template-select", function () {

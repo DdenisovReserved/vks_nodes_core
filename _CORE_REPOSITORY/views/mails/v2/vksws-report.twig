@@ -40,15 +40,11 @@
             {% endif %}
         </td>
     </tr>
-    <tr  >
-        <td>Дата начала</td>
-        <td>{{ vks.humanized.date }}</td>
+    <tr>
+        <td>Дата/Время | <a href="{{ appHttpPath }}?route=OutlookCalendarRequest/pushToStack/{{ vks.id }}/forced">Отправить в календарь Outlook</a></td>
+        <td>{{ vks.humanized.date }}, {{ vks.humanized.startTime }} - {{ vks.humanized.endTime }}</td>
     </tr>
     <tr>
-        <td>Время</td>
-        <td>{{ vks.humanized.startTime }}-{{ vks.humanized.endTime }}</td>
-    </tr>
-    <tr  >
         <td>Ответственный</td>
         <td>{{ vks.init_customer_fio }}, тел. {{ vks.init_customer_phone }}</td>
     </tr>
@@ -64,7 +60,7 @@
     {% endif %}
     {% if vksCa %}
         <tr style="background-color: #FFC6A3; font-size: 20px;">
-            <td>Ссылка-приглашение на ВКС</td>
+            <td>Ссылка-приглашение на ВКС<br><span style="color: #e82000  ;">Пожалуйста, перешлите эту ссылку в другие ТБ</span></td>
             <td>
                 <b><a href='{{ http_path }}i.php?r={{ vksCa.referral }}'>{{ http_path }}i.php?r={{ vksCa.referral }}</a></b>
             </td>
@@ -145,12 +141,6 @@
             {% else %}
                 -
             {% endif %}
-        </td>
-    </tr>
-    <tr>
-        <td>&nbsp</td>
-        <td>
-            <a href="{{ appHttpPath }}?route=OutlookCalendarRequest/pushToStack/{{ vks.id }}/forced">Отправить приглашение в мой календарь Outlook</a>
         </td>
     </tr>
 {% endblock %}

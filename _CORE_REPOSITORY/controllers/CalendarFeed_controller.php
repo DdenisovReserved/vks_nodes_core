@@ -48,115 +48,8 @@ class CalendarFeed_controller extends Controller
 
         //!get event
         //event customization
-        foreach ($events as $event) {
-            $start = date_create($event->start_date_time);
-            $end = date_create($event->end_date_time);
-//
-            if (isset($event->fromCa)) {
-                $start = date_create($event->start_date_time, new DateTimeZone(App::$instance->opt->ca_timezone));
-                $end = date_create($event->end_date_time, new DateTimeZone(App::$instance->opt->ca_timezone));
-                $mskStart = clone($start);
-                $mskEnd = clone($end);
-                $start->setTimezone(new DateTimeZone(App::$instance->opt->timezone));
-                $end->setTimezone(new DateTimeZone(App::$instance->opt->timezone));
-
-                $event->mks_start_time = $mskStart->format("H:i");
-                $event->mks_end_time = $mskEnd->format("H:i");
-                $event->mks_date = $mskStart->format("d.m.Y");
-                $event->mks_start = $mskStart->format("Y-m-d H:i");
-                $event->mks_end = $mskEnd->format("Y-m-d H:i");
-
-            }
-            $event->start_time = $start->format("H:i");
-            $event->end_time = $end->format("H:i");
-            $event->date = $start->format("d.m.Y");
-            $event->start = $start->format("Y-m-d H:i");
-            $event->end = $end->format("Y-m-d H:i");
-            ST::deployColorScheme($event, App::$instance->user->colors['local_default']);
-
-            if (!isset($event->fromCa)) {
-                $event->titleCustom = "<span class='label label-success label-as-badge'>#" . $event->id . "</span> ";
-            } else {
-                $event->titleCustom = "<span class='label label-warning label-as-badge'>#" . $event->id . "</span> ";
-            }
-
-            if ($event->status == VKS_STATUS_PENDING) {
-                    $event->titleCustom = $event->titleCustom . '<span class="label label-info">Pending</span> ';
-                    ST::deployColorScheme($event, App::$instance->user->colors['local_pending']);
-            }
-
-            if (isset($event->fromCa)) {
-
-                $event->titleCustom = $event->titleCustom . '<span class="label label-info label-as-badge" style="background-color: brown;">СA</span> ';
-
-                ST::deployColorScheme($event, App::$instance->user->colors['fromca_local_linked']);
-
-                if (!$event->isLinked) {
-                    if (!$event->tbFlag) {
-                        ST::deployColorScheme($event, App::$instance->user->colors['fromca_no_local_linked']);
-                    }
-                    $event->titleCustom = $event->titleCustom . '<span class="label label-info" style="background-color: #F2EE0F; color: #000;">НЗ</span> ';
-                }
-
-                if ($event->flag) {
-                    ST::deployColorScheme($event, App::$instance->user->colors['fromca_with_flag']);
-                }
-
-                if ($event->tbFlag) {
-                    ST::deployColorScheme($event, App::$instance->user->colors['local_with_flag']);
-                }
-            }
-
-            if (Auth::isAdmin(App::$instance) && isset($event->link_ca_vks_id) && !$event->other_tb_required) {
-                $event->titleCustom = $event->titleCustom . '<span class="label label-info">TbToCa</span>';
-//                $event->backgroundColor = "#B9BAB2";
-//                $event->borderColor = "#B9BAB2";
-            }
-
-            if (!isset($event->fromCa) && $event->other_tb_required) {
-                $event->titleCustom = $event->titleCustom . '<span class="label label-info">TbToTb</span> ';
-            }
-
-            if (!isset($event->fromCa) && $event->is_simple) {
-                $event->titleCustom = $event->titleCustom . '<span class="label label-info">Simple</span> ';
-                ST::deployColorScheme($event, App::$instance->user->colors['local_simple']);
-            }
-
-            if (Auth::isAdmin(App::$instance)) {
-                if (!isset($event->fromCa) && $event->record_required) {
-                    $event->titleCustom = $event->titleCustom . "<span class='label label-danger'><span class='glyphicon glyphicon-facetime-video'></span></span> ";
-                }
-
-                if (!isset($event->fromCa)) {
-                    if ($event->flag) {
-                        ST::deployColorScheme($event, App::$instance->user->colors['local_with_flag']);
-//                    $event->titleCustom = $event->titleCustom.'<span class="label label-danger" style="background-color: #F730D5">Flag</span> ';
-                    }
-                } else {
-
-                }
-            }
-
-            if (Auth::isAdmin(App::$instance)) {
-                if ($event->admin_id == App::$instance->user->id) {
-                    ST::deployColorScheme($event, App::$instance->user->colors['local_im_admin']);
-                }
-            }
-
-            if (Auth::isLogged(App::$instance) && !(Auth::isAdmin(App::$instance))) {
-                if ($event->owner_id == App::$instance->user->id && $event->status != VKS_STATUS_PENDING) {
-                    ST::deployColorScheme($event, App::$instance->user->colors['local_im_owner']);
-                }
-            }
-
-            $event->titleCustom .= $event->start_time . " - " . $event->end_time;
-
-//            if (isset($event->fromCa)) {
-//                $event->titleCustom .= "<div class='plank-title'>мск(" .$event->mks_start_time . " - " . $event->mks_end_time . ")</div>";
-//            }
-            $event->titleCustom .= "<div class='plank-title'>" . $event->title . "</div>";
-            $event->title = null; //костыль
-        } //end foreach
+        $events = $this->prepareEvents($events);
+        //end foreach
         //!event customization
 
 
@@ -261,8 +154,151 @@ class CalendarFeed_controller extends Controller
 
         return $events; //output
 
+    }
+
+    public function feedAtParticipant()
+    {
+
+        $start = date_create($this->request->query->get('start'))->setTime(0, 0);
+        $end = date_create($this->request->query->get('end'))->setTime(23, 59);
+        $requested_participant_id = intval($this->request->query->get('requested_participant_id'));
+
+        $vkses = Vks::where('start_date_time', ">=", $start)
+            ->where('start_date_time', '<=', $end)
+            ->whereIn('status', [VKS_STATUS_PENDING, VKS_STATUS_APPROVED])
+            ->notSimple()
+            ->with('participants')
+            ->get();
+        $filtered_vkses = array();
+        if (count($vkses))
+            foreach ($vkses as $vks) {
+                if (count($vks->participants)) {
+                    foreach ($vks->participants as $participant) {
+                        if ($participant->id === $requested_participant_id)
+                            $filtered_vkses[] = $vks;
+                    }
+                }
+            }
+//        dump($vkses);
+
+        $filtered_vkses = $this->prepareEvents($filtered_vkses);
+
+        print json_encode($filtered_vkses); //output
 
     }
 
+    public function prepareEvents($events)
+    {
+        if (count($events))
+            foreach ($events as $event) {
+                $start = date_create($event->start_date_time);
+                $end = date_create($event->end_date_time);
+//
+                if (isset($event->fromCa)) {
+                    $start = date_create($event->start_date_time, new DateTimeZone(App::$instance->opt->ca_timezone));
+                    $end = date_create($event->end_date_time, new DateTimeZone(App::$instance->opt->ca_timezone));
+                    $mskStart = clone($start);
+                    $mskEnd = clone($end);
+                    $start->setTimezone(new DateTimeZone(App::$instance->opt->timezone));
+                    $end->setTimezone(new DateTimeZone(App::$instance->opt->timezone));
 
+                    $event->mks_start_time = $mskStart->format("H:i");
+                    $event->mks_end_time = $mskEnd->format("H:i");
+                    $event->mks_date = $mskStart->format("d.m.Y");
+                    $event->mks_start = $mskStart->format("Y-m-d H:i");
+                    $event->mks_end = $mskEnd->format("Y-m-d H:i");
+
+                }
+                $event->start_time = $start->format("H:i");
+                $event->end_time = $end->format("H:i");
+                $event->date = $start->format("d.m.Y");
+                $event->start = $start->format("Y-m-d H:i");
+                $event->end = $end->format("Y-m-d H:i");
+                ST::deployColorScheme($event, App::$instance->user->colors['local_default']);
+
+                if (!isset($event->fromCa)) {
+                    $event->titleCustom = "<span class='label label-success label-as-badge'>#" . $event->id . "</span> ";
+                } else {
+                    $event->titleCustom = "<span class='label label-warning label-as-badge'>#" . $event->id . "</span> ";
+                }
+
+                if ($event->status == VKS_STATUS_PENDING) {
+                    $event->titleCustom = $event->titleCustom . '<span class="label label-info">Pending</span> ';
+                    ST::deployColorScheme($event, App::$instance->user->colors['local_pending']);
+                }
+
+                if (isset($event->fromCa)) {
+
+                    $event->titleCustom = $event->titleCustom . '<span class="label label-info label-as-badge" style="background-color: brown;">СA</span> ';
+
+                    ST::deployColorScheme($event, App::$instance->user->colors['fromca_local_linked']);
+
+                    if (!$event->isLinked) {
+                        if (!$event->tbFlag) {
+                            ST::deployColorScheme($event, App::$instance->user->colors['fromca_no_local_linked']);
+                        }
+                        $event->titleCustom = $event->titleCustom . '<span class="label label-info" style="background-color: #F2EE0F; color: #000;">НЗ</span> ';
+                    }
+
+                    if ($event->flag) {
+                        ST::deployColorScheme($event, App::$instance->user->colors['fromca_with_flag']);
+                    }
+
+                    if ($event->tbFlag) {
+                        ST::deployColorScheme($event, App::$instance->user->colors['local_with_flag']);
+                    }
+                }
+
+                if (Auth::isAdmin(App::$instance) && isset($event->link_ca_vks_id) && !$event->other_tb_required) {
+                    $event->titleCustom = $event->titleCustom . '<span class="label label-info">TbToCa</span>';
+//                $event->backgroundColor = "#B9BAB2";
+//                $event->borderColor = "#B9BAB2";
+                }
+
+                if (!isset($event->fromCa) && $event->other_tb_required) {
+                    $event->titleCustom = $event->titleCustom . '<span class="label label-info">TbToTb</span> ';
+                }
+
+                if (!isset($event->fromCa) && $event->is_simple) {
+                    $event->titleCustom = $event->titleCustom . '<span class="label label-info">Simple</span> ';
+                    ST::deployColorScheme($event, App::$instance->user->colors['local_simple']);
+                }
+
+                if (Auth::isAdmin(App::$instance)) {
+                    if (!isset($event->fromCa) && $event->record_required) {
+                        $event->titleCustom = $event->titleCustom . "<span class='label label-danger'><span class='glyphicon glyphicon-facetime-video'></span></span> ";
+                    }
+
+                    if (!isset($event->fromCa)) {
+                        if ($event->flag) {
+                            ST::deployColorScheme($event, App::$instance->user->colors['local_with_flag']);
+//                    $event->titleCustom = $event->titleCustom.'<span class="label label-danger" style="background-color: #F730D5">Flag</span> ';
+                        }
+                    } else {
+
+                    }
+                }
+
+                if (Auth::isAdmin(App::$instance)) {
+                    if ($event->admin_id == App::$instance->user->id) {
+                        ST::deployColorScheme($event, App::$instance->user->colors['local_im_admin']);
+                    }
+                }
+
+                if (Auth::isLogged(App::$instance) && !(Auth::isAdmin(App::$instance))) {
+                    if ($event->owner_id == App::$instance->user->id && $event->status != VKS_STATUS_PENDING) {
+                        ST::deployColorScheme($event, App::$instance->user->colors['local_im_owner']);
+                    }
+                }
+
+                $event->titleCustom .= $event->start_time . " - " . $event->end_time;
+
+//            if (isset($event->fromCa)) {
+//                $event->titleCustom .= "<div class='plank-title'>мск(" .$event->mks_start_time . " - " . $event->mks_end_time . ")</div>";
+//            }
+                $event->titleCustom .= "<div class='plank-title'>" . $event->title . "</div>";
+                $event->title = null; //костыль
+            }
+        return $events;
+    }
 }

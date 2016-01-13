@@ -135,24 +135,36 @@ ST::setUserJs('attendance/v3/init.js');
                     </div>
                     <div class="clearfix"></div>
                     <div class="col-lg-6">
+                        <div class="alert alert-warning" style="min-height: 100px;">
 
-                        <div class="text-danger">
-                        <span class="col-lg-8" style="border-left: 5px solid darkred;">
-                            <label for="exampleInputEmail2">Количество участников с рабочих мест<br> (IP телефоны, Lynс,
+
+                            <div class="text-danger">
+                        <span class="col-lg-6" style="border-left: 5px solid darkred;">
+                            <label for="exampleInputEmail2" style="font-size: 11px;">Количество участников с рабочих
+                                мест<br> (IP телефоны, Lynс,
                                 CMA Desktop
                                 и
                                 т.д.)
                             </label>
                         </span>
-                         <span class="col-lg-2">
-                             <input class="form-control" id="points_add_inplace_field"
-                                    placeholder="" value="0"/>
+                         <span class="col-lg-3">
+                             <span style="width: 30px; padding-right: 5px;">
+                                     <span class="glyphicon glyphicon-minus pointer" id="decrement-points_add_inplace_field"></span>
+                             </span>
+
+                                <input class="text-primary" style="width: 40px; text-align: center;  padding: 7px;"
+                                       id="points_add_inplace_field"
+                                       placeholder="" value="0"/>
+                             <span style="width: 30px; padding-left: 5px;">
+                                     <span id="increment-points_add_inplace_field" class=" text-success pointer glyphicon glyphicon-plus"></span>
+                             </span>
                         </span>
                         <span class="col-lg-2">
-                        <button type="button" class="btn btn-success" id="points_add_inplace">
-                            <span class="glyphicon glyphicon-plus-sign"></span>
+                        <button type="button" class="btn btn-success btn-sm" id="points_add_inplace">
+                            Добавить
                         </button>
                         </span>
+                            </div>
                         </div>
                     </div>
                     <div class="col-lg-6 left-border">

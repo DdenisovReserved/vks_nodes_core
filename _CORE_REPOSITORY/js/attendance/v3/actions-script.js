@@ -295,4 +295,18 @@ $(document).ready(function () {
 
     });
 
+
+    $(document).on('click', '#decrement-points_add_inplace_field', function () {
+        var value = Number($("#points_add_inplace_field").val());
+        if (value > 0) {
+            $("#points_add_inplace_field").val(value - 1)
+        }
+    });
+
+    $(document).on('click', '#increment-points_add_inplace_field', function () {
+        var value = Number($("#points_add_inplace_field").val());
+        $("#points_add_inplace_field").val(value + 1);
+
+    })
+
 });

@@ -53,7 +53,11 @@ ST::setVarPhptoJS($date, 'currentDate');
                                 </p>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <span class="connection-code-highlighter">Код подключения не выдан</span>
+                            <?php if($vks->status == VKS_STATUS_PENDING): ?>
+                                <span class="connection-code-highlighter-wait">Заявка находится на согласовании администратором ВКС, пожалуйста, подождите</span>
+                            <?php else: ?>
+                                <span class="connection-code-highlighter">Код подключения не выдан</span>
+                            <?php endif ?>
                         <?php endif ?></td>
                     <td class="text-left">
                         <div class="inside_parp">

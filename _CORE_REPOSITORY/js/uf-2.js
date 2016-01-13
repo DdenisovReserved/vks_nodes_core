@@ -1,6 +1,12 @@
 $(document).ready(function () {
     hideErrorMark("*.error-mark");
 
+
+    if ($("*[name='needTB']").data('checked') == 1) {
+        $("#tbs,#ca_participants").removeClass('hidden')
+    }
+
+
     //заплатка которая не дает писать текст в поле даты и времени
     $(document).on("keyup", "#date, #start_time, #end_time", function () {
         $(this).val("")
@@ -62,7 +68,7 @@ $(document).ready(function () {
     $(document).on("change", "#start_time", function () {
         $("#end_time").timepicker('remove');
         $("#end_time").timepicker({
-            "minTime": $("#start_time").timepicker('getTime'),
+            "minTime": $("#start_time").val(),
             "timeFormat": "H:i",
             'maxTime': '20:00',
             'show2400': true,
@@ -86,7 +92,8 @@ $(document).ready(function () {
         var participants = repo.isExistInStorage(cookieName) ? repo.getFromStorage(cookieName) : [];
         if (typeof participants === 'object') {
             participants = Array(participants);
-        };
+        }
+        ;
         if ($("*[name='in_place_participants_count']").length && $("*[name='in_place_participants_count']").val().length) {
             participants.push('in_place_participants_count');
         }
@@ -117,20 +124,20 @@ $(document).ready(function () {
             //    if (!e.cCheck) {
             //        $(".errors-cnt").html($(".errors-cnt").html() + "<p>Ошибка в коде проверки, попробуйте еще раз</p>").show();
             //        $(".refresh-captcha").click();
-                //} else {
-                    //убираем кнопку
-                    $("#submit").attr("id", "wait").removeClass('btn-success').addClass('btn-default').text('Отправка, ожидайте...');
-                    $(".time_container").find("input,select").each(function(i, element){
-                        $(element).attr("disabled", false);
-                    });
+            //} else {
+            //убираем кнопку
+            $("#submit").attr("id", "wait").removeClass('btn-success').addClass('btn-default').text('Отправка, ожидайте...');
+            $(".time_container").find("input,select").each(function (i, element) {
+                $(element).attr("disabled", false);
+            });
 
-                    //создадим кнопку и нажмем её
-                    var newSubmitButton = $this.clone().removeAttr('id').removeAttr('type');
-                    $(newSubmitButton).attr('id', 'submittrue').attr('type', 'submit').addClass('hidden');
-                    $('#form1').append(newSubmitButton);
-                    //субмитим форму? лол что
-                    $('#submittrue').click();
-                //}
+            //создадим кнопку и нажмем её
+            var newSubmitButton = $this.clone().removeAttr('id').removeAttr('type');
+            $(newSubmitButton).attr('id', 'submittrue').attr('type', 'submit').addClass('hidden');
+            $('#form1').append(newSubmitButton);
+            //субмитим форму? лол что
+            $('#submittrue').click();
+            //}
             //})
         }
     });
@@ -143,8 +150,10 @@ $(document).ready(function () {
 
 //    обработчик открытия окна с выбором участников на юзерской форме
     $(document).on("click", "#participants_inside_open_popup", function (e) {
+        var $thisButton = $(this);
         //alert("this");
         e.preventDefault();
+        $thisButton.attr("disabled", true);
         var modal = new Modal();
         dateTimeforCheck = [];
 
@@ -189,23 +198,22 @@ $(document).ready(function () {
                         dateTimeforCheck.push(additional);
                 });
             }
-            //var coreDT = {
-            //    'date': "06.12.2015",
-            //    'start_time': "10:00",
-            //    'end_time': "12:00"
-            //};
-            //dateTimeforCheck.push(coreDT);
-            //var coreDT = {
-            //    'date': "06.12.2015",
-            //    'start_time': "06:00",
-            //    'end_time': "12:00"
-            //};
-            //dateTimeforCheck.push(coreDT);
+
             if (dateTimeforCheck.length)
-                modal.pull("participants");
+                $.when(modal.pull("participants")).then(
+                    setTimeout(function () {
+                        $thisButton.attr("disabled", false);
+                    }, 4000)
+                );
+
         } else {
-            modal.pull("participants");
+            $.when(modal.pull("participants")).then(
+                setTimeout(function () {
+                    $thisButton.attr("disabled", false);
+                }, 4000)
+            );
         }
+
 
     }); //click end
 
@@ -238,14 +246,6 @@ $(document).ready(function () {
         }
     });
 
-    //$(document).on("change", "*[name='other_tb_required']", function () {
-    //    if ($(this).val() == 1) {
-    //        $("#tbs").removeClass('hidden')
-    //    } else {
-    //        $("#tbs").addClass('hidden')
-    //    }
-    //
-    //})
 
     $(document).on("click", "*[name='needTB']", function () {
         if ($(this).data('checked') == 1) {
@@ -255,8 +255,7 @@ $(document).ready(function () {
             $(this).data('checked', 1)
             $("#tbs,#ca_participants").removeClass('hidden')
         }
-
-    })
+    });
 
     $(document).on("click", ".add_time", function () {
         if ($(".time_container").length >= 5) {
@@ -344,49 +343,48 @@ $(document).ready(function () {
     });
 
 
+    $(document).on('click', '.get_help_button', function () {
 
-    $(document).on('click', '.get_help_button', function() {
+        $.ajax({
+            beforeSend: function () {
+                var opts = {
+                    lines: 17 // The number of lines to draw
+                    , length: 26 // The length of each line
+                    , width: 12 // The line thickness
+                    , radius: 42 // The radius of the inner circle
+                    , scale: 0.2 // Scales overall size of the spinner
+                    , corners: 1 // Corner roundness (0..1)
+                    , color: '#000' // #rgb or #rrggbb or array of colors
+                    , opacity: 0.25 // Opacity of the lines
+                    , rotate: 11 // The rotation offset
+                    , direction: 1 // 1: clockwise, -1: counterclockwise
+                    , speed: 3.2 // Rounds per second
+                    , trail: 23 // Afterglow percentage
+                    , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+                    , zIndex: 2e9 // The z-index (defaults to 2000000000)
+                    , className: 'spinner' // The CSS class to assign to the spinner
+                    , top: '50%' // Top position relative to parent
+                    , left: '50%' // Left position relative to parent
+                    , shadow: false // Whether to render a shadow
+                    , hwaccel: false // Whether to use hardware acceleration
+                    , position: 'absolute' // Element positioning
+                }
+                var spinner = new Spinner(opts).spin();
+                $('#center').append(spinner.el);
+            },
+            type: 'GET',
+            cache: false,
+            url: "?route=help/ask/" + $(this).data('file') + "/" + $(this).data('element'),
+            dataType: "json",
+            success: function (vks) {
+                var modal = new Modal();
+                modal.generateAndPull('Подсказка', vks[0]);
 
-         $.ajax({
-                 beforeSend: function () {
-                     var opts = {
-                         lines: 17 // The number of lines to draw
-                         , length: 26 // The length of each line
-                         , width: 12 // The line thickness
-                         , radius: 42 // The radius of the inner circle
-                         , scale: 0.2 // Scales overall size of the spinner
-                         , corners: 1 // Corner roundness (0..1)
-                         , color: '#000' // #rgb or #rrggbb or array of colors
-                         , opacity: 0.25 // Opacity of the lines
-                         , rotate: 11 // The rotation offset
-                         , direction: 1 // 1: clockwise, -1: counterclockwise
-                         , speed: 3.2 // Rounds per second
-                         , trail: 23 // Afterglow percentage
-                         , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
-                         , zIndex: 2e9 // The z-index (defaults to 2000000000)
-                         , className: 'spinner' // The CSS class to assign to the spinner
-                         , top: '50%' // Top position relative to parent
-                         , left: '50%' // Left position relative to parent
-                         , shadow: false // Whether to render a shadow
-                         , hwaccel: false // Whether to use hardware acceleration
-                         , position: 'absolute' // Element positioning
-                     }
-                     var spinner = new Spinner(opts).spin();
-                     $('#center').append(spinner.el);
-                 },
-                 type: 'GET',
-                 cache: false,
-                 url: "?route=help/ask/" + $(this).data('file') + "/"+ $(this).data('element'),
-                 dataType: "json",
-                 success: function (vks) {
-                     var modal = new Modal();
-                     modal.generateAndPull('Подсказка',vks[0]);
-
-                 },
-                 complete: function() {
-                     $('.spinner').remove();
-                 }
-             })
+            },
+            complete: function () {
+                $('.spinner').remove();
+            }
+        })
 
     })
 

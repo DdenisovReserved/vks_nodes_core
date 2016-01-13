@@ -395,6 +395,12 @@ background-color: red;
     background-color: #ea8805;
     color: white;
 }
+.connection-code-highlighter-wait {
+    font-size: 11px;
+    /*padding: 5px;*/
+    font-weight: bold;
+    color: #797E7B;
+}
 
 .connection-code-highlighter-compact {
     padding: 5px;
@@ -402,6 +408,13 @@ background-color: red;
     font-size: 12px;
     background-color: #ffbea3;
 }
+.connection-code-highlighter-compact-wait {
+    /*padding: 5px;*/
+    font-weight: bold;
+    font-size: 11px;
+    color: #797E7B;
+}
+
 .connection-code-highlighter .point {
     display: inline;
 }
@@ -530,4 +543,8 @@ background-color: red;
 .referral-code-highlighter a {
     text-wrap: none;
     font-size: 11px;
+}
+.hovered:hover {
+    background-color: #cc9331;
+    color: #ffffff;
 }

@@ -262,6 +262,7 @@ class Settings_controller extends Controller
                 }
             }
         }
+        sort($result);
         return $result;
     }
 

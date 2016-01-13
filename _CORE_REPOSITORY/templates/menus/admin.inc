@@ -78,7 +78,7 @@ global $_TB_IDENTITY;
                     </ul>
                 </li>
                 <li role='presentation'
-                    class="dropdown <?= ST::ifActiveMarkIt(['index/settings', 'user/index'], ['load', 'settings', 'dashboard', 'log', 'departments', 'attendancenew', 'reporter']) ?>">
+                    class="dropdown <?= ST::ifActiveMarkIt(['index/settings', 'attendancenew/show','attendancenew/create', 'attendancenew/edit', 'user/index'], ['load', 'settings', 'dashboard', 'log', 'departments', 'reporter']) ?>">
                     <a class="dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-expanded="false">
                         Система<span
                             class="caret"></span>
@@ -127,6 +127,9 @@ global $_TB_IDENTITY;
                         <!--                                <a href="?r=views/users/my_data"><span class="glyphicon glyphicon-th-list"></span> Мои списки</a>-->
                         <!--                            </li>-->
                     </ul>
+                </li>
+                <li class='<?= ST::ifActiveMarkIt(['attendancenew/showschedule'], []) ?>'>
+                    <a class="" href="<?= ST::route("attendancenew/showschedule/0/".date_create()->format("Y-m-d")."/1") ?>">Расписания</a>
                 </li>
                 <li class=''>
                     <a class="" id="search-vks" href="<?= ST::route("Search/index") ?>">Поиск</a>

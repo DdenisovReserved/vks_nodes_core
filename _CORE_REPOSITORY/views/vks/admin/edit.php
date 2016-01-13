@@ -273,7 +273,7 @@ ST::setVarPhptoJS(true, "editLogic");
                     <div class="col-lg-6">
                         <label class="control-label">Список участников ВКС<br><br></label>
 
-                        <div class="loader2" style="display: none;"><img src="images/loading.gif"/> Загрузка</div>
+                        <div class="loader2" style="display: none;"><img src="<?=CORE_REPOSITORY_HTTP_PATH ?>images/loading.gif"/> Загрузка</div>
                         <br>
                         <button class="btn btn-info col-lg-12" type="button" id="participants_inside_open_popup"><span
                                 class="glyphicon glyphicon-list"></span> Выбрать

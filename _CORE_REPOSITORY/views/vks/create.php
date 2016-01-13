@@ -1,14 +1,6 @@
 <?php
 ST::deployTemplate('heads/ui_timepicker.inc');
-
-//$p = new ParticipationAssert();
-//$p->init();
-
-//dump($vks);
 RenderEngine::MenuChanger();
-//$hc = new Help_controller();
-//$hc->ask('help_standart', 'date');
-//dump($vks);
 ?>
 
 <div class="container">
@@ -34,7 +26,8 @@ RenderEngine::MenuChanger();
                                 <label>
                                     <h4>Дата </h4>
                                 </label>
-                                <input data-vks_blocked_type="0" name="dates[<?= $c ?>][date]" id="<?= $c == 1 ? 'date-with-support' : '' ?>"
+                                <input data-vks_blocked_type="0" name="dates[<?= $c ?>][date]"
+                                       id="<?= $c == 1 ? 'date-with-support' : '' ?>"
                                        class="form-control <?= $c != 1 ? 'clonedDP' : '' ?>"
                                        value="<?= $date['date'] ?>"/>
 
@@ -46,7 +39,7 @@ RenderEngine::MenuChanger();
                                     </label>
                                     <input name='dates[<?= $c ?>][start_time]' id='start_time'
                                            class='form-control start_time'
-                                           <?= $date['start_time'] ? '' :'disabled' ?>
+                                        <?= $date['start_time'] ? '' : 'disabled' ?>
                                            value="<?= $date['start_time'] ?>"/>
                                 </div>
                                 <div class='<?= $c == 1 ? 'col-md-4' : 'col-md-3' ?>'>
@@ -54,7 +47,7 @@ RenderEngine::MenuChanger();
                                         <h4>Время окончания</h4>
                                     </label>
                                     <input name='dates[<?= $c ?>][end_time]' id='end_time' class='form-control end_time'
-                                           <?= $date['end_time'] ? '' :'disabled' ?>
+                                        <?= $date['end_time'] ? '' : 'disabled' ?>
                                            value="<?= $date['end_time'] ?>"/>
                                 </div>
                                 <?php if ($c != 1): ?>
@@ -80,7 +73,8 @@ RenderEngine::MenuChanger();
                                                class="glyphicon glyphicon-question-sign text-muted pointer get_help_button"
                                                title="Подсказка"></span></h4>
                             </label>
-                            <input data-vks_blocked_type="0" name="dates[1][date]" id="date-with-support" class="form-control"
+                            <input data-vks_blocked_type="0" name="dates[1][date]" id="date-with-support"
+                                   class="form-control"
                                    value="<?= $vks->get('date') ?>"/>
                         </div>
                         <div class="time-params">
@@ -126,20 +120,12 @@ RenderEngine::MenuChanger();
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <!--               <div class="form-group">-->
-                <!--                    <label>Инициатор ВКС</label>-->
-                <!--                    <select name="initiator" class="form-control">-->
-                <!--                        <option value="">--Выберите инициатора--</option>-->
-                <!--                        --><?php //foreach ($initiators as $initiator) : ?>
-                <!--                            <option value="--><?php //echo $initiator->id ?><!--">-->
-                <?php //echo  $initiator->name ?><!--</option>-->
-                <!--                        --><?php //endforeach; ?>
-                <!--                    </select>-->
-                <!--                </div>-->
                 <div class="form-group alert alert-info">
                     <div class="checkbox">
                         <label>
-                            <input type='checkbox' name='needTB' date-checked='0'>Подключить другой ТБ/ЦА
+                            <input type='checkbox' name='needTB'
+                                   data-checked='<?= $vks->get('needTB') ? '1' : '0' ?>' <?= $vks->get('needTB') ? 'checked' : '' ?>>Подключить
+                            другой ТБ/ЦА
                         </label>
                     </div>
                 </div>
@@ -152,7 +138,14 @@ RenderEngine::MenuChanger();
                                 <li>
                                     <div class="checkbox">
                                         <label>
-                                            <input type='checkbox' name='participants[]'
+                                            <input type='checkbox'
+                                                   name='participants[]'
+                                                <?php if ($vks->get('participants')) {
+                                                    foreach ($vks->get('participants') as $parp) {
+                                                        if ($parp == $tb->id) echo " checked ";
+                                                    }
+                                                }
+                                                ?>
                                                    value="<?= $tb->id ?>"> <?= $tb->name ?>
                                         </label>
                                     </div>
@@ -168,7 +161,9 @@ RenderEngine::MenuChanger();
                             <option value="0">0</option>
                             <?php $range = range(1, 10); ?>
                             <?php foreach ($range as $variant) : ?>
-                                <option value="<?= $variant ?>"><?= $variant ?></option>
+                                <option value="<?= $variant ?>" <?php if($vks->get('ca_participants') && intval($vks->get('ca_participants')) == intval($variant)) {
+                                     echo 'selected';
+                                } ?>><?= $variant ?></option>
                             <?php endforeach; ?>
                         </select>
                         <label>Ожидаемое кол-во участников в ЦА</label>
@@ -220,7 +215,7 @@ RenderEngine::MenuChanger();
                                                                                      title="Подсказка"></span></h4>
                         </label>
 
-                        <div class="loader2" style="display: none;"><img src="images/loading.gif"/> Загрузка</div>
+                        <div class="loader2" style="display: none;"><img src="<?=CORE_REPOSITORY_HTTP_PATH ?>images/loading.gif"/> Загрузка</div>
                         <br>
                         <button class="btn btn-info col-lg-8" type="button"
                                 id="participants_inside_open_popup"><span
@@ -260,7 +255,9 @@ RenderEngine::MenuChanger();
                         <div class="checkbox">
 
                             <label>
-                                <input name="is_private" type="checkbox" <?= $vks->has('is_private') ? $vks->get('is_private') ? 'checked' : '' : '' ?>/>&nbsp<b>Приватная ВКС</b>
+                                <input name="is_private"
+                                       type="checkbox" <?= $vks->has('is_private') ? $vks->get('is_private') ? 'checked' : '' : '' ?>/>&nbsp<b>Приватная
+                                    ВКС</b>
                             </label>
                         <span style="font-size: 18px;" data-file="help_standart" data-element="is_private"
                               class="glyphicon glyphicon-question-sign text-muted pointer get_help_button"
