@@ -1,0 +1,22 @@
+<tr>
+    <td>Запрашиваетcя поддержка в точке</td>
+    <td style="color: #44562a">{{ request.attendance.full_path }}</td>
+</tr>
+
+<tr>
+    <td>Запрос создал</td>
+    <td>
+        {{ request.owner.login }}
+        <br>{{ request.owner.fio }}, {{ request.owner.phone }},
+    </td>
+</tr>
+<tr>
+    <td>Сообщение от пользователя</td>
+    <td>
+        {% if request.user_message|length %}
+            {{ request.user_message }}
+        {% else %}
+            -
+        {% endif %}
+    </td>
+</tr>

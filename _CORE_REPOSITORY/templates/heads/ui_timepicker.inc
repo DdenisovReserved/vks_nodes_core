@@ -17,26 +17,26 @@
     <!--    <link rel="stylesheet" type="text/css" href="css/custom-menu.css"/>-->
     <!--        <link rel="stylesheet" type="text/css" href="js/notify/css/bootstrap-notify.css"/>-->
     <!--    <!---->
-    <!--        <script type="text/javascript" src="js/jquery/jquery-1.11.0.min.js"></script>-->
-    <!--        <script type="text/javascript" src="js/support/support.js"></script>-->
-    <!--        <script type="text/javascript" src="js/jquery/jquery-ui-1.10.3.custom.js"></script>-->
-    <!--        <script type="text/javascript" src="js/jquery-timepicker/jquery-ui-timepicker-addon.js"></script>-->
-    <!--        <script type="text/javascript" src="js/jquery/jquery.timepicker.min.js"></script>-->
-    <!--        <script type="text/javascript" src="js/bootstrap.js"></script>-->
-    <!--        <script type="text/javascript" src="js/modals/Modal.class.js"></script>-->
-    <!--        <script type="text/javascript" src="js/search/core.class.js"></script>-->
-    <!--        <script type="text/javascript" src="js/search/clicker.js"></script>-->
-    <!--        <script type="text/javascript" src="js/core.js"></script>-->
-    <!--        <script type="text/javascript" src="js/notify/js/soundmanager2-nodebug-jsmin.js"></script>-->
-    <!--        <script type="text/javascript" src="js/notify/js/bootstrap-notify.js"></script>-->
-    <!--        <script type="text/javascript" src="js/production/fancybox/source/jquery.fancybox.pack.js"></script>-->
-    <!--        <script type="text/javascript" src="js/bootstrap-switch.min.js"></script>-->
-    <!--        <script type="text/javascript" src="js/jquery.fancybox.js"></script>-->
-    <!--        <script type="text/javascript" src="js/lib/moment.min.js"></script>-->
-    <!--        <script type="text/javascript" src="js/fullcalendar.js"></script>-->
-    <!--        <script type="text/javascript" src="js/ru.js"></script>-->
-    <!--        <script type="text/javascript" src="js/jquery/spinner.js"></script>-->
-    <!--        <script type="text/javascript" src="js/jquery/spin.jquery.plugin.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery/jquery-1.11.0.min.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/support/support.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery/jquery-ui-1.10.3.custom.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery-timepicker/jquery-ui-timepicker-addon.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery/jquery.timepicker.min.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/bootstrap.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/modals/Modal.class.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/search/core.class.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/search/clicker.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/core.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/notify/js/soundmanager2-nodebug-jsmin.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/notify/js/bootstrap-notify.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/production/fancybox/source/jquery.fancybox.pack.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/bootstrap-switch.min.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery.fancybox.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/lib/moment.min.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/fullcalendar.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/ru.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery/spinner.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery/spin.jquery.plugin.js"></script>-->
 
     <!--    <link rel="stylesheet" type="text/css" href="js/color-picker/css/pick-a-color-1.2.3.min.css"/>-->
     <!--    notices-->
@@ -64,7 +64,7 @@
     </script>
     <![endif]-->
 </head>
-<div id="center" style="position:fixed;top:50%;left:50%"></div>
+<div id="center" style="z-index: 6666; position:fixed;top:50%;left:50%"></div>
 <?php
 //if admin add notice listener
 if (Auth::isAdmin(App::$instance))

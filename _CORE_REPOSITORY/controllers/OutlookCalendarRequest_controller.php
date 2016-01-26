@@ -27,20 +27,21 @@ class OutlookCalendarRequest_controller extends Controller
                 App::$instance->log->logWrite(LOG_OTHER_EVENTS, "New Outlook request create for " . App::$instance->user->login . ', vks: ' . $vks->id);
                 App::$instance->MQ->setMessage("Приглашение сформировано, ожидайте, отправка будет произведена в течении 2х минут");
             } else {
-                App::$instance->MQ->setMessage("Приглашение уже отправлялось в ваш календарь, <a class='confirmation' href='".ST::route('OutlookCalendarRequest/pushToStack/'.$vks->id.'/forced')."'>Отправить еще раз</a>");
+                App::$instance->MQ->setMessage("Приглашение уже отправлялось в ваш календарь, <a class='confirmation' href='" . ST::route('OutlookCalendarRequest/pushToStack/' . $vks->id . '/forced') . "'>Отправить еще раз</a>");
             }
         }
 
         ST::redirect('back');
     }
 
-    public static function changeRequestTypeAndPutToResend($vks_id, $request_type) {
+    public static function changeRequestTypeAndPutToResend($vks_id, $request_type)
+    {
         if (in_array($request_type, [
             OutlookCalendarRequest::REQUEST_TYPE_NEW, OutlookCalendarRequest::REQUEST_TYPE_UPDATE
         ])) {
             $requests = OutlookCalendarRequest::where('vks_id', $vks_id)->get();
             if (count($requests)) {
-                foreach($requests as $request) {
+                foreach ($requests as $request) {
                     $request->request_type = $request_type;
                     $request->send_status = OutlookCalendarRequest::SEND_STATUS_REQUIRED;
                     $request->save();

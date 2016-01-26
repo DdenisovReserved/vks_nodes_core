@@ -355,4 +355,11 @@ class ST
         return ((float)$usec + (float)$sec);
     }
 
+    static function routeToDomainGate()
+    {
+        $path = explode("/", HTTP_BASE_PATH);
+        $path = array_slice($path, 0, -1);
+        return "http://".$_SERVER['SERVER_ADDR'].":8088"."/".array_pop($path). "/domain_gate/warp.php";
+    }
+
 } //_______________class end_______________________

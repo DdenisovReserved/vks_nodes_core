@@ -5,10 +5,8 @@ RenderEngine::MenuChanger();
 //dump($vks->owner);
 ?>
 
-    <div class="container">
-        <div class="col-lg-2">
-        </div>
-        <div class="col-lg-7 left-border">
+    <div style="width: 960px; margin: 0 auto;">
+        <div class="col-lg-12">
             <div class='action-buttons'>
                 <div class="col-lg-6 no-left-padding">
                     <h4>Данные ВКС</h4>
@@ -21,13 +19,13 @@ RenderEngine::MenuChanger();
                     </div>
                 </div>
             </div>
-            <table class="table table-hover table-striped">
+            <table class="table table-hover table-striped table-bordered">
                 <tr>
                     <td>id</td>
                     <td><?= $vks->id ?></td>
                 </tr>
                 <tr>
-                    <td>Статус:</td>
+                    <td>Статус</td>
                     <td><?= $vks->humanized->status_label ?></td>
                 </tr>
 
@@ -105,7 +103,7 @@ RenderEngine::MenuChanger();
             </table>
             <hr>
             <div class="text-muted">
-                Ссылка на эту страницу
+                <a href="<?= ST::route("Vks/show") . "/" . $vks->id ?>">Ссылка на эту страницу</a>
                 <textarea
                     class="form-control"><?= ST::route("Vks/show") . "/" . $vks->id ?></textarea>
             </div>

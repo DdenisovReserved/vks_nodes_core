@@ -6,7 +6,7 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
-    $vendorDir . '/react/promise/src/functions_include.php',
-    $vendorDir . '/illuminate/support/Illuminate/Support/helpers.php',
-    $vendorDir . '/symfony/var-dumper/Resources/functions/dump.php',
+    'ad155f8f1cf0d418fe49e248db8c661b' => $vendorDir . '/react/promise/src/functions_include.php',
+    '3b5531f8bb4716e1b6014ad7e734f545' => $vendorDir . '/illuminate/support/Illuminate/Support/helpers.php',
+    '667aeda72477189d0494fecd327c3641' => $vendorDir . '/symfony/var-dumper/Resources/functions/dump.php',
 );

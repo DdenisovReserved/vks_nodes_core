@@ -23,41 +23,7 @@ ST::setVarPhptoJS(true, "editLogic");
     <div class="col-lg-6 text-left text-muted"><h4>ВКС #<?= $vks->id ?> Режим редактирования (Вид Администратора)</h4>
     </div>
     <div class="col-lg-6 text-right text-muted">
-        <div class='action-buttons'>
-            <div class="text-right">
-                <div class="btn-group" role="group" aria-label="...">
-
-                    <?php if ($vks->humanized->isCloneable): ?>
-                        <a class='btn btn-default btn-sm' href='?route=Vks/makeClone/<?= $vks->id ?>'
-                           title='Клонировать'><span class='glyphicon glyphicon-duplicate'></span></a>
-                    <?php else: ?>
-                        <span class='btn btn-default btn-sm' href='' disabled title='Клонировать'><span
-                                class='glyphicon glyphicon-duplicate'></span></span>
-                    <?php endif; ?>
-
-                    <?php if ($vks->humanized->isEditable): ?>
-                        <a class='btn btn-info btn-sm' href='?route=Vks/edit/<?= $vks->id ?>'
-                           title='Редактировать'><span class='glyphicon glyphicon-edit'></span></a>
-                    <?php else: ?>
-                        <span class='btn btn-default btn-sm' href='' disabled title='Редактировать'><span
-                                class='glyphicon glyphicon-edit'></span></span>
-                    <?php endif; ?>
-
-                    <?php if ($vks->humanized->isDeletable): ?>
-                        <?php if (Auth::isLogged(App::$instance) && Auth::isAdmin(App::$instance)): ?>
-                            <a class='btn btn-danger btn-sm' href='?route=Vks/annulate/<?= $vks->id ?>'
-                               title='Аннулировать'><span class='glyphicon glyphicon-remove-sign'></span></a>
-                        <?php elseif (Auth::isLogged(App::$instance)): ?>
-                            <a class='btn btn-danger btn-sm confirmation' href='?route=Vks/cancel/<?= $vks->id ?>'
-                               title='Аннулировать'><span class='glyphicon glyphicon-remove-sign'></span></a>
-                        <?php endif; ?>
-                    <?php else: ?>
-                        <span class='btn btn-default btn-sm' href='' disabled title='Аннулировать'><span
-                                class='glyphicon glyphicon-remove-sign'></span></span>
-                    <?php endif; ?>
-                </div>
-            </div>
-        </div>
+        <?php include_once(CORE_REPOSITORY_REAL_PATH . "views/vks/tpl/_action_menu.php") ?>
     </div>
     <div class="col-lg-12">
         <hr>
@@ -319,7 +285,7 @@ ST::setVarPhptoJS(true, "editLogic");
                 </div>
                 <div class="form-group">
                     <div class="col-lg-12">
-                        <div class="form-group alert alert-danger">
+                        <div class="form-group">
                             <div class="checkbox">
                                 <label>
                                     <input name="is_private" type="checkbox" <?= $vks->is_private ? 'checked' : '' ?>/>&nbspПриватная ВКС
@@ -330,7 +296,7 @@ ST::setVarPhptoJS(true, "editLogic");
                         </div>
                     </div>
                     <div class="col-lg-12">
-                        <div class="form-group alert alert-danger">
+                        <div class="form-group">
                             <div class="checkbox">
                                 <label>
                                     <input name="record_required"

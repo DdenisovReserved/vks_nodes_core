@@ -1,0 +1,23 @@
+<tr>
+    <td width="30%">Название ВКС</td>
+    <td>{{ vks.title }}</td>
+</tr>
+<tr>
+    <td>Дата/Время | <a href="{{ appHttpPath }}?route=OutlookCalendarRequest/pushToStack/{{ vks.id }}/forced">Отправить
+            в календарь Outlook</a></td>
+    <td>{{ vks.humanized.date }}, {{ vks.humanized.startTime }} - {{ vks.humanized.endTime }}</td>
+</tr>
+<tr>
+    <td>Ответственный</td>
+    <td>{{ vks.init_customer_fio }}, тел. {{ vks.init_customer_phone }}</td>
+</tr>
+<tr>
+    <td>Владелец</td>
+    <td>
+        {% if vks.owner %}
+            {{ vks.owner.login }} ({{ vks.owner.fio }}, {{ vks.owner.phone }})
+        {% else %}
+            -
+        {% endif %}
+    </td>
+</tr>

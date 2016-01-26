@@ -112,6 +112,9 @@ global $_TB_IDENTITY;
                             <a href="<?= ST::route('Lk/show') ?>">Мои ВКС</a>
                         </li>
                         <li class=''>
+                            <a href="?route=Lk/showMyTechSupportRequests">Мои запросы в ТП</a>
+                        </li>
+                        <li class=''>
                             <a href="<?= ST::route('User/editMyData') ?>">Мои данные</a>
                         </li>
                         <li class=''>
@@ -131,6 +134,7 @@ global $_TB_IDENTITY;
                 <li class='<?= ST::ifActiveMarkIt(['attendancenew/showschedule'], []) ?>'>
                     <a class="" href="<?= ST::route("attendancenew/showschedule/0/".date_create()->format("Y-m-d")."/1") ?>">Расписания</a>
                 </li>
+
                 <li class=''>
                     <a class="" id="search-vks" href="<?= ST::route("Search/index") ?>">Поиск</a>
                 </li>

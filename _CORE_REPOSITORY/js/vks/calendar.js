@@ -1,6 +1,8 @@
 $(document).ready(function () {
+    var modal = new Modal();
     $(document).on("click", ".modal-event-ws", function () {
-        getModalVks($(this).attr('event-id'));
+        modal.showPageInModal("?route=Vks/show/"+$(this).attr('event-id'))
+        //getModalVks($(this).attr('event-id'));
     });
     $(document).on("click", ".modal-event-ca", function () {
         getModalVksCa($(this).attr('event-id'));

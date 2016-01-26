@@ -8233,7 +8233,7 @@
             }
             else {
                 if (this.load_getted)
-                    return '<th colspan="2" class="load-column-head"><span id="showGraph" data-date="' + this.phpDate + '" data-server="1" class="pointer"><a href="?route=Load/show/' + this.phpDate + '/' + this.calendar.options.pullServerLoadFrom + '"> <span class="glyphicon glyphicon-new-window text-info" title="Показать график"></span> Нагрузка </a></th><th class="fc-axis ' + this.widgetHeaderClass + '" ' + this.axisStyleAttr() + '></th>';
+                    return '<th colspan="2" class="load-column-head"><span id="showGraph" data-date="' + this.phpDate + '" data-server="1" class="pointer"><a href="?route=Load/showJsLoadGraph/' + this.phpDate + '"> <span class="glyphicon glyphicon-new-window text-info" title="Показать график"></span> Нагрузка </a></th><th class="fc-axis ' + this.widgetHeaderClass + '" ' + this.axisStyleAttr() + '></th>';
                 else {
                     return '<th class="fc-axis ' + this.widgetHeaderClass + '" ' + this.axisStyleAttr() + '></th>';
                 }

@@ -5,7 +5,7 @@
         <hr>
         <form class="form-horizontal" method="post" action="<?= ST::route('Vks/dropByAdmin/' . $vks->id) ?>">
             <div class="form-group">
-                <label class="control-label col-lg-3">Комментрарий для пользователя</label>
+                <label class="control-label col-lg-3">Комментарий для пользователя</label>
 
                 <div class="col-lg-6">
                     <textarea name="comment_for_user" class="form-control" rows="5"></textarea>

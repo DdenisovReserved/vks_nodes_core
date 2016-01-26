@@ -1,9 +1,6 @@
 <?php
 ST::deployTemplate('heads/ui_timepicker.inc');
 
-ST::setVarPhptoJS(AttendanceNew_controller::makeStackName(STACK_MULTIPLY), 'stackMultiName');
-ST::setVarPhptoJS(1000, 'stackMultiCapacity');
-
 ST::setUserJs('uf-2.js');
 
 $p = new ParticipationsV3Assert();
@@ -168,7 +165,8 @@ RenderEngine::MenuChanger();
                             </div>
                         </div>
                     </div>
-
+                    <?php include_once(CORE_REPOSITORY_REAL_PATH."views/vks/tpl/_tech_support_checkbox.php") ?>
+                    <hr>
                     <?php ST::setUpErrorContainer(); ?>
 <!--                    <div class="form-group">-->
 <!--                        <div class="col-md-12  no-left-padding">-->

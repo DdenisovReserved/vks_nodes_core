@@ -14,9 +14,10 @@ RenderEngine::MenuChanger();
     })
 </script>
 <div class="container">
-    <div class="col-lg-3"><a class="btn btn-default"
-                             href="?route=AttendanceNew/show/<?= $data['backPack']->parent_id ?>"> Назад</a></div>
-    <div class="col-md-6  block-border-shadow-normal-padding left-border padding25">
+    <div class="col-lg-1 col-sm-offset-2"><a class="btn btn-default"
+                                             href="?route=AttendanceNew/show/<?= $data['backPack']->parent_id ?>">
+            Назад</a></div>
+    <div class="col-md-6 block-border-shadow-normal-padding left-border padding25">
         <h4>Редактировать точку/контейнер</h4>
         <hr>
         <form class="form-horizontal" method="post" action="?route=AttendanceNew/update/<?= $data['backPack']->id ?>">
@@ -27,12 +28,12 @@ RenderEngine::MenuChanger();
                        maxlength="160"/>
             </div>
             <?php if (!$data['backPack']->container): ?>
-            <div class="form-group">
-                <label>Ip:</label>
-                <input name="ip" class="form-control"
-                       value="<?php echo (isset($data['backPack']->ip) && !empty($data['backPack']->ip)) ? $data['backPack']->ip : '' ?>"
-                       maxlength="160"/>
-            </div>
+                <div class="form-group">
+                    <label>Ip:</label>
+                    <input name="ip" class="form-control"
+                           value="<?php echo (isset($data['backPack']->ip) && !empty($data['backPack']->ip)) ? $data['backPack']->ip : '' ?>"
+                           maxlength="160"/>
+                </div>
             <?php endif; ?>
             <div class="form-group">
                 <label>Тип:</label>
@@ -58,7 +59,7 @@ RenderEngine::MenuChanger();
                             value="<?= $data['backPack']->parent_id ?>"><?= Attendance::findOrFail($data['backPack']->parent_id)->name ?></option>
                     <?php endif; ?>
                     <?php foreach ($data['containers'] as $container): ?>
-                        <?php if ($container->id != $data['rootId'] && $backPack->parent_id != $container->id): ?>
+                        <?php if ($backPack->parent_id != $container->id): ?>
                             <?php if ($container->id !== $backPack->id): ?>
                                 <option value="<?= $container->id ?>"><?= $container->name ?></option>
 
@@ -71,20 +72,28 @@ RenderEngine::MenuChanger();
 
 
             <div class="form-group">
-                <div class="checkbox  alert alert-info">
+                <div class="checkbox">
                     <label>
-                        <input name="active" type="checkbox" <?= $data['backPack']->active ? "checked": '' ?>/>&nbspАктивна
+                        <input name="active" type="checkbox" <?= $data['backPack']->active ? "checked" : '' ?>/>&nbspАктивна
                     </label>
                 </div>
             </div>
             <?php if (!$data['backPack']->container): ?>
-            <div class="form-group">
-                <div class="checkbox  alert alert-warning">
-                    <label>
-                        <input name="check" type="checkbox" <?= $data['backPack']->check ? "checked": '' ?>/>&nbspПроверка
-                    </label>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input name="check" type="checkbox" <?= $data['backPack']->check ? "checked" : '' ?>/>&nbspПроверка
+                            на участие в других ВКС
+                        </label>
+                    </div>
                 </div>
-            </div>
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input name="tech_supportable" type="checkbox" <?= $data['backPack']->tech_supportable ? "checked" : '' ?>/>&nbspТехническая поддержка
+                        </label>
+                    </div>
+                </div>
             <?php endif; ?>
 
             <div class="form-group">

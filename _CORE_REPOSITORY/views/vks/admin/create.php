@@ -260,7 +260,7 @@ ST::setUserJs('codes/askFreeCodes.js');
                     </div>
                 </div>
                 <hr>
-                <div class="form-group alert alert-info">
+                <div class="form-group">
                     <div class="">
                         <div class="checkbox">
 
@@ -275,7 +275,7 @@ ST::setUserJs('codes/askFreeCodes.js');
                         </div>
                     </div>
                 </div>
-                <div class="form-group alert alert-info">
+                <div class="form-group">
                     <div class="">
                         <div class="checkbox">
                             <label>
@@ -289,6 +289,7 @@ ST::setUserJs('codes/askFreeCodes.js');
                         </div>
                     </div>
                 </div>
+                <?php include_once(CORE_REPOSITORY_REAL_PATH."views/vks/tpl/_tech_support_checkbox.php") ?>
                 <hr>
                 <?php ST::setUpErrorContainer(); ?>
                 <div class="form-group text-left">

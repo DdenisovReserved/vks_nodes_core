@@ -129,9 +129,12 @@ RenderEngine::MenuChanger();
                         </label>
                     </div>
                 </div>
+                <div class="clearfix"></div>
 
                 <div class="col-lg-6">
-                    <div class="form-group hidden alert alert-info" id="tbs">
+                    <br>
+
+                    <div class="form-group hidden" id="tbs">
                         <label>Выберите ТБ с которыми хотите связаться</label>
                         <ul class="list-unstyled">
                             <?php foreach ($tbs as $tb) : if ($tb->id != App::$instance->tbId) : ?>
@@ -161,8 +164,9 @@ RenderEngine::MenuChanger();
                             <option value="0">0</option>
                             <?php $range = range(1, 10); ?>
                             <?php foreach ($range as $variant) : ?>
-                                <option value="<?= $variant ?>" <?php if($vks->get('ca_participants') && intval($vks->get('ca_participants')) == intval($variant)) {
-                                     echo 'selected';
+                                <option
+                                    value="<?= $variant ?>" <?php if ($vks->get('ca_participants') && intval($vks->get('ca_participants')) == intval($variant)) {
+                                    echo 'selected';
                                 } ?>><?= $variant ?></option>
                             <?php endforeach; ?>
                         </select>
@@ -215,7 +219,9 @@ RenderEngine::MenuChanger();
                                                                                      title="Подсказка"></span></h4>
                         </label>
 
-                        <div class="loader2" style="display: none;"><img src="<?=CORE_REPOSITORY_HTTP_PATH ?>images/loading.gif"/> Загрузка</div>
+                        <div class="loader2" style="display: none;"><img
+                                src="<?= CORE_REPOSITORY_HTTP_PATH ?>images/loading.gif"/> Загрузка
+                        </div>
                         <br>
                         <button class="btn btn-info col-lg-8" type="button"
                                 id="participants_inside_open_popup"><span
@@ -279,6 +285,7 @@ RenderEngine::MenuChanger();
                         </div>
                     </div>
                 </div>
+                <?php include_once(CORE_REPOSITORY_REAL_PATH."views/vks/tpl/_tech_support_checkbox.php") ?>
                 <hr>
                 <?php ST::setUpErrorContainer(); ?>
                 <div class="form-group text-left">

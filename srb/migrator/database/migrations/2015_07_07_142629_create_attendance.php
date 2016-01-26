@@ -20,7 +20,7 @@ class CreateAttendance extends Migration
             $table->unsignedInteger('parent_id')->default(1)->nullable();
             $table->integer('container')->default(0);
             $table->integer('active')->default(1);
-
+            $table->integer('tech_supportable')->default(0);
 
             $table->timestamps();
 

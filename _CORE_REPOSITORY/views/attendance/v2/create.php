@@ -26,6 +26,7 @@ $points = $points->request;
                 <th>Родитель</th>
                 <th>Активна</th>
                 <th>Проверка**</th>
+                <th>Тех. поддержка**</th>
                 <th>&nbsp</th>
                 <?php if ($points->get('point')): ?>
                 <?php $c = 1; foreach($points->get('point') as $point): ?>
@@ -67,6 +68,9 @@ $points = $points->request;
                         </td>
                         <td class="text-center">
                             <input name=point[<?= $c ?>][check]" type="checkbox" <?= isset($point['check']) ? 'checked' : '' ?>/>
+                        </td>
+                        <td class="text-center">
+                            <input name=point[<?= $c ?>][tech_supportable]" type="checkbox" <?= isset($point['tech_supportable']) ? 'checked' : '' ?>/>
                         </td>
                         <td class="text-center">
                             <span class="btn btn-default btn-sm point-row-delete pointer" <?= $c==1 ? "disabled" : false ?>>Удалить</span>
@@ -114,6 +118,9 @@ $points = $points->request;
                             <input name=point[1][check]" type="checkbox" checked/>
                         </td>
                         <td class="text-center">
+                            <input name=point[1][tech_supportable]" type="checkbox"/>
+                        </td>
+                        <td class="text-center">
                             <span class="btn btn-default btn-sm point-row-delete pointer" disabled>Удалить</span>
                         </td>
                     </tr>
@@ -125,7 +132,7 @@ $points = $points->request;
             </div>
             <div class="form-group">
                 *ip адрес у контейнеров игнорируется и нигде не показывается<br>
-                **проверка у контейнеров не производится
+                **игнорируется у контейнеров
             </div>
         </form>
     </div>

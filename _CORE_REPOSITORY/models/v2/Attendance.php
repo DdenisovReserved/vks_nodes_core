@@ -1,5 +1,6 @@
 <?php
-use \Illuminate\Database\Eloquent\Model as Eloquent;
+use Illuminate\Database\Eloquent\Model as Eloquent;
+
 class Attendance extends Eloquent
 {
     protected $table = 'attendance';
@@ -7,12 +8,23 @@ class Attendance extends Eloquent
     protected $appends = array('full_path');
 
     protected $fillable = [
-        'name','parent_id','container', 'ip', 'active', 'check'
+        'name', 'parent_id', 'container', 'ip', 'active', 'check','tech_supportable'
     ];
 
-    public function childs ()
+
+    public function parent()
     {
-        return $this->hasMany('Attendance','parent_id','id');
+        return $this->hasOne('Attendance', 'id', 'parent_id');
+    }
+
+    public function childs()
+    {
+        return $this->hasMany('Attendance', 'parent_id', 'id');
+    }
+
+    public function tech_support_requests()
+    {
+        return $this->hasMany('TechSupportRequest', 'att_id', 'id');
     }
 
     public function getFullPathAttribute()
@@ -27,4 +39,14 @@ class Attendance extends Eloquent
         parent::observe(new AttendanceObserver());
     }
 
+
+    public function scopeFull($query)
+    {
+        return $query->with('childs', 'tech_support_container', 'tech_support_engineers');
+    }
+
+    public function scopeTechSupportable($query)
+    {
+        return $query->where('tech_supportable', 1);
+    }
 }

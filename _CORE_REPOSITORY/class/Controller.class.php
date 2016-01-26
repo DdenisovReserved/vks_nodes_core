@@ -32,10 +32,19 @@ class Controller extends Core
         $_SESSION['backPack'] = $request;
     }
 
-    public function error($templateName)
+    public function error($templateName, $message = '')
     {
-        $this->render('errors/' . $templateName);
+        $d = array('message'=>$message);
+        $this->render('errors/' . $templateName, $d);
         die;
+    }
+
+
+    public function backWithData($message, $message_class = 'danger')
+    {
+        $this->putUserDataAtBackPack($this->request);
+        App::$instance->MQ->setMessage($message, $message_class);
+        ST::redirect("back");
     }
 
 } // class end

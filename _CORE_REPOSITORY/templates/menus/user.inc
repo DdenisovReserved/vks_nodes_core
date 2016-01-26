@@ -64,6 +64,9 @@ global $_TB_IDENTITY;
                             <a href="?route=Lk/show">Мои ВКС</a>
                         </li>
                         <li class=''>
+                            <a href="?route=Lk/showMyTechSupportRequests">Мои запросы в ТП</a>
+                        </li>
+                        <li class=''>
                             <a href="<?= ST::route('User/editMyData') ?>">Мои данные</a>
                         </li>
                         <li class=''>
@@ -82,12 +85,10 @@ global $_TB_IDENTITY;
             <li class='<?= ST::ifActiveMarkIt(['AttendanceNew/showSchedule'], []) ?>'>
                 <a class="" href="<?= ST::route("AttendanceNew/showSchedule/0/".date_create()->format("Y-m-d")."/1") ?>">Расписания</a>
             </li>
+
             <li class='<?= ST::ifActiveMarkIt([], ['search']) ?>'>
                 <a class="" id="search-vks" href="<?= ST::route("Search/index") ?>">Поиск</a>
             </li>
-
-
-
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <?php if(strlen(Settings_controller::getOther('help-phone'))): ?>
@@ -110,7 +111,7 @@ global $_TB_IDENTITY;
                 </li>
             <?php else : ?>
             <li class='<?= ST::ifActiveMarkIt(['authnew/login', 'authnew/showrecallpwd']) ?>'>
-                <a href='<?= ST::routeToCARaw('domain_gate/warp.php') ?>'>Вход
+                <a href='<?= ST::routeToDomainGate() ?>'>Вход
                 </a>
             </li>
             <li class=''><a

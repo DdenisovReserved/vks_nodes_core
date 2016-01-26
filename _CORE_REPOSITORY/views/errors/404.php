@@ -6,6 +6,9 @@ RenderEngine::MenuChanger();?>
         <br><br><br><br>
         <h1 class="text-muted">Ошибка</h1>
         <span class="text-muted" style="font-size: 160px; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;">404</span>
+        <?php if(strlen($message)): ?>
+            <h2 class="text-danger">Текст ошибки: <?= $message ?></h2><hr>
+        <?php endif ?>
         <h1 class="text-muted text-center"></span> Cтраница не найдена</h1><hr>
         <h4 class="text-center"><a href="<?= ST::route('Index/index') ?>">Вернуться на главную</a></h4>
     </div>

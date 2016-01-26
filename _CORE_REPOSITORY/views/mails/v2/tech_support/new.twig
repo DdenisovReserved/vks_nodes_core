@@ -1,0 +1,10 @@
+{% extends "mails/base.twig" %}
+{% block body %}
+    <tr class="table-head">
+        <td colspan="2">
+            <h2>Запрос Тех. поддержки для ВКС #{{ vks.id }} в {{ request.attendance.name}}</h2>
+        </td>
+    </tr>
+    {% include "mails/v2/tech_support/_about_request.twig" %}
+    {% include "mails/v2/tech_support/_about_vks.twig" %}
+{% endblock %}

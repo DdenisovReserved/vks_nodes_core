@@ -33,12 +33,18 @@ $rowCounter = 1;
 
             <th class="col-lg-1 text-center">#</th>
             <th class="text-center"><a href="<?= RenderEngine::makeOrderLink('container') ?>">Тип</a></th>
-            <th class="col-lg-4"><a href="<?= RenderEngine::makeOrderLink('name') ?>">Название</a></th>
+            <th class="col-lg-3"><a href="<?= RenderEngine::makeOrderLink('name') ?>">Название</a></th>
             <th class="col-lg-2"><a href="<?= RenderEngine::makeOrderLink('ip') ?>">ip*</a></th>
             <th class="col-lg-1 text-center"><span class="glyphicon glyphicon-log-in"
                                                    title="Объектов (точек и контейнеров) внутри"></span></th>
-            <th class="col-lg-1 text-center"><span class="glyphicon glyphicon-flash" title="Активность точки"></span> </th>
-            <th class="col-lg-1 text-center"><span class="glyphicon glyphicon-random" title="Проверять на занятость при создании ВКС"></span> </th>
+            <th class="col-lg-1 text-center"><span class="glyphicon glyphicon-flash" title="Активность точки"></span>
+            </th>
+            <th class="col-lg-1 text-center"><span class="glyphicon glyphicon-random"
+                                                   title="Проверять на занятость при создании ВКС"></span></th>
+            <th class="col-lg-1 text-center"><span class="glyphicon glyphicon-screenshot"
+                                                   title="Техническая поддержка"></span></th>
+
+
             <th class="col-lg-2 text-center"><span class="glyphicon glyphicon-cog" title="Действия"></span></th>
 
             <!--            loop throught points data -->
@@ -73,21 +79,35 @@ $rowCounter = 1;
 
                     <td class="text-center">
                         <?php if ($point->active): ?>
-                            <span class="glyphicon glyphicon-eye-open text-success"
+                            <span class="glyphicon glyphicon-ok text-success"
                                   title="Активна и видна пользователям"></span>
                         <?php else: ?>
-                            <span class="glyphicon glyphicon-eye-close text-danger"
+                            <span class="glyphicon glyphicon-remove text-danger"
                                   title="Не активна и не видна"></span>
                         <?php endif; ?>
                     </td>
 
                     <td class="text-center">
                         <?php if ($point->check): ?>
-                            <span class="glyphicon glyphicon-eye-open text-success"
+                            <span class="glyphicon glyphicon-ok text-success"
                                   title="проверяем"></span>
                         <?php else: ?>
-                            <span class="glyphicon glyphicon-eye-close text-danger"
+                            <span class="glyphicon glyphicon-remove text-danger"
                                   title="не проверяем"></span>
+                        <?php endif; ?>
+                    </td>
+                    <td class="text-center">
+                        <?php if (!$point->container): ?>
+                            <?php if ($point->tech_supportable): ?>
+                                <span class="glyphicon glyphicon-ok text-success"
+                                      title="ТП включена"></span>
+                            <?php else: ?>
+                                <span class="glyphicon glyphicon-remove text-danger"
+                                      title="ТП Выключена"></span>
+                            <?php endif; ?>
+                        <?php else: ?>
+                            <span class="glyphicon glyphicon-minus text-muted"
+                                  title="ТП для контейнеров не предоставляется"></span>
                         <?php endif; ?>
                     </td>
 
@@ -95,7 +115,6 @@ $rowCounter = 1;
 
                         <a class="btn btn-default btn-sm" href="?route=AttendanceNew/edit/<?= $point->id ?>"><span
                                 class="glyphicon glyphicon-edit" title="Редактировать"></span></a>
-
                         <a class="btn btn-default btn-sm confirmation"
                            href="?route=AttendanceNew/delete/<?= $point->id ?>"><span class="glyphicon glyphicon-remove"
                                                                                       title="Удалить"></span></a>

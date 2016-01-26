@@ -25,7 +25,9 @@ if (!$app->tbId) {
 header($app->opt->header);
 date_default_timezone_set($app->opt->timezone);
 //dump(App::$instance->capsule->getConnection()->getQueryLog());
-$router = new Router();
+
+$router = new FrontController();
+$router->run();
 
 
 

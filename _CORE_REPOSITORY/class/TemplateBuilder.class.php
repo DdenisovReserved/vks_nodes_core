@@ -17,8 +17,13 @@ class TemplateBuilder
     public static function justRender($viewName,$data=[])
     {
         extract($data, EXTR_PREFIX_SAME, "same");
-
-        include_once(CORE_REPOSITORY_REAL_PATH."views/".$viewName.".php");
+//        dump(CORE_REPOSITORY_REAL_PATH."views/".$viewName.".php");
+        if (is_file(CORE_REPOSITORY_REAL_PATH."views/".$viewName.".php"))
+            include_once(CORE_REPOSITORY_REAL_PATH."views/".$viewName.".php");
+        else {
+            $sc = new Controller();
+            $sc->error('template-not-found');
+        }
 
     }
 

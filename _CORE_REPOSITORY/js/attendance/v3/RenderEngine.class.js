@@ -4,7 +4,7 @@ function RenderEngine() {
 
 RenderEngine.prototype.render = function (repository, toContainer, append, withPath, onlypoints) {
     if (repository == null) {
-        toContainer.html('<i>Ошибка получения данных</i>');
+        alert('Ошибка получения данных по точкам ВКС');
         return;
     }
     var compiled = '';

@@ -117,26 +117,26 @@ class __TwigTemplate_975b8a5b82803484099845f3647a47288f2965861986943af2db37e2fa4
         // line 41
         echo "        </td>
     </tr>
-    <tr  >
-        <td>Дата начала</td>
+    <tr>
+        <td>Дата/Время | <a href=\"";
+        // line 44
+        echo twig_escape_filter($this->env, (isset($context["appHttpPath"]) ? $context["appHttpPath"] : null), "html", null, true);
+        echo "?route=OutlookCalendarRequest/pushToStack/";
+        echo twig_escape_filter($this->env, $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "id", array()), "html", null, true);
+        echo "/forced\">Отправить в календарь Outlook</a></td>
         <td>";
         // line 45
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "humanized", array()), "date", array()), "html", null, true);
-        echo "</td>
-    </tr>
-    <tr>
-        <td>Время</td>
-        <td>";
-        // line 49
+        echo ", ";
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "humanized", array()), "startTime", array()), "html", null, true);
-        echo "-";
+        echo " - ";
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "humanized", array()), "endTime", array()), "html", null, true);
         echo "</td>
     </tr>
-    <tr  >
+    <tr>
         <td>Ответственный</td>
         <td>";
-        // line 53
+        // line 49
         echo twig_escape_filter($this->env, $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "init_customer_fio", array()), "html", null, true);
         echo ", тел. ";
         echo twig_escape_filter($this->env, $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "init_customer_phone", array()), "html", null, true);
@@ -145,31 +145,31 @@ class __TwigTemplate_975b8a5b82803484099845f3647a47288f2965861986943af2db37e2fa4
     <tr>
         <td>Подразделение</td>
         <td>";
-        // line 57
+        // line 53
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "department_rel", array()), "prefix", array()), "html", null, true);
         echo ". ";
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "department_rel", array()), "name", array()), "html", null, true);
         echo "</td>
     </tr>
     ";
-        // line 59
+        // line 55
         if (($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "other_tb_required", array(), "any", true, true) && ($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "other_tb_required", array()) != 0))) {
-            // line 60
+            // line 56
             echo "        <tr style=\"background-color: #FFC6A3; font-size: 20px;\">
             <td>Подключать другой ТБ/ЦА</td>
             <td>Да</td>
         </tr>
     ";
         }
-        // line 65
+        // line 61
         echo "    ";
         if ((isset($context["vksCa"]) ? $context["vksCa"] : null)) {
-            // line 66
+            // line 62
             echo "        <tr style=\"background-color: #FFC6A3; font-size: 20px;\">
-            <td>Ссылка-приглашение на ВКС</td>
+            <td>Ссылка-приглашение на ВКС<br><span style=\"color: #e82000  ;\">Пожалуйста, перешлите эту ссылку в другие ТБ</span></td>
             <td>
                 <b><a href='";
-            // line 69
+            // line 65
             echo twig_escape_filter($this->env, (isset($context["http_path"]) ? $context["http_path"] : null), "html", null, true);
             echo "i.php?r=";
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["vksCa"]) ? $context["vksCa"] : null), "referral", array()), "html", null, true);
@@ -183,32 +183,32 @@ class __TwigTemplate_975b8a5b82803484099845f3647a47288f2965861986943af2db37e2fa4
 
     ";
         }
+        // line 70
+        echo "    ";
+        // line 71
+        echo "    ";
+        // line 72
+        echo "    ";
+        // line 73
+        echo "    ";
         // line 74
-        echo "    ";
-        // line 75
-        echo "    ";
-        // line 76
-        echo "    ";
-        // line 77
-        echo "    ";
-        // line 78
         echo "    <tr  >
         <td>Комментарий пользователю</td>
         <td>
             ";
-        // line 81
+        // line 77
         if (twig_length_filter($this->env, $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "comment_for_user", array()))) {
-            // line 82
+            // line 78
             echo "                ";
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "comment_for_user", array()), "html", null, true);
             echo "
             ";
         } else {
-            // line 84
+            // line 80
             echo "                -
             ";
         }
-        // line 86
+        // line 82
         echo "
         </td>
     </tr>
@@ -216,28 +216,28 @@ class __TwigTemplate_975b8a5b82803484099845f3647a47288f2965861986943af2db37e2fa4
     <tr>
         <td>Участники
             <span class=\"badge\">";
-        // line 92
+        // line 88
         echo twig_escape_filter($this->env, (twig_length_filter($this->env, $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "participants", array())) + $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "in_place_participants_count", array())), "html", null, true);
         echo "</span>
         </td>
         <td class=\"small-td\">
             <ul>
                 ";
-        // line 96
+        // line 92
         if ((isset($context["vksCa"]) ? $context["vksCa"] : null)) {
-            // line 97
+            // line 93
             echo "                    <li class=\"list-group-item-text\">Кол-во участников в ЦА: <span
                                 class=\"label label-as-badge label-warning\">";
-            // line 98
+            // line 94
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["vksCa"]) ? $context["vksCa"] : null), "ca_participants", array()), "html", null, true);
             echo "</span>
                     </li>
                     ";
-            // line 100
+            // line 96
             $context['_parent'] = $context;
             $context['_seq'] = twig_ensure_traversable($this->getAttribute((isset($context["vksCa"]) ? $context["vksCa"] : null), "participants", array()));
             foreach ($context['_seq'] as $context["_key"] => $context["parp"]) {
-                // line 101
+                // line 97
                 echo "                        <li class=\"list-group-item-text\">";
                 echo twig_escape_filter($this->env, $this->getAttribute($context["parp"], "full_path", array()), "html", null, true);
                 echo "</li>
@@ -246,28 +246,28 @@ class __TwigTemplate_975b8a5b82803484099845f3647a47288f2965861986943af2db37e2fa4
             $_parent = $context['_parent'];
             unset($context['_seq'], $context['_iterated'], $context['_key'], $context['parp'], $context['_parent'], $context['loop']);
             $context = array_intersect_key($context, $_parent) + $_parent;
-            // line 103
+            // line 99
             echo "                ";
         }
-        // line 104
+        // line 100
         echo "                <li class=\"list-group-item\">C рабочих мест (IP телефон, Lynс, CMA Desktop и
                     т.д.): ";
-        // line 105
+        // line 101
         echo twig_escape_filter($this->env, $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "in_place_participants_count", array()), "html", null, true);
         echo "</li>
                 <li>Точки ВКС:
                     ";
-        // line 107
+        // line 103
         if (twig_length_filter($this->env, $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "participants", array()))) {
-            // line 108
+            // line 104
             echo "                        ";
             $context['_parent'] = $context;
             $context['_seq'] = twig_ensure_traversable($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "participants", array()));
             foreach ($context['_seq'] as $context["_key"] => $context["parp"]) {
-                // line 109
+                // line 105
                 echo "                            <ul>
                                 <li class=\"list-group-item\">";
-                // line 110
+                // line 106
                 echo twig_escape_filter($this->env, $this->getAttribute($context["parp"], "full_path", array()), "html", null, true);
                 echo "</li>
                             </ul>
@@ -276,14 +276,14 @@ class __TwigTemplate_975b8a5b82803484099845f3647a47288f2965861986943af2db37e2fa4
             $_parent = $context['_parent'];
             unset($context['_seq'], $context['_iterated'], $context['_key'], $context['parp'], $context['_parent'], $context['loop']);
             $context = array_intersect_key($context, $_parent) + $_parent;
-            // line 113
+            // line 109
             echo "                    ";
         } else {
-            // line 114
+            // line 110
             echo "                        0
                     ";
         }
-        // line 116
+        // line 112
         echo "                </li>
             </ul>
         </td>
@@ -292,45 +292,45 @@ class __TwigTemplate_975b8a5b82803484099845f3647a47288f2965861986943af2db37e2fa4
         <td>Комментарий администратору</td>
         <td>
             ";
-        // line 123
+        // line 119
         if (twig_length_filter($this->env, $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "comment_for_admin", array()))) {
-            // line 124
+            // line 120
             echo "                ";
             echo twig_escape_filter($this->env, $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "comment_for_admin", array()), "html", null, true);
             echo "
             ";
         } else {
-            // line 126
+            // line 122
             echo "                -
             ";
         }
-        // line 128
+        // line 124
         echo "        </td>
     </tr>
     <tr>
         <td>Запись ВКС</td>
         <td>
             ";
-        // line 133
+        // line 129
         if ($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "record_required", array())) {
-            // line 134
+            // line 130
             echo "                Да
             ";
         } else {
-            // line 136
+            // line 132
             echo "                Нет
             ";
         }
-        // line 138
+        // line 134
         echo "        </td>
     </tr>
     <tr>
         <td>Владелец</td>
         <td>
             ";
-        // line 143
+        // line 139
         if ($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "owner", array())) {
-            // line 144
+            // line 140
             echo "                ";
             echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "owner", array()), "login", array()), "html", null, true);
             echo " (";
@@ -340,23 +340,12 @@ class __TwigTemplate_975b8a5b82803484099845f3647a47288f2965861986943af2db37e2fa4
             echo ")
             ";
         } else {
-            // line 146
+            // line 142
             echo "                -
             ";
         }
-        // line 148
+        // line 144
         echo "        </td>
-    </tr>
-    <tr>
-        <td>&nbsp</td>
-        <td>
-            <a href=\"";
-        // line 153
-        echo twig_escape_filter($this->env, (isset($context["appHttpPath"]) ? $context["appHttpPath"] : null), "html", null, true);
-        echo "?route=OutlookCalendarRequest/pushToStack/";
-        echo twig_escape_filter($this->env, $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "id", array()), "html", null, true);
-        echo "/forced\">Отправить приглашение в мой календарь Outlook</a>
-        </td>
     </tr>
 ";
     }
@@ -373,7 +362,7 @@ class __TwigTemplate_975b8a5b82803484099845f3647a47288f2965861986943af2db37e2fa4
 
     public function getDebugInfo()
     {
-        return array (  355 => 153,  348 => 148,  344 => 146,  334 => 144,  332 => 143,  325 => 138,  321 => 136,  317 => 134,  315 => 133,  308 => 128,  304 => 126,  298 => 124,  296 => 123,  287 => 116,  283 => 114,  280 => 113,  271 => 110,  268 => 109,  263 => 108,  261 => 107,  256 => 105,  253 => 104,  250 => 103,  241 => 101,  237 => 100,  232 => 98,  229 => 97,  227 => 96,  220 => 92,  212 => 86,  208 => 84,  202 => 82,  200 => 81,  195 => 78,  193 => 77,  191 => 76,  189 => 75,  187 => 74,  173 => 69,  168 => 66,  165 => 65,  158 => 60,  156 => 59,  149 => 57,  140 => 53,  131 => 49,  124 => 45,  118 => 41,  114 => 39,  111 => 38,  104 => 36,  99 => 35,  97 => 34,  90 => 29,  86 => 27,  82 => 25,  74 => 22,  68 => 20,  66 => 19,  62 => 18,  59 => 17,  55 => 16,  52 => 15,  50 => 14,  43 => 10,  35 => 5,  31 => 3,  28 => 2,  11 => 1,);
+        return array (  348 => 144,  344 => 142,  334 => 140,  332 => 139,  325 => 134,  321 => 132,  317 => 130,  315 => 129,  308 => 124,  304 => 122,  298 => 120,  296 => 119,  287 => 112,  283 => 110,  280 => 109,  271 => 106,  268 => 105,  263 => 104,  261 => 103,  256 => 101,  253 => 100,  250 => 99,  241 => 97,  237 => 96,  232 => 94,  229 => 93,  227 => 92,  220 => 88,  212 => 82,  208 => 80,  202 => 78,  200 => 77,  195 => 74,  193 => 73,  191 => 72,  189 => 71,  187 => 70,  173 => 65,  168 => 62,  165 => 61,  158 => 56,  156 => 55,  149 => 53,  140 => 49,  129 => 45,  123 => 44,  118 => 41,  114 => 39,  111 => 38,  104 => 36,  99 => 35,  97 => 34,  90 => 29,  86 => 27,  82 => 25,  74 => 22,  68 => 20,  66 => 19,  62 => 18,  59 => 17,  55 => 16,  52 => 15,  50 => 14,  43 => 10,  35 => 5,  31 => 3,  28 => 2,  11 => 1,);
     }
 }
 /* {% extends "mails/base.twig" %}*/
@@ -418,15 +407,11 @@ class __TwigTemplate_975b8a5b82803484099845f3647a47288f2965861986943af2db37e2fa4
 /*             {% endif %}*/
 /*         </td>*/
 /*     </tr>*/
-/*     <tr  >*/
-/*         <td>Дата начала</td>*/
-/*         <td>{{ vks.humanized.date }}</td>*/
+/*     <tr>*/
+/*         <td>Дата/Время | <a href="{{ appHttpPath }}?route=OutlookCalendarRequest/pushToStack/{{ vks.id }}/forced">Отправить в календарь Outlook</a></td>*/
+/*         <td>{{ vks.humanized.date }}, {{ vks.humanized.startTime }} - {{ vks.humanized.endTime }}</td>*/
 /*     </tr>*/
 /*     <tr>*/
-/*         <td>Время</td>*/
-/*         <td>{{ vks.humanized.startTime }}-{{ vks.humanized.endTime }}</td>*/
-/*     </tr>*/
-/*     <tr  >*/
 /*         <td>Ответственный</td>*/
 /*         <td>{{ vks.init_customer_fio }}, тел. {{ vks.init_customer_phone }}</td>*/
 /*     </tr>*/
@@ -442,7 +427,7 @@ class __TwigTemplate_975b8a5b82803484099845f3647a47288f2965861986943af2db37e2fa4
 /*     {% endif %}*/
 /*     {% if vksCa %}*/
 /*         <tr style="background-color: #FFC6A3; font-size: 20px;">*/
-/*             <td>Ссылка-приглашение на ВКС</td>*/
+/*             <td>Ссылка-приглашение на ВКС<br><span style="color: #e82000  ;">Пожалуйста, перешлите эту ссылку в другие ТБ</span></td>*/
 /*             <td>*/
 /*                 <b><a href='{{ http_path }}i.php?r={{ vksCa.referral }}'>{{ http_path }}i.php?r={{ vksCa.referral }}</a></b>*/
 /*             </td>*/
@@ -523,12 +508,6 @@ class __TwigTemplate_975b8a5b82803484099845f3647a47288f2965861986943af2db37e2fa4
 /*             {% else %}*/
 /*                 -*/
 /*             {% endif %}*/
-/*         </td>*/
-/*     </tr>*/
-/*     <tr>*/
-/*         <td>&nbsp</td>*/
-/*         <td>*/
-/*             <a href="{{ appHttpPath }}?route=OutlookCalendarRequest/pushToStack/{{ vks.id }}/forced">Отправить приглашение в мой календарь Outlook</a>*/
 /*         </td>*/
 /*     </tr>*/
 /* {% endblock %}*/

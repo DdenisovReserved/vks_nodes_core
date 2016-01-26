@@ -5,10 +5,8 @@ RenderEngine::MenuChanger();
 //    dump($parp->toArray());
 //};
 ?>
-    <div class="container">
-        <div class="col-lg-2">
-        </div>
-        <div class="col-lg-9 left-border">
+    <div style="width: 960px; margin: 0 auto;">
+        <div class="col-lg-12">
             <div class='action-buttons'>
                 <div class="col-lg-6 no-left-padding">
                     <h4>Данные ВКС</h4>
@@ -19,7 +17,7 @@ RenderEngine::MenuChanger();
                     </div>
                 </div>
             </div>
-            <table class="table table-hover table-striped">
+            <table class="table table-hover table-striped table-bordered">
                 <tr>
                     <td width="30%">id</td>
                     <td>
@@ -40,7 +38,7 @@ RenderEngine::MenuChanger();
                     </td>
                 </tr>
                 <tr>
-                    <td>Статус:</td>
+                    <td>Статуc</td>
                     <td><?= $vks->humanized->status_label ?></span></td>
                 </tr>
 
@@ -60,7 +58,7 @@ RenderEngine::MenuChanger();
                                 </p>
                             <?php endforeach; ?>
                         <?php else: ?>
-                            <?php if($vks->status == VKS_STATUS_PENDING): ?>
+                            <?php if ($vks->status == VKS_STATUS_PENDING): ?>
                                 <span class="connection-code-highlighter-wait">Заявка находится на согласовании администратором ВКС, пожалуйста, подождите</span>
                             <?php else: ?>
                                 <span class="connection-code-highlighter">Код подключения не выдан</span>
@@ -114,16 +112,13 @@ RenderEngine::MenuChanger();
                         <?php endif ?>
                     </td>
                 </tr>
-                <!--                <tr>-->
-                <!--                    <td>Комментарий для администратора</td>-->
-                <!--                    <td>--><?php //echo $vks->comment_for_admin ?><!-- </td>-->
-                <!--                </tr>-->
                 <tr>
                     <td>Комментарий для пользователя</td>
                     <td><?= strlen($vks->comment_for_user) ? $vks->comment_for_user : '-' ?> </td>
                 </tr>
                 <tr>
-                    <td>Список участников</td>
+                    <td>Список участников <span
+                            class="label label-as-badge label-default"><?= $vks->participants_count ?></span></td>
                     <td>
                         <div class="inside_parp">
                             <ol class="">
@@ -168,6 +163,26 @@ RenderEngine::MenuChanger();
                     </td>
                 </tr>
                 <tr>
+                    <td>Тех. поддержка в точках</td>
+                    <td>
+                        <ol class="">
+                            <?php if (count($vks->tech_support_requests)): ?>
+                                <?php foreach ($vks->tech_support_requests as $request): ?>
+                                    <?php if($request->status != TechSupportRequest::STATUS_USER_REFUSE): ?>
+                                        <li>
+                                        <span class="text-info glyphicon glyphicon-camera"
+                                              title="Точка">&nbsp</span><?= $request->attendance->full_path ?>
+                                        </li>
+                                    <?php endif ?>
+
+                                <?php endforeach ?>
+                            <?php else: ?>
+                                <i>-</i>
+                            <?php endif ?>
+                        </ol>
+                    </td>
+                </tr>
+                <tr>
                     <td>Владелец ВКС</td>
                     <td>
                         <?php if ($vks->owner): ?>
@@ -197,7 +212,7 @@ RenderEngine::MenuChanger();
             </table>
             <hr>
             <div class="text-muted">
-                Ссылка на эту страницу
+                <a href="<?= ST::route("Vks/show") . "/" . $vks->id ?>">Ссылка на эту страницу</a>
                 <textarea
                     class="form-control"><?= ST::route("Vks/show") . "/" . $vks->id ?></textarea>
             </div>

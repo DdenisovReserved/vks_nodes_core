@@ -38,7 +38,8 @@ ST::setUserJs('codes/askFreeCodes.js');
 </script>
 <div class="container-fluid">
     <div class="col-lg-12">
-        <h4>Информация по заявке<span class="pull-right"><a class="btn btn-default btn-sm" href="<?= ST::route('vks/edit/' . $vks->id) ?>">
+        <h4>Информация по заявке<span class="pull-right"><a class="btn btn-default btn-sm"
+                                                            href="<?= ST::route('vks/edit/' . $vks->id) ?>">
                     Редактировать</a></span></h4>
         <hr>
     </div>
@@ -50,10 +51,11 @@ ST::setUserJs('codes/askFreeCodes.js');
             <?php endif ?>
 
             <?php if (!is_null($caVks)) : ?>
-               <?php  $flag = false; foreach (isset($caVks->inside_parp) ? $caVks->inside_parp : $caVks->participants as $parp): ?>
-                <?php if ($parp->attendance_id == App::$instance->tbId): ?>
-                    <?php $flag = True; ?>
-                <?php endif ?>
+                <?php $flag = false;
+                foreach (isset($caVks->inside_parp) ? $caVks->inside_parp : $caVks->participants as $parp): ?>
+                    <?php if ($parp->attendance_id == App::$instance->tbId): ?>
+                        <?php $flag = True; ?>
+                    <?php endif ?>
                 <?php endforeach; ?>
                 <?php if (!$flag): ?>
                     <div class="alert alert-danger">Обратите внимание: ваш ТБ не заявлен на эту ВКС</div>
@@ -267,7 +269,9 @@ ST::setUserJs('codes/askFreeCodes.js');
             </tr>
 
         </table>
-
+        <hr>
+        <h4>Заявки на тех. поддержку</h4>
+        <?php include_once(CORE_REPOSITORY_REAL_PATH . "views/techsupport/tpl/_call_table.php") ?>
 
     </div>
     <!--    submission form -->
@@ -313,18 +317,18 @@ ST::setUserJs('codes/askFreeCodes.js');
             </div>
         <?php endif ?>
         <?php if ($last_version && count($last_version['connection_codes'])): ?>
-            <div><p class="alert alert-danger">Для ВКС уже выдавались код(ы) </p>
+            <div class="alert alert-danger"><p>Для ВКС уже выдавались код(ы) </p>
 
-                <div class="well">
-                    <ul>
-                        <?php foreach ($last_version['connection_codes'] as $code) : ?>
-                            <li class=""><h4><?= $code['value'] ?><sup>(<?= $code['tip'] ?>)</sup></h4></li>
-                        <?php endforeach; ?>
-                    </ul>
+                <p>
+                <ul>
+                    <?php foreach ($last_version['connection_codes'] as $code) : ?>
+                        <li class=""><h4><?= $code['value'] ?><sup>(<?= $code['tip'] ?>)</sup></h4></li>
+                    <?php endforeach; ?>
+                </ul>
+                </p>
+                <p class="alert alert-warning">Возможно ВКС отредактировали или перевели в статус "на согласование".<br>
 
-                    <p class="alert alert-warning">Возможно ВКС отредактировали или перевели в статус "на согласование".<br>
-
-                        Это просто информация, сейчас код не привязан к этой ВКС.</p></div>
+                    Сейчас код не привязан к этой ВКС.</p>
             </div>
 
         <?php endif ?>
@@ -336,7 +340,9 @@ ST::setUserJs('codes/askFreeCodes.js');
 
             <div class="form-group">
                 <h4>Код подключения
-                    <button class="btn btn-default btn-sm" id="askCodes" onclick="askFreeCodes('#askCodes','<?= $vks->start_date_time ?>', '<?= $vks->end_date_time ?>')" type="button">
+                    <button class="btn btn-default btn-sm" id="askCodes"
+                            onclick="askFreeCodes('#askCodes','<?= $vks->start_date_time ?>', '<?= $vks->end_date_time ?>')"
+                            type="button">
                         <span class="glyphicon glyphicon-question-sign"></span> <span class="text">Показать таблицу занятости кодов</span>
                     </button>
                 </h4>
@@ -440,7 +446,9 @@ ST::setUserJs('codes/askFreeCodes.js');
                 <div id="placeholder" class="demo-placeholder" style="width:100%;height:450px"></div>
             </div>
             <div class="clearfix"></div>
-            <div><button class="btn btn-default btn-sm pull-right" id="reset" type="button">Сброс</button></div>
+            <div>
+                <button class="btn btn-default btn-sm pull-right" id="reset" type="button">Сброс</button>
+            </div>
 
 
         </div>

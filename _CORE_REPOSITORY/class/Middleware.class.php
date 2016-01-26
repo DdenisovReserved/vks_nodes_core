@@ -64,7 +64,8 @@ class Middleware extends Controller
         $result->method = false;
         $result->access = false;
         $result->ajax = false;
-//        dump($controller, $action);
+
+
         foreach ($routes as $route) {
             //is ajax?
 
@@ -72,13 +73,14 @@ class Middleware extends Controller
                 $result->ajax = true;
             }
 //            dump($result);
+
             //check requested controller
             if ($route->controller === $controller) {
 
                 $result->controller = True;
                 //check requested action
                 foreach ($route->action as $founded_action) {
-
+//                    dump($founded_action);
                     if ($founded_action === '*' || $founded_action === $action) {
                         $result->action = True;
                         //check requested method
@@ -127,6 +129,7 @@ class Middleware extends Controller
             print json_encode(['response' => 'false']);
             die;
         }
+
 
         if (!$requestCheckResult->controller) {
             $this->error('404');

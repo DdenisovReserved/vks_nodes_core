@@ -207,7 +207,6 @@
     </route>
 
 
-
     <route>
         <controller>Vks</controller>
         <action>select, index, show, test</action>
@@ -511,7 +510,6 @@
     </route>
 
 
-
     <route>
         <controller>Departments</controller>
         <action>*</action>
@@ -552,13 +550,20 @@
         <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
     </route>
 
+    <route>
+        <controller>TechSupport</controller>
+        <action>showRequests, addRequest, storeRequest</action>
+        <methods>POST, GET</methods>
+        <ajax>true</ajax>
+        <access>@</access>
+    </route>
 
-    <!--<route>-->
-    <!--<controller>Modules</controller>-->
-    <!--<action>edit, store</action>-->
-    <!--<methods>POST, GET</methods>-->
-    <!--<ajax>true</ajax>-->
-    <!--<access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>-->
-    <!--</route>-->
+    <route>
+        <controller>TechSupport</controller>
+        <action>on, off</action>
+        <methods>POST, GET</methods>
+        <ajax>true</ajax>
+        <access>ROLE_ADMIN, ROLE_ADMIN_MODERATOR</access>
+    </route>
 
 </root>

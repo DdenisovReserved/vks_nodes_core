@@ -22,9 +22,10 @@ class AttendanceNew_controller extends Controller
             $recordsCount = Attendance::where('parent_id', $rootId)->count();
             $breadCrumps = self::fullParentInfo($rootId);
             $pages = RenderEngine::makePagination($recordsCount, $this->getQlimit(30), 'route');
+
             $this->render('attendance/v2/show', compact('points', 'breadCrumps', 'pages'));
         } else {
-            die("this is not container");
+            $this->error('404');
         }
 
     } //function end
@@ -71,6 +72,7 @@ class AttendanceNew_controller extends Controller
             $att->fill($point);
             $att->active = isset($point['active']) ? 1 : 0;
             $att->check = isset($point['check']) && !$att->container ? 1 : 0;
+            $att->tech_supportable = isset($point['tech_supportable']) && !$att->container ? 1 : 0;
             $att->save();
             $result[] = "{$att->name} создана успешно";
         }
@@ -108,9 +110,11 @@ class AttendanceNew_controller extends Controller
             App::$instance->MQ->setMessage($this->validator->errors()->all());
             ST::redirect("back");
         }
+
         $att->fill($request->request->all());
         $att->active = ($request->request->has('active')) ? 1 : 0;
         $att->check = ($request->request->has('check')) ? 1 : 0;
+        $att->tech_supportable = ($request->request->has('tech_supportable')) ? 1 : 0;
         $att->save();
         App::$instance->MQ->setMessage("Успешно отредактировано");
         ST::redirect("?route=AttendanceNew/show/" . $att->parent_id);
@@ -557,7 +561,6 @@ class AttendanceNew_controller extends Controller
 
         return $result;
     }
-
 
     public function showSchedule($showType, $date, $attendance_id)
     {

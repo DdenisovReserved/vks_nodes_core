@@ -59,16 +59,25 @@
                                 <h5>
                                     <span class="glyphicon glyphicon-info-sign"></span>
                                     <?php if ($report->getObject()->status == VKS_STATUS_PENDING): ?>
-                                    Ожидайте согласования администратором. Результат согласования и код подключения
-                                    будет
-                                    направлены на вашу электронную почту: <?= App::$instance->user->email ?>
-                                <?php elseif($report->getObject()->status == VKS_STATUS_APPROVED
-                                    && $report->getObject()->is_simple): ?>
-                                        Ваша ВКС по упрощенной схеме успешно создана, в течении 5 минут на вашу электронную почту: <b><?= App::$instance->user->email ?></b> поступит отчет (с кодом подключения) о созданной ВКС
-                                <?php endif ?>
+                                        Ожидайте согласования администратором. Результат согласования и код подключения
+                                        будет
+                                        направлены на вашу электронную почту: <?= App::$instance->user->email ?>
+                                    <?php elseif ($report->getObject()->status == VKS_STATUS_APPROVED
+                                        && $report->getObject()->is_simple
+                                    ): ?>
+                                        Ваша ВКС по упрощенной схеме успешно создана, в течении 5 минут на вашу электронную почту:
+                                        <b><?= App::$instance->user->email ?></b> поступит отчет (с кодом подключения) о созданной ВКС
+                                    <?php endif ?>
                                 </h5>
                             </td>
                         </tr>
+                        <?php if (!$report->getObject()->is_simple): ?>
+                            <tr>
+                                <td colspan="2">
+                                    <a href="<?= ST::route('TechSupport/addRequest/'.$report->getObject()->id) ?>" class="btn btn-info">Заказать тех. поддержку</a>
+                                </td>
+                            </tr>
+                        <?php endif ?>
                     <?php endif ?>
                 </table>
             </div>

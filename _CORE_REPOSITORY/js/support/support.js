@@ -8,12 +8,25 @@ $(document).ready(function () {
 
     })
 
+    $(document).on("click", ".modalled", function (event) {
+        var $this = $(this);
+        $this.attr("disabled", true);
+        event.preventDefault();
+        var modal = new Modal();
+        modal.showPageInModal($this.prop("href"));
+
+        setTimeout(function () {
+            $this.attr("disabled", false);
+        }, 1000);
+
+    })
+
+
     $(document).on("click", ".confirmation", function (event) {
         event.preventDefault();
         if (confirm('Вы уверены?')) {
             window.location = $(this).attr("href");
         }
-
     })
 })
 function parseElement($element) {

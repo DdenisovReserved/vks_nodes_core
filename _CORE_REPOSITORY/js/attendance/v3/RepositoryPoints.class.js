@@ -3,6 +3,7 @@ function RepositoryPoints() {
 }
 
 RepositoryPoints.prototype.pullPoints = function (id, except, dateTimeforCheck) {
+
     id = typeof id === 'undefined' ? 1 : id;
     except = typeof except === 'undefined' ? [0] : except;
     dateTimeforCheck = typeof dateTimeforCheck === 'undefined' ? [] : dateTimeforCheck;
@@ -297,7 +298,16 @@ RepositoryPoints.prototype.getFromStorage = function (key) {
         url: "?route=LocalStorage/get/" + key + "",
         dataType: "json",
         success: function (data) {
-            result = data
+            result = [];
+
+            for (var key in data) {
+                // skip loop if the property is from prototype
+                if (!data.hasOwnProperty(key)) continue;
+                var obj = data[key];
+                result.push(obj);
+            }
+            //console.log(result);
+
         },
         complete: function () {
             $('.spinner').remove();

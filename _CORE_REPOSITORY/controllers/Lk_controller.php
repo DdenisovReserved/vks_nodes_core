@@ -55,4 +55,20 @@ class Lk_controller extends Controller
         $this->render("lk/index", compact('vksList', 'pages', 'filter'));
     }
 
+    public function showMyTechSupportRequests() {
+
+        $calls = TechSupportRequest::my()
+            ->take($this->getQlimit(30))
+            ->skip($this->getQOffset())
+            ->orderBy('updated_at','desc')
+            ->get();
+
+        $recordsCount = TechSupportRequest::my()->count();
+
+        $pages = RenderEngine::makePagination($recordsCount, $this->getQlimit(30), 'route');
+
+        return $this->render("lk/showMyTsCalls", compact("calls", 'pages'));
+    }
+
+
 }

@@ -8,10 +8,14 @@ $(document).ready(function () {
 
     allSelectedContainer = [];
     selectedPoints = [];
-    $(askCookies).each(function (i, elem) {
-        selectedPoints.push(elem.id)
-    });
 
+    //console.log(askCookies);
+
+
+    $(askCookies).each(function (i, elem) {
+        if (typeof elem.id !== 'undefined') //filtrate in place participant record
+            selectedPoints.push(elem.id)
+    });
     render.renderSelected(askCookies, "#selected_points_container");
     render.render(repo.pullPoints(currentContainer, selectedPoints, dateTimeforCheck), "#points_container");
 
@@ -54,7 +58,6 @@ $(document).ready(function () {
             } else {
 
 
-
                 $(ui.item).find(".btn-group").html("<button class='btn btn-default btn-sm add-one-child' type='button'>Кто-то</button><button class='btn btn-default btn-sm add-all-childs' type='button'>Все</button><button class='btn btn-default btn-sm show-container-button' type='button'>Выбрать</button>");
 
 
@@ -81,5 +84,4 @@ $(document).ready(function () {
             selectedPoints = render.pullSelected("#selected_points_container");
         }
     }).disableSelection();
-
 });
