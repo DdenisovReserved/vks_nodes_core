@@ -63,9 +63,9 @@ global $_TB_IDENTITY;
                         <li class=''>
                             <a href="?route=Lk/show">Мои ВКС</a>
                         </li>
-                        <li class=''>
-                            <a href="?route=Lk/showMyTechSupportRequests">Мои запросы в ТП</a>
-                        </li>
+<!--                        <li class=''>-->
+<!--                            <a href="?route=Lk/showMyTechSupportRequests">Мои запросы в ТП</a>-->
+<!--                        </li>-->
                         <li class=''>
                             <a href="<?= ST::route('User/editMyData') ?>">Мои данные</a>
                         </li>

@@ -1,9 +1,8 @@
 <?php
-ST::deployTemplate('heads/ui_timepicker.inc');
-RenderEngine::MenuChanger();
-//foreach($vks->participants as $parp) {
-//    dump($parp->toArray());
-//};
+if (!$partial) {
+    ST::deployTemplate('heads/ui_timepicker.inc');
+    RenderEngine::MenuChanger();
+}
 ?>
     <div style="width: 960px; margin: 0 auto;">
         <div class="col-lg-12">

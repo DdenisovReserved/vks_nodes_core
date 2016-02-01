@@ -10,23 +10,17 @@ require_once('init.php');
 $app->user = new Auth();
 $app->node = MY_NODE;
 
-//$getTb = Curl::get(ST::routeToCaApi('getTbId/'.TB_PATTERN));
-//$getTb = json_decode($getTb, True);
-//
-//if ($getTb['status'] != 200) {
-//    App::$instance->MQ->setMessage('Внимание: нет связи с Планировщиком ЦА, вы не получаете события с центрального сервера','danger');
-//} else {
-//    $app->tbId = $getTb['data'][0];
-//}
 $app->tbId = CAAttendance::where('name', 'like' ,'%'.TB_PATTERN.'%')->where('is_tb', 1)->first(['id'])->id;
+
 if (!$app->tbId) {
     App::$instance->MQ->setMessage('Внимание: нет связи с Планировщиком ЦА, вы не получаете события с центрального сервера', 'danger');
 }
+
 header($app->opt->header);
 date_default_timezone_set($app->opt->timezone);
-//dump(App::$instance->capsule->getConnection()->getQueryLog());
 
 $router = new FrontController();
+
 $router->run();
 
 

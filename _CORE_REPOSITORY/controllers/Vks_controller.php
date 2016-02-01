@@ -528,10 +528,8 @@ class Vks_controller extends Controller
             'Почта ответственного' => [$request->get('init_customer_mail'), 'required|max(255)'],
             'Тел. ответственного' => [$request->get('init_customer_phone'), 'required|max(255)'],
             'Подразделение' => [$request->get('department'), 'required|int'],
-//            'Инициатор' => [$request->get('initiator'), 'required|int'],
             'Участники в ЦА' => [$request->get('ca_participants'), 'int|between(0,10)'],
             'Владелец' => [$request->get('owner_id'), 'required|int'],
-//            'Код ЦА' => [$request->get('ca_code'), 'int'],
             'Комментарий для пользователя' => [$request->get('comment_for_user'), 'max(160)'],
             'Участники ВКС' => [$request->get('inside_participants'), 'array'],
             'Кол-во участников с рабочих мест (IP телефоны)' => [$request->get('in_place_participants_count'), 'int'],
@@ -552,19 +550,13 @@ class Vks_controller extends Controller
 
             $request->set('participants', array_merge($participants, [(string)App::$instance->tbId]));
 
-//            if (count($request->get('participants')) <= 1) {
-//                $this->putUserDataAtBackPack($this->request);
-//                App::$instance->MQ->setMessage('Вы не указали участников от ТБ', 'danger');
-//                ST::redirect("back");
-//            } else { //can create virtual VK in CA
             $trVks = $this->createTransitVksOnCA($request);
-//                 die;
+
             if (!isset($trVks->id)) {
                 $this->putUserDataAtBackPack($this->request);
                 App::$instance->MQ->setMessage('В настоящий момент невозможно создать транзитную ВКС на ресурсах ЦА, все коды заняты или сервер ЦА перегружен, попробуйте позже', 'danger');
                 ST::redirect("back");
             }
-//            }
         }
 
         //any participants required
@@ -603,7 +595,7 @@ class Vks_controller extends Controller
         $vks->approved_by = App::$instance->user->id;
 
         $vks->save();
-        //parse inner participants
+
         if ($request->get('tech_support_required'))
             TechSupportRequest::create(array(
                 'att_id' => $request->get('tech_support_att_id'),
@@ -628,12 +620,6 @@ class Vks_controller extends Controller
         App::$instance->MQ->setMessage("ВКС " . ST::linkToVksPage($vks->id) . " добавлена в расписание");
 
         App::$instance->log->logWrite(LOG_VKSWS_CREATED, "VKS " . ST::linkToVksPage($vks->id) . " Created by admin, direct insert");
-
-//        if (!$load->isPassedByCapacity($vks->start_date_time, $vks->end_date_time, self::countParticipants($vks->id), 0)) {
-//            App::$instance->MQ->setMessage("Ошибка: Заявленное кол-во участников, превышает предельно допустимую нагрузку на сервер ВКС");
-//            $this->putUserDataAtBackPack($this->request);
-//            ST::redirect("back");
-//        }
 
         if (!$request->has('no-codes')) {
             foreach ($request->get('code') as $code) {
@@ -675,7 +661,7 @@ class Vks_controller extends Controller
 
     }
 
-    public function show($id)
+    public function show($id, $partial = false)
     {
         try {
             $vks = Vks::with('participants', 'department_rel', 'connection_codes', 'initiator_rel', 'owner', 'approver', 'tech_support_requests')
@@ -721,10 +707,11 @@ class Vks_controller extends Controller
         $vks = $this->humanize($vks);
 
 //        dump($vks);
+
         if (!$vks->is_simple) {
-            $this->render('vks/show', compact('vks'));
+            $this->render('vks/show', compact('vks', 'partial'));
         } else {
-            $this->render('vks/simple-info', compact('vks'));
+            $this->render('vks/simple-info', compact('vks', 'partial'));
         }
 
 

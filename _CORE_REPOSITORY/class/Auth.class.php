@@ -13,9 +13,7 @@ class Auth
         if (isset($_COOKIE[md5("logged" . $_TB_IDENTITY[MY_NODE]['serviceName'])])
             && $_COOKIE[md5("logged" . $_TB_IDENTITY[MY_NODE]['serviceName'])]
         ) {
-
             $user = User::where('token', $_COOKIE[md5("logged" . $_TB_IDENTITY[MY_NODE]['serviceName'])])->approved()->first();
-
             if ($user) {
                 if ($user->origin == MY_NODE) {
                     $this->isLogged = true;
@@ -35,7 +33,6 @@ class Auth
         $_SESSION['my_home'] = NODE_HTTP_PATH;
 
     }
-
     static function isLogged($init)
     {
         return $init->user->isLogged ? true : false;

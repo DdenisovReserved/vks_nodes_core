@@ -15,6 +15,7 @@ $points = $points->request;
     <div class="col-md-11  block-border-shadow-normal-padding left-border padding25">
         <h4>Создать точку/контейнер</h4>
         <hr>
+        <div class="alert alert-danger">Свойтво "техническая поддержка" используется в экспериментальном режиме и пока нигде не используется</div>
         <div class="">
             <button class="btn btn-info add-point-row" type="button">+ Запись</button>
         </div>

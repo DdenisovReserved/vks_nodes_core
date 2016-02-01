@@ -1,7 +1,7 @@
 $(document).ready(function () {
     var modal = new Modal();
     $(document).on("click", ".modal-event-ws", function () {
-        modal.showPageInModal("?route=Vks/show/"+$(this).attr('event-id'))
+        modal.showPageInModal("?route=Vks/show/"+$(this).attr('event-id')+"/true")
         //getModalVks($(this).attr('event-id'));
     });
     $(document).on("click", ".modal-event-ca", function () {

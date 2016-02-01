@@ -289,7 +289,7 @@ ST::setUserJs('codes/askFreeCodes.js');
                         </div>
                     </div>
                 </div>
-                <?php include_once(CORE_REPOSITORY_REAL_PATH."views/vks/tpl/_tech_support_checkbox.php") ?>
+                <?php // include_once(CORE_REPOSITORY_REAL_PATH."views/vks/tpl/_tech_support_checkbox.php") ?>
                 <hr>
                 <?php ST::setUpErrorContainer(); ?>
                 <div class="form-group text-left">

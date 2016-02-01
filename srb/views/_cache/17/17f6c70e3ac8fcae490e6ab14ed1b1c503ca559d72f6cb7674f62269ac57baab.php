@@ -88,7 +88,12 @@ class __TwigTemplate_cd3d9c20d259b2cc8e1d9386ecc4cc151bf151754845c556b797edbac1e
 
     </tr>
     <tr>
-        <td>Дата/Время</td>
+        <td>Дата/Время | <a href=\"";
+        // line 37
+        echo twig_escape_filter($this->env, (isset($context["appHttpPath"]) ? $context["appHttpPath"] : null), "html", null, true);
+        echo "?route=OutlookCalendarRequest/pushToStack/";
+        echo twig_escape_filter($this->env, $this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "id", array()), "html", null, true);
+        echo "/forced\">Отправить в календарь Outlook</a></td>
         <td>";
         // line 38
         echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "humanized", array()), "date", array()), "html", null, true);
@@ -137,12 +142,10 @@ class __TwigTemplate_cd3d9c20d259b2cc8e1d9386ecc4cc151bf151754845c556b797edbac1e
         if ($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "owner", array())) {
             // line 64
             echo "                ";
-            echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "owner", array()), "login", array()), "html", null, true);
-            echo " (";
             echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "owner", array()), "fio", array()), "html", null, true);
             echo ", ";
             echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "owner", array()), "phone", array()), "html", null, true);
-            echo ")
+            echo "
             ";
         } else {
             // line 66
@@ -167,7 +170,7 @@ class __TwigTemplate_cd3d9c20d259b2cc8e1d9386ecc4cc151bf151754845c556b797edbac1e
 
     public function getDebugInfo()
     {
-        return array (  153 => 68,  149 => 66,  139 => 64,  137 => 63,  130 => 58,  126 => 56,  122 => 54,  120 => 53,  110 => 46,  106 => 44,  94 => 38,  86 => 32,  78 => 29,  72 => 27,  70 => 26,  66 => 25,  63 => 24,  59 => 23,  51 => 18,  35 => 5,  31 => 3,  28 => 2,  11 => 1,);
+        return array (  156 => 68,  152 => 66,  144 => 64,  142 => 63,  135 => 58,  131 => 56,  127 => 54,  125 => 53,  115 => 46,  111 => 44,  99 => 38,  93 => 37,  86 => 32,  78 => 29,  72 => 27,  70 => 26,  66 => 25,  63 => 24,  59 => 23,  51 => 18,  35 => 5,  31 => 3,  28 => 2,  11 => 1,);
     }
 }
 /* {% extends "mails/base.twig" %}*/
@@ -206,7 +209,7 @@ class __TwigTemplate_cd3d9c20d259b2cc8e1d9386ecc4cc151bf151754845c556b797edbac1e
 /* */
 /*     </tr>*/
 /*     <tr>*/
-/*         <td>Дата/Время</td>*/
+/*         <td>Дата/Время | <a href="{{ appHttpPath }}?route=OutlookCalendarRequest/pushToStack/{{ vks.id }}/forced">Отправить в календарь Outlook</a></td>*/
 /*         <td>{{ vks.humanized.date }}, {{ vks.humanized.startTime }} - {{ vks.humanized.endTime }}</td>*/
 /*     </tr>*/
 /* */
@@ -233,7 +236,7 @@ class __TwigTemplate_cd3d9c20d259b2cc8e1d9386ecc4cc151bf151754845c556b797edbac1e
 /*         <td>Владелец</td>*/
 /*         <td>*/
 /*             {% if  vks.owner %}*/
-/*                 {{ vks.owner.login }} ({{ vks.owner.fio }}, {{ vks.owner.phone }})*/
+/*                 {{ vks.owner.fio }}, {{ vks.owner.phone }}*/
 /*             {% else %}*/
 /*                 -*/
 /*             {% endif %}*/

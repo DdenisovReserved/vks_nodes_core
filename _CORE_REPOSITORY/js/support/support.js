@@ -337,5 +337,42 @@ var getUrlParameter = function getUrlParameter(sParam) {
 };
 
 
+// left: 37, up: 38, right: 39, down: 40,
+// spacebar: 32, pageup: 33, pagedown: 34, end: 35, home: 36
+var keys = {37: 1, 38: 1, 39: 1, 40: 1};
+
+function preventDefault_scroll(e) {
+    e = e || window.event;
+    if (e.preventDefault)
+        e.preventDefault();
+    e.returnValue = false;
+}
+
+function preventDefaultForScrollKeys_scroll(e) {
+    if (keys[e.keyCode]) {
+        preventDefault(e);
+        return false;
+    }
+}
+
+
+function disableScroll() {
+    if (window.addEventListener) // older FF
+        window.addEventListener('DOMMouseScroll', preventDefault_scroll, false);
+    window.onwheel = preventDefault_scroll; // modern standard
+    window.onmousewheel = document.onmousewheel = preventDefault_scroll; // older browsers, IE
+    window.ontouchmove  = preventDefault_scroll; // mobile
+    document.onkeydown  = preventDefaultForScrollKeys_scroll;
+}
+
+function enableScroll() {
+    if (window.removeEventListener)
+        window.removeEventListener('DOMMouseScroll', preventDefault_scroll, false);
+    window.onmousewheel = document.onmousewheel = null;
+    window.onwheel = null;
+    window.ontouchmove = null;
+    document.onkeydown = null;
+}
+
 
 

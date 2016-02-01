@@ -548,3 +548,8 @@ background-color: red;
     background-color: #cc9331;
     color: #ffffff;
 }
+body.noscroll {
+    position: fixed;
+    overflow-y: scroll;
+    width: 100%;
+}

@@ -74,7 +74,7 @@
                         <?php if (!$report->getObject()->is_simple): ?>
                             <tr>
                                 <td colspan="2">
-                                    <a href="<?= ST::route('TechSupport/addRequest/'.$report->getObject()->id) ?>" class="btn btn-info">Заказать тех. поддержку</a>
+<!--                                    <a href="--><?php // echo ST::route('TechSupport/addRequest/'.$report->getObject()->id) ?><!--" class="btn btn-info">Заказать тех. поддержку</a>-->
                                 </td>
                             </tr>
                         <?php endif ?>

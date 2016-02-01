@@ -8,6 +8,7 @@ $rowCounter = 1;
 ?>
 <div class="container">
     <div class="col-md-12 block-border-shadow-normal-padding ">
+
         <!--            if no points -->
         <a class="btn btn-success" href="?route=AttendanceNew/create/<?=
         (empty(FrontController::getParams())) ? 1 : FrontController::getParams();

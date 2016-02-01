@@ -20,6 +20,7 @@ RenderEngine::MenuChanger();
     <div class="col-md-6 block-border-shadow-normal-padding left-border padding25">
         <h4>Редактировать точку/контейнер</h4>
         <hr>
+        <div class="alert alert-danger">Свойтво "техническая поддержка" используется в экспериментальном режиме и пока нигде не используется</div>
         <form class="form-horizontal" method="post" action="?route=AttendanceNew/update/<?= $data['backPack']->id ?>">
             <div class="form-group">
                 <label>Имя:</label>

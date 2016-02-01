@@ -154,6 +154,11 @@ $(document).ready(function () {
         //alert("this");
         e.preventDefault();
         $thisButton.attr("disabled", true);
+        //block for 4 seconds
+        setTimeout(function () {
+            $thisButton.attr("disabled", false);
+        }, 4000)
+
         var modal = new Modal();
         dateTimeforCheck = [];
 
@@ -200,18 +205,10 @@ $(document).ready(function () {
             }
 
             if (dateTimeforCheck.length)
-                $.when(modal.pull("participants")).then(
-                    setTimeout(function () {
-                        $thisButton.attr("disabled", false);
-                    }, 4000)
-                );
+                $.when(modal.pull("participants"));
 
         } else {
-            $.when(modal.pull("participants")).then(
-                setTimeout(function () {
-                    $thisButton.attr("disabled", false);
-                }, 4000)
-            );
+            $.when(modal.pull("participants"));
         }
 
 

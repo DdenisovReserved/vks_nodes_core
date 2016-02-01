@@ -1,6 +1,8 @@
 <?php
-ST::deployTemplate('heads/ui_timepicker.inc');
-RenderEngine::MenuChanger();
+if (!$partial) {
+    ST::deployTemplate('heads/ui_timepicker.inc');
+    RenderEngine::MenuChanger();
+}
 //dump($vks);
 //dump($vks->owner);
 ?>

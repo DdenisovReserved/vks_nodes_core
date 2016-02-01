@@ -139,7 +139,7 @@ $(document).ready(function () {
 
 function getModalVks(vksId) {
     var modal = new Modal();
-    modal.showPageInModal("?route=Vks/show/" + vksId)
+    modal.showPageInModal("?route=Vks/show/" + vksId + "/true")
 
 }
 

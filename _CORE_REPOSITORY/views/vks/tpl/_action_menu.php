@@ -19,15 +19,15 @@
         <?php endif ?>
 
     <?php endif ?>
-    <?php if ($vks->humanized->isTechSupportable): ?>
-        <a class='btn btn-default btn-sm'
-           href='?route=TechSupport/showRequests/<?= $vks->id ?>'
-           title='Показать запросы на тех. поддержку'><span
-                class='glyphicon glyphicon-screenshot'></span></a>
-    <?php else: ?>
-        <span class='btn btn-default btn-sm' href='' disabled title='Показать запросы на тех. поддержку'><span
-                class='glyphicon glyphicon-screenshot'></span></span>
-    <?php endif ?>
+<!--    --><?php //if ($vks->humanized->isTechSupportable): ?>
+<!--        <a class='btn btn-default btn-sm'-->
+<!--           href='?route=TechSupport/showRequests/--><?php // echo $vks->id ?><!--'-->
+<!--           title='Показать запросы на тех. поддержку'><span-->
+<!--                class='glyphicon glyphicon-screenshot'></span></a>-->
+<!--    --><?php //else: ?>
+<!--        <span class='btn btn-default btn-sm' href='' disabled title='Показать запросы на тех. поддержку'><span-->
+<!--                class='glyphicon glyphicon-screenshot'></span></span>-->
+<!--    --><?php //endif ?>
 
     <?php if ($vks->humanized->isOutlookable): ?>
         <a class='btn btn-default btn-sm'

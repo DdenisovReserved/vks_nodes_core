@@ -30,6 +30,9 @@ trait validatorTrait
 
         $this->validator->addRuleMessage('attendance_is_tech_supportable', 'На выбранной точке ВКС, тех. поддержка не оказывается, извините');
         $this->validator->addRule('attendance_is_tech_supportable', function ($value, $input, $args) {
+
+            if (!$value) return true; //if value not presented, continue
+
             try {
                 $att = Attendance::findOrFail($value);
             } catch (Exception $e) {
