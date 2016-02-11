@@ -11,6 +11,7 @@ $(document).ready(function () {
     });
 
     $(document).on("click", ".timerow", function (e) {
+
         //e.stopPropagation()
         var dateTime = $(this).data('datetime');
         dateTime = dateTime.split(' ');
@@ -20,30 +21,30 @@ $(document).ready(function () {
         };
         $.ajax({
             beforeSend: function () {
-                var opts = {
-                    lines: 17 // The number of lines to draw
-                    , length: 26 // The length of each line
-                    , width: 12 // The line thickness
-                    , radius: 42 // The radius of the inner circle
-                    , scale: 0.2 // Scales overall size of the spinner
-                    , corners: 1 // Corner roundness (0..1)
-                    , color: '#000' // #rgb or #rrggbb or array of colors
-                    , opacity: 0.25 // Opacity of the lines
-                    , rotate: 11 // The rotation offset
-                    , direction: 1 // 1: clockwise, -1: counterclockwise
-                    , speed: 3.2 // Rounds per second
-                    , trail: 23 // Afterglow percentage
-                    , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
-                    , zIndex: 2e9 // The z-index (defaults to 2000000000)
-                    , className: 'spinner' // The CSS class to assign to the spinner
-                    , top: '50%' // Top position relative to parent
-                    , left: '50%' // Left position relative to parent
-                    , shadow: false // Whether to render a shadow
-                    , hwaccel: false // Whether to use hardware acceleration
-                    , position: 'absolute' // Element positioning
-                }
-                var spinner = new Spinner(opts).spin();
-                $('#center').append(spinner.el);
+                //var opts = {
+                //    lines: 17 // The number of lines to draw
+                //    , length: 26 // The length of each line
+                //    , width: 12 // The line thickness
+                //    , radius: 42 // The radius of the inner circle
+                //    , scale: 0.2 // Scales overall size of the spinner
+                //    , corners: 1 // Corner roundness (0..1)
+                //    , color: '#000' // #rgb or #rrggbb or array of colors
+                //    , opacity: 0.25 // Opacity of the lines
+                //    , rotate: 11 // The rotation offset
+                //    , direction: 1 // 1: clockwise, -1: counterclockwise
+                //    , speed: 3.2 // Rounds per second
+                //    , trail: 23 // Afterglow percentage
+                //    , fps: 20 // Frames per second when using setTimeout() as a fallback for CSS
+                //    , zIndex: 2e9 // The z-index (defaults to 2000000000)
+                //    , className: 'spinner' // The CSS class to assign to the spinner
+                //    , top: '50%' // Top position relative to parent
+                //    , left: '50%' // Left position relative to parent
+                //    , shadow: false // Whether to render a shadow
+                //    , hwaccel: false // Whether to use hardware acceleration
+                //    , position: 'absolute' // Element positioning
+                //}
+                //var spinner = new Spinner(opts).spin();
+                //$('#center').append(spinner.el);
             },
             type: 'post',
             data: data,
@@ -51,11 +52,14 @@ $(document).ready(function () {
             url: "?route=Vks/backPackDispatcher",
             dataType: 'json',
             success: function (data) {
-                if (data)
-                    location.href = "?route=Vks/Create"
+                if (data) {
+                    if (confirm("Перейти на форму и создать ВКС на это время?"))
+                        location.href = "?route=Vks/Create"
+                }
+
             },
             complete: function () {
-                $('.spinner').remove();
+                //$('.spinner').remove();
 
             }
         })
@@ -119,18 +123,18 @@ $(document).ready(function () {
 
     })
     var oldVal = '';
-    $(document).on("mouseenter", ".fc-day-number", function (e) {
-        oldVal = $(this).html();
-        $(this).css({
-            'background-color': '#ff911b',
-            'cursor': 'pointer'
-        }).html("<span class='show-more text-center'>Показать день</span>");
-    })
-    $(document).on("mouseleave", ".fc-day-number", function (e) {
-        $(this).find('.show-more').remove();
-        $(this).css('background-color', '');
-        $(this).html(oldVal)
-    })
+    //$(document).on("mouseenter", ".fc-day-number", function (e) {
+    //    oldVal = $(this).html();
+    //    $(this).css({
+    //        'background-color': '#ff911b',
+    //        'cursor': 'pointer'
+    //    }).html("<span class='show-more text-center'>Показать день</span>");
+    //})
+    //$(document).on("mouseleave", ".fc-day-number", function (e) {
+    //    $(this).find('.show-more').remove();
+    //    $(this).css('background-color', '');
+    //    $(this).html(oldVal)
+    //})
 
     $(document).on('focus', '#invite-code', function () {
         $(this).select();

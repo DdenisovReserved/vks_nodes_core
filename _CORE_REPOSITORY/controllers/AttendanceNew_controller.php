@@ -616,7 +616,7 @@ class AttendanceNew_controller extends Controller
                 ->where('start_date_time', '<=', $end)
                 ->whereIn('status', [VKS_STATUS_PENDING, VKS_STATUS_APPROVED])
                 ->notSimple()
-                ->with('participants')
+                ->with('participants', 'connection_codes')
                 ->orderBy("start_date_time", 'desc')
                 ->get();
             $filtered_vkses = array();

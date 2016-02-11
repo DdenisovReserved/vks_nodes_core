@@ -16,9 +16,10 @@ class Vks_controller extends Controller
 
         $vkses = Vks::full()
             ->where('date', $date)
+            ->whereIn('status', array(VKS_STATUS_APPROVED, VKS_STATUS_PENDING))
             ->take($this->getQlimit(30))
             ->skip($this->getQOffset())
-            ->orderBy($this->getQOrder(), $this->getQVector())
+            ->orderBy($this->getQOrder('start_date_time'), $this->getQVector('asc'))
             ->get();
         $recordsCount = Vks::where('date', $date)
             ->count();
@@ -73,6 +74,9 @@ class Vks_controller extends Controller
             $e['selectable'] = true;
         });
 
+        if(!count($tbs)) {
+            App::$instance->MQ->setMessage('Не удолось получить список ТБ, создать ВКС ТБ-ТБ не получится. Возможно это временный сбой.', 'danger');
+        }
 
         $this->render('vks/create', compact('departments', 'initiators', 'tbs', 'vks', 'available_points'));
     }
@@ -531,6 +535,7 @@ class Vks_controller extends Controller
             'Участники в ЦА' => [$request->get('ca_participants'), 'int|between(0,10)'],
             'Владелец' => [$request->get('owner_id'), 'required|int'],
             'Комментарий для пользователя' => [$request->get('comment_for_user'), 'max(160)'],
+            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(160)'],
             'Участники ВКС' => [$request->get('inside_participants'), 'array'],
             'Кол-во участников с рабочих мест (IP телефоны)' => [$request->get('in_place_participants_count'), 'int'],
             'Точка для технической поддержки' => [$request->get('tech_support_att_id'), "int|attendance_is_tech_supportable"],
@@ -781,6 +786,7 @@ class Vks_controller extends Controller
             'Почта ответственного' => [$request->get('init_customer_mail'), 'required|max(255)'],
             'Тел. ответственного' => [$request->get('init_customer_phone'), 'required|max(255)'],
             'Подразделение' => [$request->get('department'), 'required|int'],
+            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(160)'],
             'Кол-во участников с рабочих мест (IP телефоны)' => [$request->get('in_place_participants_count'), 'int'],
             'Участники ВКС' => [$request->get('inner_participants'), 'array'],
         ]);
@@ -854,6 +860,8 @@ class Vks_controller extends Controller
             'Подразделение' => [$request->get('department'), 'required|int'],
             'Владелец' => [$request->get('owner_id'), 'required|int'],
             'Участники ВКС' => [$request->get('inner_participants'), 'array'],
+            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(160)'],
+            'Комментарий для Пользователя' => [$request->get('comment_for_user'), 'max(160)'],
             'Кол-во участников с рабочих мест (IP телефоны)' => [$request->get('in_place_participants_count'), 'int'],
         ]);
         if (!count($request->get('inner_participants')) && $request->get('in_place_participants_count') == 0) {
@@ -1005,10 +1013,11 @@ class Vks_controller extends Controller
                     ST::redirect("back");
                 }
             } else {
-                $compiledData[] = array(
-                    'vks_id' => $vks->id,
-                    'attendance_id' => intval($parp->id),
-                );
+                if (isset($parp->id))
+                    $compiledData[] = array(
+                        'vks_id' => $vks->id,
+                        'attendance_id' => intval($parp->id),
+                    );
             }
         }
         Vks_participant::insert($compiledData);
@@ -1265,8 +1274,8 @@ class Vks_controller extends Controller
         }
 
         if (!self::isVksCanBeApproved($vks))
-            throw new Exception('this VKS can\'t be approved or declined,change it status to PENDING first');
-//        $graphUrl = $load->drawLoadImage($vks->date);
+            $this->error('500', 'Открыть экран согласования по этой ВКС невозможно, переведите эту ВКС в статус "на согласовании" и попробуйте еще раз');
+
 
         $vks->isPassebByCapacity = $load->isPassedByCapacity($vks->start_date_time, $vks->end_date_time, $this->countParticipants($vks->id), 0);
 
@@ -1660,6 +1669,7 @@ class Vks_controller extends Controller
             'Участники ВКС' => [$request->get('inner_participants'), 'array'],
             'Точка для технической поддержки' => [$request->get('tech_support_att_id'), "int|attendance_is_tech_supportable"],
             'Комментарий для Тех. поддержки' => [$request->get('user_message'), 'max(255)'],
+            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(160)'],
         ]);
         //if no passes
         if (!$this->validator->passes()) {
@@ -2141,7 +2151,7 @@ class Vks_controller extends Controller
         $request->request->set('in_place_participants_count', 0); //init
         if ($lsc->isExist($cookieName)) {
             foreach ($lsc->get($cookieName, false) as $parp) {
-                if ($parp->type == 3) //if in place
+                if (isset($parp->type) && $parp->type == 3) //if in place
                     $request->request->set('in_place_participants_count', $parp->counter);
                 else {
                     $inner_parp[] = $parp;
@@ -2187,4 +2197,10 @@ class Vks_controller extends Controller
         print true;
     }
 
+    public function day($date) {
+       
+
+        return $this->render("vks/dayGraph",compact('date'));
+
+    }
 }

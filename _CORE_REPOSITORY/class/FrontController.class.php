@@ -91,7 +91,7 @@ class FrontController extends Controller
         Counter::create([
             'origin'=>MY_NODE,
             'ip'=>App::$instance->user->ip,
-            'request'=>$this->controller."/".$this->action . $params,
+            'request'=>$this->controller."/".$this->action . urlencode($params),
             'type'=>ST::isAjaxRequest() ? REQUEST_AJAX : REQUEST_REGULAR,
             'created_at'=>$mskTime,
             'updated_at'=>$mskTime

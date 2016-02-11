@@ -31,7 +31,7 @@ class CalendarFeed_controller extends Controller
             $getFromCA = Curl::get(ST::routeToCaApi("getVksWasInPeriodForTb/" . App::$instance->tbId . "/" . $start . "/" . $end));
             $getFromCA = json_decode($getFromCA);
 //            dump($getFromCA->status);
-            if ($getFromCA->status == 200) {
+            if ($getFromCA && $getFromCA->status == 200) {
                 $getFromCA = $getFromCA->data;
             } else {
                 $getFromCA = array();
@@ -58,6 +58,69 @@ class CalendarFeed_controller extends Controller
 
     }
 
+    public function feedMainCount()
+    {
+        $vks = new Vks();
+        $start = date_create($this->request->query->get('start'));
+        $end = date_create($this->request->query->get('end'));
+        $events = [];
+        $db = App::$instance->capsule->getConnection();
+        //get local events
+        $cacheName = App::$instance->tbId . ".vks.events.calendar_counters.{$start->getTimestamp()}.{$end->getTimestamp()}";
+        $events = App::$instance->cache->get($cacheName);
+
+        if (!$events) {
+            $sql = "SELECT COUNT(*) as counter, date, status
+                FROM " . App::$instance->db->prefix . $vks->getTable() . "
+                WHERE start_date_time >= '" . $start->setTime(0, 0)->format("Y-m-d H:i:s") . "'
+                AND start_date_time <= '" . $end->setTime(23, 59)->format("Y-m-d H:i:s") . "'
+                AND status in (" . VKS_STATUS_PENDING . ", " . VKS_STATUS_APPROVED . ")
+                GROUP BY date, status";
+
+            $raw_results = $db->select($db->raw($sql));
+            $result = array();
+            if (count($raw_results))
+                foreach ($raw_results as $vksCounter) {
+                    $formatDate = date_create($vksCounter['date'])->format("Y-m-d");
+
+                    if ($vksCounter['status'] === VKS_STATUS_APPROVED) {
+                        $result[$formatDate][VKS_STATUS_APPROVED] = $vksCounter['counter'];
+                    } else {
+                        $result[$formatDate][VKS_STATUS_PENDING] = $vksCounter['counter'];
+                    }
+                }
+
+            while ($start < $end) {
+                $formatDate = $start->format("Y-m-d");
+                if (!array_key_exists($formatDate, $result)) {
+                    $result[$formatDate][VKS_STATUS_APPROVED] = 0;
+                    $result[$formatDate][VKS_STATUS_PENDING] = 0;
+                } else {
+                    //check not existed keys and fill them with zeros
+                    if (!isset($result[$formatDate][VKS_STATUS_APPROVED]))
+                        $result[$formatDate][VKS_STATUS_APPROVED] = 0;
+                    if (!isset($result[$formatDate][VKS_STATUS_PENDING]))
+                        $result[$formatDate][VKS_STATUS_PENDING] = 0;
+                }
+                $start->modify("+1 day");
+            }
+
+            foreach ($result as $date => $counters) {
+                $events[] = array(
+                    'start' => $date,
+                    'php_date' => $date,
+                    'counters' => $counters,
+                );
+            }
+
+            //cache it
+            $cachedObj = new CachedObject($events, ['tag.' . $cacheName, "tag." . App::$instance->tbId . ".vks.events.calendar_counters"]);
+//            dump($cachedObj);
+            App::$instance->cache->set($cacheName, $cachedObj, 3600 * 24 * 3);
+        }
+
+        print json_encode($events); //output
+    }
 
     public function feedInPeriod($start, $end)
     {
@@ -83,7 +146,7 @@ class CalendarFeed_controller extends Controller
 
         $getFromCA = json_decode($getFromCA);
 //            dump($getFromCA->data);
-        if ($getFromCA->status == 200) {
+        if ($getFromCA && $getFromCA->status == 200) {
             $getFromCA = $getFromCA->data;
         } else {
             $getFromCA = array();

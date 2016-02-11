@@ -6,36 +6,45 @@ class Load_controller extends Controller
 
     public function get($date, $whitchServer = 0)
     {
-        if (Auth::isAdmin(App::$instance)) {
-            $settings = new Settings_controller();
-            $getServerData = $settings->getServerParam($whitchServer);
-            $serverMaxLoad = $getServerData['capacity'];
-            $date = date_create($date);
-            //prepare return array
-            $result = [];
-            //fill array with timespans
-            //put time to beginning of working day
-            $date->setTime(8, 0);
-            //define end of the day
-            $endOfTheDay = clone($date);
-            $endOfTheDay->setTime(20, 0);
-            //begin rollin
-            $c = 0;
-            while ($date <= $endOfTheDay) {
-                $time = clone($date);
-                $date->modify("+15 minutes");
-//            dump($time);
-                //pull wks
-                $result[$c] = [
-                    'time' => $time->format("H:i"),
-                    'counter' => 0,
-                    'percentage' => 0
-                ];
-                $result[$c]['counter'] = $this->getLoadAtPeriod($date, $time, $whitchServer);
 
-                $result[$c]['percentage'] = $this->calculateLoad($result[$c]['counter'], $serverMaxLoad);
-                $c++;
+        if (Auth::isAdmin(App::$instance)) {
+
+            $cacheName = App::$instance->tbId . ".vks.events.calendar_load.{" . date_create($date)->getTimestamp() . "}";
+            $result = App::$instance->cache->get($cacheName);
+            if (!$result) {
+                $settings = new Settings_controller();
+                $getServerData = $settings->getServerParam($whitchServer);
+                $serverMaxLoad = $getServerData['capacity'];
+                $date = date_create($date);
+                //prepare return array
+                $result = [];
+                //fill array with timespans
+                //put time to beginning of working day
+                $date->setTime(8, 0);
+                //define end of the day
+                $endOfTheDay = clone($date);
+                $endOfTheDay->setTime(20, 0);
+                //begin rollin
+                $c = 0;
+                while ($date <= $endOfTheDay) {
+                    $time = clone($date);
+                    $date->modify("+15 minutes");
+                    $result[$c] = [
+                        'time' => $time->format("H:i"),
+                        'counter' => 0,
+                        'percentage' => 0
+                    ];
+                    $result[$c]['counter'] = $this->getLoadAtPeriod($date, $time, $whitchServer);
+                    $result[$c]['percentage'] = $this->calculateLoad($result[$c]['counter'], $serverMaxLoad);
+                    $c++;
+                }
+
+                $cachedObj = new CachedObject($result, ['tag.' . $cacheName]);
+
+                App::$instance->cache->set($cacheName, $cachedObj, 3600 * 24 * 3);
+
             }
+
             if (ST::isAjaxRequest()) {
                 print json_encode($result);
             } else {
@@ -147,7 +156,9 @@ class Load_controller extends Controller
         $graph = $this->pullLoadDataForJs($date, $whitchServer);
         return $this->render('load/jsGraph', compact('graph'));
     }
-    public function pullLoadDataForJs($date, $whitchServer = 0) {
+
+    public function pullLoadDataForJs($date, $whitchServer = 0)
+    {
         $limit = intval($this->getServerCapacity($whitchServer));
         if (!$limit) $this->error('no-object');
         $getLoad = $this->get($date, $whitchServer);
@@ -158,15 +169,15 @@ class Load_controller extends Controller
         $graph->data = array();// counter, loadcounter
         $graph->threshold = array(); //counter, limit
 
-        for($c = 0; $c < count($getLoad); $c++) {
-            if (in_array(explode(":",$getLoad[$c]['time'])[1],['00','30']) ) {
-                $graph->plotTicks[] = array($c,$getLoad[$c]['time']);
+        for ($c = 0; $c < count($getLoad); $c++) {
+            if (in_array(explode(":", $getLoad[$c]['time'])[1], ['00', '30'])) {
+                $graph->plotTicks[] = array($c, $getLoad[$c]['time']);
             } else {
                 $graph->plotTicks[] = array($c, '');
             }
 
             $graph->data[] = array($c, intval($getLoad[$c]['counter']));
-            $graph->threshold[] =  array($c, $limit);
+            $graph->threshold[] = array($c, $limit);
         }
         return $graph;
     }
@@ -307,7 +318,6 @@ class Load_controller extends Controller
     private function getLoadAtPeriod($timeSpot1, $timeSpot2, $serverNum)
     {
         $result = Null;
-
         switch ($serverNum) {
             case (0):
                 foreach (Vks::where('start_date_time', '<=', $timeSpot2)
@@ -321,7 +331,6 @@ class Load_controller extends Controller
         }
 
         return $result;
-
     }
 
     private function pullDataAtPeriod($timeSpot1, $timeSpot2, $whitchServer)

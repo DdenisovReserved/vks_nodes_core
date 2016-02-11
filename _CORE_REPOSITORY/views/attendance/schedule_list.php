@@ -6,6 +6,7 @@ ST::setVarPhptoJS($attendance->id, 'requested_participant_id');
 ST::setUserJs("vks/showAtParticipant_calendar.js");
 ST::setUserJs("attendance/tree.js");
 ST::setUserCss("attendance/tree.css");
+$resuested_att = $attendance;
 ?>
 <script>
     $(document).ready(function () {
@@ -26,9 +27,9 @@ ST::setUserCss("attendance/tree.css");
     })
 </script>
 <div class="pull-left">
-    <h3 class="text-muted">ВКС походящие <?= date_create($date)->format("d.m.Y") ?> в переговорной: <span
+    <h3 class="text-muted">ВКС походящие <b><?= date_create($date)->format("d.m.Y") ?></b> в переговорной: <span
             class="text-success"><?= strlen(AttendanceNew_controller::makeFullPath($attendance->id)) ? AttendanceNew_controller::makeFullPath($attendance->id) : 'Корневой контейнер'; ?></span>
-        </h3>
+    </h3>
 </div>
 <div class="pull-right">
     <h3>
@@ -45,25 +46,25 @@ ST::setUserCss("attendance/tree.css");
     <?php include_once(CORE_REPOSITORY_REAL_PATH . "views/attendance/tpl/_search_form.php") ?>
     <?php if (count($filtered_vkses)): ?>
         <table class="table table-striped table-hover small">
-            <th class="text-center  col-lg-1">id</th>
-            <th class="text-center  col-lg-2">Время</th>
-            <th class="text-center  col-lg-2">Название</th>
-            <th class="text-center  col-lg-2">Код Вк</th>
-            <th class="text-center  col-lg-2">Участники</th>
-            <th class="text-center col-lg-1"><span class="glyphicon glyphicon-info-sign" title="Тип ВКС"></span></th>
-            <th class="text-center col-lg-1"><span class="glyphicon glyphicon-facetime-video" title="Запись ВКС"></span>
+            <th class="text-left  col-lg-1">id</th>
+            <th class="text-left  col-lg-2">Время</th>
+            <th class="text-left  col-lg-2">Название</th>
+            <th class="text-left  col-lg-2">Код Вк</th>
+            <th class="text-left  col-lg-2">Участники</th>
+            <th class="text-left col-lg-1"><span class="glyphicon glyphicon-info-sign" title="Тип ВКС"></span></th>
+            <th class="text-left col-lg-1"><span class="glyphicon glyphicon-facetime-video" title="Запись ВКС"></span>
             </th>
             <?php foreach ($filtered_vkses as $vks): ?>
                 <tr>
-                    <td class="text-center">
+                    <td class="text-left">
                         <?= ST::linkToVksPage($vks->id, true) ?>
                     </td>
-                    <td class="text-center">
+                    <td class="text-left">
                         <?= $vks->humanized->startTime ?> - <?= $vks->humanized->endTime ?>
                     </td>
-                    <td class="text-center"><?= $vks->title ?></td>
+                    <td class="text-left"><?= $vks->title ?></td>
 
-                    <td class="text-center">
+                    <td class="text-left">
                         <?php if (count($vks->connection_codes)): ?>
                             <?php foreach ($vks->connection_codes as $code) : ?>
                                 <p>
@@ -76,7 +77,7 @@ ST::setUserCss("attendance/tree.css");
                             <?php if ($vks->status == VKS_STATUS_PENDING): ?>
                                 <span class="connection-code-highlighter-wait">Заявка находится на согласовании администратором ВКС, пожалуйста, подождите</span>
                             <?php else: ?>
-                                <span class="connection-code-highlighter">Код подключения не выдан</span>
+                                <span class="text-muted">Код подключения не выдан</span>
                             <?php endif ?>
                         <?php endif ?></td>
                     <td class="text-left">
@@ -119,7 +120,7 @@ ST::setUserCss("attendance/tree.css");
                             </ol>
                         </div>
                     </td>
-                    <td class="text-center">
+                    <td class="text-left">
                         <?php if ($vks->link_ca_vks_id): ?>
                             <?php if ($vks->other_tb_required): ?>
                                 <span class="glyphicon glyphicon-certificate text-primary"
@@ -133,7 +134,7 @@ ST::setUserCss("attendance/tree.css");
                         <?php endif; ?>
 
                     </td>
-                    <td class="text-center">
+                    <td class="text-left">
                         <?= $vks->record_required ? "<span title='Да, запись заказана' class='glyphicon glyphicon-ok text-success'></span>" : "<span title='Нет, без записи' class='glyphicon glyphicon-remove text-danger'></span>" ?>
                     </td>
                 </tr>
@@ -141,7 +142,25 @@ ST::setUserCss("attendance/tree.css");
 
         </table>
     <?php else: ?>
-        <div class="text-center"><i>Список пуст</i></div>
+        <?php if ($attendance->id == 1): ?>
+            <div class="col-md-6">
+                <h4>Выберите точку из каталога</h4>
+
+                <div id="tree_holder">
+                </div>
+            </div>
+            <div class="col-md-6">
+                <?php include_once(CORE_REPOSITORY_REAL_PATH . "views/attendance/tpl/_last_seen_attendance.php") ?>
+            </div>
+            <div class="clearfix"></div>
+            <br>
+        <?php endif ?>
+        <div class="clearfix"></div>
+        <?php if ($resuested_att->id != 1): ?>
+            <div class="text-center">
+                <div class="alert alert-success"><i>Вкс не найдены, переговорная свободна</i></div>
+            </div>
+        <?php endif ?>
     <?php endif ?>
 
 </div>
@@ -149,13 +168,16 @@ ST::setUserCss("attendance/tree.css");
     <div class="text-center">
         <div class="date-pick"></div>
     </div>
-    <hr>
-    <h4>Каталог точек</h4>
-    <div id="tree_holder">
-    </div>
-    <hr>
-    <?php include_once(CORE_REPOSITORY_REAL_PATH . "views/attendance/tpl/_last_seen_attendance.php") ?>
+    <?php if ($resuested_att->id != 1): ?>
 
+        <hr>
+        <h4>Каталог точек</h4>
+
+        <div id="tree_holder">
+        </div>
+        <hr>
+        <?php include_once(CORE_REPOSITORY_REAL_PATH . "views/attendance/tpl/_last_seen_attendance.php") ?>
+    <?php endif ?>
 </div>
 <div class="clearfix"></div>
 <div style="margin-top: 7.0em;">

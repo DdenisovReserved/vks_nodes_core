@@ -1,7 +1,9 @@
 $(document).ready(function () {
+
+
     var modal = new Modal();
     $(document).on("click", ".modal-event-ws", function () {
-        modal.showPageInModal("?route=Vks/show/"+$(this).attr('event-id')+"/true")
+        modal.showPageInModal("?route=Vks/show/" + $(this).attr('event-id') + "/true")
         //getModalVks($(this).attr('event-id'));
     });
     $(document).on("click", ".modal-event-ca", function () {
@@ -15,16 +17,15 @@ $(document).ready(function () {
             left: 'prev,next today',
             center: 'title',
 //            right: 'month,agendaWeek,agendaDay'
-            right: 'month,agendaDay'
+            right: 'month'
 
         },
         //axisFormat: "HH:mm",
         editable: false,
 //            defaultDate: '2015-07-30',
-        eventLimit: true, // allow "more" link when too many events
         //defaultView: 'agendaDay',
         defaultView: 'month',
-        events: "?route=CalendarFeed/feedMain",
+        events: "?route=CalendarFeed/feedMainCount",
         eventLimit: {
             'agenda': 4,
             'default': 4
@@ -41,38 +42,96 @@ $(document).ready(function () {
         slotEventOverlap: false,
         height: 'auto',
         pullServerLoadFrom: 0,
-        eventClick: function (calEvent) {
-            //get vka additional data, function in core.js
-            //getModalVks(calEvent.id);
-        },
 
-        dayClick: function (date, jsEvent, view) {
-
-            if (view.name == 'month' || view.name == 'basicWeek') {
-//
-                $('#calendar').fullCalendar('gotoDate', date);
-                $('#calendar').fullCalendar('changeView', 'agendaDay');
-            }
-        },
         eventRender: function (event, element) {
-//                    element.attr('data-toggle',"popover");
-//                    element.attr('data-content',"And here's some amazing content. It's very engaging. Right?");
-//                    element.attr('data-placement',"top");
 
-            element.addClass('pointer');
-            if (event.fromCa) {
-                element.addClass('pointer modal-event-ca');
-            } else {
-                element.addClass('pointer modal-event-ws');
-            }
+            element.removeClass("fc-day-grid-event fc-event fc-start fc-end");
 
+            element.css({
+                'background-color': 'white !important',
+                'display': 'block',
+                'height': '50px'
+            });
+            var container_main = $(element.find(".fc-content"));
 
-            element.attr("event-id", event.id);
+            container_main.css({
+                'margin-top': '35px'
+            });
 
-            element.find(".fc-time").html("<div>" + event.titleCustom + "</div>");
-//
+            $(container_main.find(".fc-title")).remove();
+            var container_counters = $("<div/>", {
+                'class': 'text-center',
+                'id': 'counters_container'
+            });
+            container_counters.append(
+                $("<span/>", {
+                    'class': 'alert alert-info',
+                    'style': 'background-color: #EFEFEF; border-color: #EFEFEF;',
+                    'html': "<span class='text-primary'><b>" + event.counters[1] + "</b></span>/<span class='text-muted'>" + event.counters[0] + "</span>"
+                })
+            );
+
+            var container_actions = $("<div/>", {
+                'class': 'text-center hidden',
+                'id': 'actions_container'
+            });
+
+            container_actions.append(
+                $("<span/>", {
+                    'id': 'vks-show-list',
+                    'html': "<img title='Показать ВКС списком' data-date='" + event.php_date + "' class='icon pointer' src='../_CORE_REPOSITORY/images/list-icon-nohover.png'/>"
+                })
+            ).append(
+                $("<span/>", {
+                    'id': 'vks-show-graph',
+                    'html': "<img title='Показать ВКС на графике' data-date='" + event.php_date + "' class='icon pointer' src='../_CORE_REPOSITORY/images/graph-icon-nohover.png'/>"
+                })
+            );
+            element.append(container_main.append(container_counters).append(container_actions));
         }
     });
+
+
+    $(document).on("mouseenter", ".fc-event-container", function() {
+
+        $(this)
+            .find("#counters_container").addClass("hidden")
+            .end()
+            .find("#actions_container").removeClass("hidden");
+        $(this).find(".fc-content").css('margin-top', '24px')
+    });
+    $(document).on("mouseleave", ".fc-event-container", function() {
+       $(this)
+           .find("#actions_container").addClass("hidden")
+           .end()
+           .find("#counters_container").removeClass("hidden");
+        $(this).find(".fc-content").css('margin-top', '35px')
+    });
+
+    $(document).on("mouseenter", "#vks-show-list", function() {
+        $(this).find("img").attr("src",'../_CORE_REPOSITORY/images/list-icon.png' );
+    });
+    $(document).on("mouseleave", "#vks-show-list", function() {
+        $(this).find("img").attr("src",'../_CORE_REPOSITORY/images/list-icon-nohover.png' );
+    });
+
+    $(document).on("click", "#vks-show-list", function() {
+        location.href  = "?route=Vks/index/"+$(this).find("img").data("date");
+    });
+
+    $(document).on("mouseenter", "#vks-show-graph", function() {
+        $(this).find("img").attr("src",'../_CORE_REPOSITORY/images/graph-icon.png' );
+    });
+    $(document).on("mouseleave", "#vks-show-graph", function() {
+        $(this).find("img").attr("src",'../_CORE_REPOSITORY/images/graph-icon-nohover.png' );
+    });
+
+    $(document).on("click", "#vks-show-graph", function() {
+        location.href  = "?route=Vks/day/"+$(this).find("img").data("date");
+    });
+
+
+
 
 
 });

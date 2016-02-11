@@ -91,7 +91,7 @@ ST::setUserJs('codes/askFreeCodes.js');
                 <div class="form-group alert alert-info">
                     <div class="checkbox">
                         <label>
-                            <input type='checkbox' name='needTB'
+                            <input type='checkbox' name='needTB' <?=!count($tbs) ? 'disabled' : ''   ?>
                                    data-checked='<?= $vks->get('needTB') ? '1' : '0' ?>' <?= $vks->get('needTB') ? 'checked' : '' ?>>Подключить
                             другой ТБ/ЦА
                         </label>

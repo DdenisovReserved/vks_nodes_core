@@ -20,10 +20,10 @@ class VksObserver
     {
 
         App::$instance->cache->renewTag("tag.".App::$instance->tbId.".vks.events.calendar");
+        App::$instance->cache->renewTag("tag.".App::$instance->tbId.".vks.events.calendar_counters");
         App::$instance->cache->renewTag("tag.".App::$instance->tbId.".vks.controller.api.get.{$model->id}");
-//        dump('saved');
+        App::$instance->cache->renewTag("tag.".App::$instance->tbId . ".vks.events.calendar_load.{" . date_create($model->date)->getTimestamp() . "}");
 
-//        die;
     }
 
     public function deleted($model)

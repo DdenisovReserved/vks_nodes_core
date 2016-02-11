@@ -553,3 +553,7 @@ body.noscroll {
     overflow-y: scroll;
     width: 100%;
 }
+.icon {
+    width: 45px;
+    margin-left: 5px;
+}

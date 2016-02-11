@@ -283,7 +283,7 @@ ST::setUserJs('codes/askFreeCodes.js');
         <?php endif ?>
         <?php if ($vks->stack): ?>
 
-            <p class="alert alert-danger">Это ВКС в стеке (создана за один раз) со следующими ВКС</p>
+            <p class="alert alert-danger">Эта ВКС в стеке (создана за один раз) со следующими ВКС</p>
             <div class="well">
                 <table class="table table-bordered">
                     <th>id</th>

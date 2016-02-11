@@ -2,7 +2,7 @@
 
 $path_server_root = "c:/Users/Public/xampp/htdocs/";
 
-$server_ip = "http://localhost:83/";
+$server_ip = "http://localhost/";
 
 $core_ca_dir = "videoconf-ca-dev/";
 

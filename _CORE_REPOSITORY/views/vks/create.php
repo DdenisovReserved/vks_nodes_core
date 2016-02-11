@@ -121,9 +121,9 @@ RenderEngine::MenuChanger();
                     </select>
                 </div>
                 <div class="form-group alert alert-info">
-                    <div class="checkbox">
+                    <div class="checkbox" >
                         <label>
-                            <input type='checkbox' name='needTB'
+                            <input type='checkbox' <?=!count($tbs) ? 'disabled' : ''   ?> name='needTB'
                                    data-checked='<?= $vks->get('needTB') ? '1' : '0' ?>' <?= $vks->get('needTB') ? 'checked' : '' ?>>Подключить
                             другой ТБ/ЦА
                         </label>

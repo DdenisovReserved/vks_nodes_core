@@ -1,5 +1,6 @@
 <?php
 ini_set('SMTP', 'smtp.sbrf.ru');
+ini_set("max_execution_time", 57);
 class Mail
 {
     const ADDRESS = 'videoconf@mail.ca.sbrf.ru';
@@ -61,7 +62,7 @@ class Mail
 
     }
 
-    static function sendIcalEvent($vks, $method = 0, CAUser $requested_user) //humanized
+    static function sendIcalEvent($vks, $method = 0, $requested_user) //humanized
     {
         $methods = array(
             0 => 'REQUEST',

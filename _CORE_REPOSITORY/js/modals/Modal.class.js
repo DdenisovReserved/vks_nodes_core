@@ -1,5 +1,35 @@
+$(document).ready(function () {
+    $(document).on('click', "#vks_modal_bg", function (e) {
+        $(".close_modal").click();
+    });
+
+    $(document).on('click', '#vks_modal', function (e) {
+        e.stopPropagation();
+    });
+
+    $(document).on('click', ".close_modal", function (e) {
+        $('#vks_modal').remove();
+        $("#vks_modal_bg").remove();
+        jQuery.enableScroll();
+
+    });
+});
+
 function Modal() {
-    //pass
+
+    Modal.element_bg = $("<div/>", {
+        'id': 'vks_modal_bg'
+    });
+    Modal.closeElement = $("<div/>", {
+        'class': 'text-right close_modal',
+        'style': 'margin-bottom: 20px; padding-bottom: 10px;',
+        'html': "<span class='pull-right pointer text-primary' >Закрыть</span>"
+    });
+
+    Modal.element = $("<div/>", {
+        'id': 'vks_modal'
+    });
+
 }
 
 Modal.prototype.generateAndPull = function (title, content, more_buttons) {
@@ -87,22 +117,7 @@ Modal.prototype.pull = function (name, params) {
         },
         url: "?route=ModalWindow/pull",
         success: function (data) {
-            //$.fancybox({
-            //    'width': 720,
-            //    'autoSize': false,
-            //    'height': 'auto',
-            //    'content': data,
-            //    //closeClick: true,
-            //    openEffect: 'none',
-            //    openSpeed: 150,
-            //    closeEffect: 'none',
-            //    closeSpeed: 150,
-            //    'iframe': true,
-            //    'scrollOutside': true,
-            //    helpers: {
-            //        overlay: true
-            //    }
-            //});
+
             $("body").append(data);
         },
         complete: function () {
@@ -155,34 +170,7 @@ Modal.prototype.showPageInModal = function (url) {
 
             jQuery.asModal($(tempEl).html(data));
 
-            //$.fancybox({
-            //    'width': 'auto',
-            //    'autoSize': false,
-            //    'height': 'auto',
-            //    'content': $(tempEl).html(),
-            //    //closeClick: true,
-            //    openEffect: 'none',
-            //    openSpeed: 50,
-            //    closeEffect: 'none',
-            //    closeSpeed: 150,
-            //    'iframe': true,
-            //    'scrollOutside': true,
-            //    helpers: {
-            //        overlay: false
-            //    },
-            //    beforeShow: function () {
-            //        if ($(document).height() > $(window).height()) {
-            //            var scrollTop = ($('html').scrollTop()) ? $('html').scrollTop() : $('body').scrollTop(); // Works for Chrome, Firefox, IE...
-            //            $('html').addClass('noscroll').css('top', -scrollTop);
-            //        }
-            //
-            //    },
-            //    afterClose: function () {
-            //        var scrollTop = parseInt($('html').css('top'));
-            //        $('html').removeClass('noscroll');
-            //        $('html,body').scrollTop(-scrollTop);
-            //    }
-            //});
+
             //fix icon show in ie 8
             var $style;
             $style = $('<style type="text/css">:before,:after{content:none !important}</style>');
@@ -212,43 +200,27 @@ jQuery.fn.center = function () {
 
 jQuery.asModal = function (modalContent) {
 
-    var modal_element = $("#vks_modal");
 
     jQuery.disableScroll();
 
-    $(document).on('click', closeElement, function () {
-        $(element).remove();
-        $(element_bg).remove();
-        jQuery.enableScroll();
-    });
 
-    $(document).on('click', element_bg, function () {
-        $(closeElement).click();
-    });
-
-    modal_element.remove();
+    Modal.element.remove();
+    Modal.element_bg.remove();
 
 
-    var element_bg = $("<div/>", {
-        'id': 'vks_modal_bg'
-    });
-
-    var element = $("<div/>", {
-        'id': 'vks_modal'
-    });
     $("<div/>", {
         'id': 'vks_modal_head',
-    }).appendTo(element);
+    }).appendTo(Modal.element);
 
     $("<div/>", {
         'id': 'vks_modal_content'
-    }).appendTo(element);
+    }).appendTo(Modal.element);
 
     $("<div/>", {
         'id': 'vks_modal_bottom',
-    }).appendTo(element);
+    }).appendTo(Modal.element);
 
-    element_bg.css({
+    Modal.element_bg.css({
         'min-height': $(window).height(),
         'height': $(window).height(),
         'overflow-y': 'auto',
@@ -260,9 +232,9 @@ jQuery.asModal = function (modalContent) {
         'z-index': 9997
     });
 
-    element.css({
-        'min-height': $(window).height() - 10,
-        'height': $(window).height() - 10,
+    Modal.element.css({
+        'min-height': $(window).height() - 30,
+        'height': $(window).height() - 30,
         'overflow-y': 'auto',
         'width': '1000px',
         'padding': '20px',
@@ -271,16 +243,16 @@ jQuery.asModal = function (modalContent) {
         'z-index': 9999
     });
 
-    $('body').append(element_bg);
-    $('body').append(element);
+    $('body').append(Modal.element);
 
-    var closeElement = "<div class='text-right' style='margin-top: 5px; margin-bottom: 5px;'><span class='btn btn-link btn-sm close_modal'>Закрыть</span></div>";
+    $('body').append(Modal.element_bg);
 
-    $("#vks_modal_head").html(closeElement);
+
+    $("#vks_modal_head").html(Modal.closeElement);
     $("#vks_modal_content").html(modalContent);
 
-    $(element_bg).center();
-    $(element).center();
+    $(Modal.element_bg).center();
+    $(Modal.element).center();
 
     return this;
 

@@ -4370,9 +4370,11 @@
             }
 
             if (date.isSame(today, 'day')) {
+
                 classes.push(
                     'fc-today',
                     view.highlightStateClass
+
                 );
             }
             else if (date < today) {
@@ -6441,7 +6443,7 @@
                 '>' +
                 '<div class="fc-content" >' +
                 (timeText ?
-                '<div class="fc-time" style="font-size: 16px;" ' +
+                '<div class="fc-time" style="font-size: 12px; color:#131926;" ' +
                 ' data-start="' + htmlEscape(startTimeText) + '"' +
                 ' data-full="' + htmlEscape(fullTimeText) + '"' +
                 '>' +

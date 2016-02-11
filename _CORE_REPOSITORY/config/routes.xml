@@ -217,7 +217,7 @@
 
     <route>
         <controller>Vks</controller>
-        <action>apiGet, hasLocalVks, showlocalvks</action>
+        <action>apiGet, hasLocalVks, showlocalvks, day</action>
         <methods>get, post</methods>
         <ajax>true</ajax>
         <access>*</access>
@@ -307,7 +307,7 @@
 
     <route>
         <controller>calendarfeed</controller>
-        <action>feedns, feedmain, feedAtParticipant</action>
+        <action>feedns, feedmain, feedAtParticipant, feedMainCount</action>
         <methods>get</methods>
         <ajax>true</ajax>
         <access>*</access>

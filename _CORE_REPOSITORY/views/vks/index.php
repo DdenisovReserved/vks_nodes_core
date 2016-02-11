@@ -5,45 +5,48 @@ ST::setVarPhptoJS($date, 'currentDate');
 ?>
 <script>
     $(document).ready(function () {
-        $(".date-pick").datepicker({
-            onSelect: function (date) {
-                location.href = "<?php echo App::$instance->opt->appHttpPath; ?>?route=Vks/index/" + date;
-            },
-            defaultDate: currentDate
+        $('#btn_another_date').click(function ()
+        {
+            $('#dp_another_date').datepicker();
+            $('#dp_another_date').datepicker("show");
         });
+        $(document).on('change','#dp_another_date', function() {
+            location.href = '?route=Vks/index/'+$(this).val();
+        })
+
     })
 </script>
 <div class="col-lg-12">
-    <h3 class="text-center">Список ВКС на <?= $date ?><a class="pull-right btn btn-default"
+    <h3 class="text-center"><input class="hidden" id="dp_another_date" disabled/><button type="button" class="btn btn-info btn-sm pull-left" id="btn_another_date">Другая дата</button>Список ВКС на <b><?= $date ?></b><a class="pull-right btn btn-default btn-sm"
                                                          href="<?= ST::route('Index/index') ?>">Вернуться
             в
             календарь</a></h3>
     <hr>
 </div>
-<div class="col-md-9 right-border">
+<div class="col-md-12">
     <?php if (!count($vkses)): ?>
         <div class="alert alert-info text-center">Список пуст</div>
     <?php else: ?>
         <table class="table table-striped table-hover small">
-            <th class="text-center"><a href="<?= RenderEngine::makeOrderLink('id') ?>">id</a></th>
-            <th class="text-center"><a href="<?= RenderEngine::makeOrderLink('title') ?>">Название</a></th>
-            <th class="text-center"><a href="<?= RenderEngine::makeOrderLink('date') ?>">Дата</a></th>
-            <th class="text-center"><a href="<?= RenderEngine::makeOrderLink('start_date_time') ?>">Время</a></th>
-            <th class="text-center">Код Вк</th>
-            <th class="text-center">Участники</th>
-            <th class="text-center"><span class="glyphicon glyphicon-info-sign" title="Тип ВКС"></span></th>
-            <th class="text-center"><span class="glyphicon glyphicon-facetime-video" title="Запись ВКС"></span></th>
+            <th class="text-left col-lg-1"><a href="<?= RenderEngine::makeOrderLink('id') ?>">id</a></th>
+            <th class="text-left col-lg-2"><a href="<?= RenderEngine::makeOrderLink('start_date_time') ?>">Время</a></th>
+            <th class="text-left col-lg-3"><a href="<?= RenderEngine::makeOrderLink('title') ?>">Название</a></th>
+
+            <th class="text-left col-lg-2">Код Вк</th>
+            <th class="text-left col-lg-2">Участники</th>
+            <th class="text-left col-lg-1"><span class="glyphicon glyphicon-info-sign" title="Тип ВКС"></span></th>
+            <th class="text-left col-lg-1"><span class="glyphicon glyphicon-facetime-video" title="Запись ВКС"></span></th>
             <?php foreach ($vkses as $vks): ?>
                 <tr>
-                    <td class="text-center">
+                    <td class="text-left">
                         <?= ST::linkToVksPage($vks->id, true) ?>
                     </td>
-                    <td class="text-center"><?= $vks->title ?></td>
-                    <td class="text-center"><?= $vks->humanized->date ?></td>
-                    <td class="text-center">
+                    <td class="text-left">
                         <?= $vks->humanized->startTime ?> - <?= $vks->humanized->endTime ?>
                     </td>
-                    <td class="text-center">
+                    <td class="text-left"><?= $vks->title ?></td>
+
+                    <td class="text-left">
                         <?php if (count($vks->connection_codes)): ?>
                             <?php foreach ($vks->connection_codes as $code) : ?>
                                 <p>
@@ -56,12 +59,12 @@ ST::setVarPhptoJS($date, 'currentDate');
                             <?php if($vks->status == VKS_STATUS_PENDING): ?>
                                 <span class="connection-code-highlighter-wait">Заявка находится на согласовании администратором ВКС, пожалуйста, подождите</span>
                             <?php else: ?>
-                                <span class="connection-code-highlighter">Код подключения не выдан</span>
+                                <span class="text-muted">Код подключения не выдан</span>
                             <?php endif ?>
                         <?php endif ?></td>
                     <td class="text-left">
                         <div class="inside_parp">
-                            <ol>
+                            <ol class="no-left-padding">
 
                                 <?php if (isset($vks->tb_parp)): ?>
                                     <li class="list-group-item-text">Кол-во участников в ЦА: <span
@@ -72,7 +75,6 @@ ST::setVarPhptoJS($date, 'currentDate');
                                                 class="label label-warning label-as-badge">TB</span></li>
                                     <?php endforeach; ?>
                                 <?php endif ?>
-
 
                                 <li class="list-group-item-text"><span
                                         class="glyphicon glyphicon-phone"></span> C рабочих мест (IP телефон, Lynс, CMA
@@ -122,8 +124,5 @@ ST::setVarPhptoJS($date, 'currentDate');
         </table>
         <?= $pages ?>
     <?php endif; ?>
-</div>
-<div class="col-md-3">
-    <div class="date-pick"></div>
 </div>
 </div>
