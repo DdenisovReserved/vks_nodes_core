@@ -18,7 +18,6 @@ $(document).ready(function () {
             center: 'title',
 //            right: 'month,agendaWeek,agendaDay'
             right: 'month'
-
         },
         //axisFormat: "HH:mm",
         editable: false,

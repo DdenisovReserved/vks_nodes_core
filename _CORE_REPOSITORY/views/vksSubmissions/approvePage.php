@@ -63,11 +63,44 @@ ST::setUserJs('codes/askFreeCodes.js');
             <?php endif ?>
         <?php endif ?>
         <?php if ($vks->other_tb_required): ?>
-            <div class="alert alert-info">В этой ВКС заявлены участники из других ТБ, ВКС в ЦА создана автоматически
-                из нашего пула адресов
+            <div class="alert alert-danger">Для этой ВКС требуется подключить другой ТБ или участников из ЦА
             </div>
         <?php endif ?>
+
+        <?php if ($vks->other_tb_required): ?>
+            <table class="table table-bordered">
+                <tr class="alert alert-danger">
+                    <td class="col-lg-1">Запрашиваемые участники в ЦА и других ТБ <span
+                            class="label label-as-badge label-default"><?= isset($vks->CaIdParticipants) && count($vks->CaIdParticipants) ? count($vks->CaIdParticipants) + $vks->CaInPlaceParticipantCount->participants_count : 'Не определено' ?></span>
+                    </td>
+                    <td class="col-lg-5">
+                        <?php if(isset($vks->CaIdParticipants) && count($vks->CaIdParticipants)): ?>
+                            <p>
+                            С рабочих мест в ЦА: <span
+                                class="label label-as-badge label-default"><?= $vks->CaInPlaceParticipantCount->participants_count ?></span>
+                        </p>
+                        <p>
+                            Заявленные ТБ:
+                        <ol>
+                            <?php foreach ($vks->CaIdParticipants as $ca_id): ?>
+                                <li><span
+                                        class="glyphicon glyphicon-facetime-video text-success"></span> <?= CAAttendance::find($ca_id->ca_att_id)->name ?>
+                                </li>
+                            <?php endforeach ?>
+                        </ol>
+                        </p>
+                        <?php else: ?>
+                        <p>Не определено</p>
+                        <?php endif ?>
+
+                    </td>
+                </tr>
+            </table>
+        <?php endif ?>
+
         <table class="table table-hover table-bordered" id="vks-info-table">
+
+
             <?php if ($caVks): ?>
                 <th class="compare-td col-lg-1 "></th>
                 <th class="compare-td ">В нашей заявке</th>
@@ -75,7 +108,7 @@ ST::setUserJs('codes/askFreeCodes.js');
             <?php endif ?>
             <tr>
                 <td class="col-lg-1">id</td>
-                <td class="col-lg-5"><?= $vks->id ?></td>
+                <td class="col-lg-5"><?= ST::linkToVksPage($vks->id, true) ?></td>
                 <?php if ($caVks): ?>
                     <td class="compare-td alert-warning col-lg-5"><?= $caVks->id ?><?= $vks->link_ca_vks_type == VKS_WAS ? ' (С поддержкой администратора)' : ' (Без поддержки администратора)' ?></td>
                 <?php endif ?>
@@ -110,13 +143,6 @@ ST::setUserJs('codes/askFreeCodes.js');
                     <td class="compare-td alert-warning"> -</td>
                 <?php endif ?>
             </tr>
-            <!--            <tr>-->
-            <!--                <td>Инициатор</td>-->
-            <!--                <td>--><?php // echo $vks->initiator_rel->name ?><!--</td>-->
-            <!--                --><?php //if ($caVks): ?>
-            <!--                    <td class="compare-td alert-warning"> -</td>-->
-            <!--                --><?php //endif ?>
-            <!--            </tr>-->
             <tr>
                 <td>Заказчик</td>
                 <td><?= $vks->init_customer_fio ?>, тел. <?= $vks->init_customer_phone ?> </td>
@@ -177,9 +203,9 @@ ST::setUserJs('codes/askFreeCodes.js');
                                             <span
                                                 class='glyphicon glyphicon-warning-sign text-danger points_check_where_admin_page'
                                                 id='<?= $parp->id ?>' data-vks_id="<?= $vks->id ?>"
-                                                data-start="<?= date_create($vks->start_date_time)->format("H:i") ?>"
-                                                data-end="<?= date_create($vks->end_date_time)->format("H:i") ?>"
-                                                data-date="<?= date_create($vks->date)->format("Y-m-d") ?>"
+                                                data-start="<?= $vks->start_date_time->format("H:i") ?>"
+                                                data-end="<?= $vks->end_date_time->format("H:i") ?>"
+                                                data-date="<?= $vks->date->format("Y-m-d") ?>"
                                                 title='Точка ВКС занята в другой конференции'></span>
                                         <?php endif ?>
                                     </li>
@@ -229,7 +255,7 @@ ST::setUserJs('codes/askFreeCodes.js');
 
             </tr>
             <td>Комментарий для администратора</td>
-            <td><?= $vks->comment_for_admin ?></td>
+            <td><?= $vks->comment_for_admin ? $vks->comment_for_admin : '-' ?></td>
             <?php if ($caVks): ?>
                 <?php
                 $linkCode = ST::routeToInviteCompressor($caVks->referral);
@@ -338,65 +364,103 @@ ST::setUserJs('codes/askFreeCodes.js');
                 <h4 class="text-muted">Форма согласования</h4>
             </div>
 
-            <div class="form-group">
-                <h4>Код подключения
-                    <button class="btn btn-default btn-sm" id="askCodes"
-                            onclick="askFreeCodes('#askCodes','<?= $vks->start_date_time ?>', '<?= $vks->end_date_time ?>')"
-                            type="button">
-                        <span class="glyphicon glyphicon-question-sign"></span> <span class="text">Показать таблицу занятости кодов</span>
-                    </button>
-                </h4>
-                <?php if ($vks->link_ca_vks_id && (is_null($caVks) || !($caVks->status == VKS_STATUS_APPROVED || $caVks->status == VKS_STATUS_TRANSPORT_FOR_TB))): ?>
-                    <div class="alert alert-danger">!ВНИМАНИЕ: Статус ВКС в ЦА не позволяет никому
-                        подключаться к ней
+            <?php if ($vks->other_tb_required): ?>
+
+                <div class="well padding25">
+                    <div class="form-group">
+                        <h4>Код подключения в ЦА
+                            <button type="button" data-date="<?= $vks->date->format("Y-m-d") ?>" id="show-ca-at-day"
+                                    class="btn btn-sm btn-default"><span
+                                    class="glyphicon glyphicon-question-sign"></span> Показать чем заняты коды в этот
+                                день
+                            </button>
+                        </h4>
+                        <?php if (count($codesFiltrated)): ?>
+                            <label>Выберите код из вашего пула</label>
+                            <select class="form-control" name="ca_transport_code">
+                                <option value="">
+                                    --Выберите--
+                                </option>
+                                <?php foreach ($codesFiltrated as $ca_code => $transport_vksses): ?>
+                                    <option
+                                        value="<?= $ca_code ?>" <?= count($transport_vksses) ? 'disabled' : '' ?>><?= $ca_code ?> </option>
+                                <?php endforeach ?>
+                            </select>
+                        <?php else: ?>
+                            <div class="alert alert-danger">
+                                <p class="text-danger">
+                                    Получить коды из пула, не удалось. Возможно это ошибка.
+                                </p>
+                            </div>
+                        <?php endif ?>
                     </div>
-                <?php else: ?>
-                <button type="button" class="btn btn-sm btn-success" name="add">+ код из шаблона</button>
-                <button type="button" class="btn btn-sm btn-info" name="manual">+ код вручную</button>
-                <br><br>
-
-
-                <table class="code-table table table-striped" data-rows="1">
-                    <th style="width: 25px;"></th>
-                    <th class="col-lg-2">Шаблон</th>
-                    <th class="col-lg-2">Префикс</th>
-                    <th class="col-lg-1">Постфикс</th>
-                    <th style="width: 125px;">Подсказка для пользователя</th>
-                    <th style="width: 25px;"></th>
-                    <tr>
-                        <td colspan="6" class="emptyly"><i>Нет ни одного кода, выберите что-нибудь</i></td>
-                    </tr>
-                </table>
-
-                <!--                    <div class="col-lg-4">-->
-                <!--                        <button type="button" class="manual-code btn btn-info"-->
-                <!--                            >Ввести вручную-->
-                <!--                        </button>-->
-                <!---->
-                <!--                    </div>-->
-
-                <!--                    build it-->
-
-                </ul>
-            </div>
-            <div class="form-group alert alert-warning">
-                <div class="checkbox">
-                    <label>
-                        <input type='checkbox' name='no-codes' data-checked="0"> <b>Согласовать без кода</b>
-                    </label>
+                    <div class="form-group text-info">
+                        <div class="checkbox">
+                            <label>
+                                <input name="ca_transport_no_create" type="checkbox"/>&nbsp<b>Не создавать транспортную
+                                    ВКС
+                                    (В ЦА)</b>
+                            </label>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="form-group alert alert-danger">
-                <div class="checkbox">
-                    <label>
-                        <input type='checkbox' name='no-check'> <b>Игнорировать проверку кодов</b>
-                    </label>
-                </div>
-            </div>
+
+
             <?php endif ?>
-            <div class="form-group">
-                <label>Комментарий для пользователя</label>
-                <textarea name="comment_for_user" maxlength="160" rows="4" class="form-control"></textarea>
+            <div class="well padding25">
+                <div class="form-group">
+                    <h4>Код подключения в ТБ
+                        <button class="btn btn-default btn-sm" id="askCodes"
+                                onclick="askFreeCodes('#askCodes','<?= $vks->start_date_time->format("Y-m-d H:i:s") ?>', '<?= $vks->end_date_time->format("Y-m-d H:i:s") ?>')"
+                                type="button">
+                            <span class="glyphicon glyphicon-question-sign"></span> <span class="text">Показать таблицу занятости кодов</span>
+                        </button>
+                    </h4>
+                    <?php if ($vks->link_ca_vks_id && (is_null($caVks) || !($caVks->status == VKS_STATUS_APPROVED || $caVks->status == VKS_STATUS_TRANSPORT_FOR_TB))): ?>
+                        <div class="alert alert-danger">!ВНИМАНИЕ: Статус ВКС в ЦА не позволяет никому
+                            подключаться к ней
+                        </div>
+                    <?php else: ?>
+                    <button type="button" class="btn btn-sm btn-success" name="add">+ код из шаблона</button>
+                    <button type="button" class="btn btn-sm btn-info" name="manual">+ код вручную</button>
+                    <br><br>
+
+
+                    <table class="code-table table table-striped" data-rows="1">
+                        <th style="width: 25px;"></th>
+                        <th class="col-lg-2">Шаблон</th>
+                        <th class="col-lg-2">Префикс</th>
+                        <th class="col-lg-1">Постфикс</th>
+                        <th style="width: 125px;">Подсказка для пользователя</th>
+                        <th style="width: 25px;"></th>
+                        <tr>
+                            <td colspan="6" class="emptyly"><i>Нет ни одного кода, выберите что-нибудь</i></td>
+                        </tr>
+                    </table>
+                    </ul>
+                </div>
+                <div class="form-group text-info">
+                    <div class="checkbox">
+                        <label>
+                            <input type='checkbox' name='no-codes' data-checked="0"> <b>Согласовать без кода</b>
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group ">
+                    <div class="checkbox text-danger">
+                        <label>
+                            <input type='checkbox' name='no-check'> <b>Игнорировать проверку кодов</b>
+                        </label>
+                    </div>
+                </div>
+                <?php endif ?>
+
+            </div>
+            <div class="well padding25">
+                <div class="form-group">
+                    <label>Комментарий для пользователя</label>
+                    <textarea name="comment_for_user" maxlength="160" rows="4" class="form-control"><?= $vks->comment_for_user ?></textarea>
+                </div>
             </div>
 
             <?= ST::setUpErrorContainer() ?>
@@ -456,5 +520,20 @@ ST::setUserJs('codes/askFreeCodes.js');
 </div>
 
 <?= ST::setUserJs('graph/renderMainGraph.js') ?>
+<script>
+    $(document).ready(function (e) {
+        var modal = new Modal();
+        $(document).on("click", "#show-ca-at-day", function () {
+            var $thisButton = $(this);
+            //alert("this");
+            $thisButton.attr("disabled", true);
+            //block for 4 seconds
+            setTimeout(function () {
+                $thisButton.attr("disabled", false);
+            }, 4000)
+            modal.showPageInModal("?route=Dashboard/showCACodes/" + $(this).attr('data-date') + "/true")
+        });
+    });
+</script>
 
-
+})

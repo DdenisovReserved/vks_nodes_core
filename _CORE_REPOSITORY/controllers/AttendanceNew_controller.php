@@ -516,7 +516,7 @@ class AttendanceNew_controller extends Controller
         return $path;
     }
 
-    public function isFree($attId, $vksStart, $vksEnd, $exceptVksIds = [])
+    public function isFree($attId, DateTime $vksStart, DateTime $vksEnd, $exceptVksIds = [])
     {
         $vkses = Vks::where('start_date_time', "<=", $vksEnd)
             ->where('end_date_time', '>=', $vksStart)

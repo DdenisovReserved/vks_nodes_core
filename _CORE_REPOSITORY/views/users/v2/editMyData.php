@@ -32,7 +32,8 @@ ST::setUserCss('render-vks.css');
                 <?php endif ?>
                 <?php foreach ($_TB_IDENTITY as $tbId => $tbName) : ?>
                     <?php if($tbId == CA_CA): ?>
-                        <?php if($user->is_from_domain && explode("\\", $user->login)[0] == 'ALPHA'): ?>
+                        <?php if($user->is_from_domain &&
+                            in_array(explode("\\", App::$instance->user->login)[0], array('ALPHA', 'OMEGA'))): ?>
                             <option <?= $user->origin == $tbId ? 'selected' : '' ?>
                                 value='<?= $tbId ?>'><?= $tbName['humanName'] ?></option>
                         <?php endif ?>

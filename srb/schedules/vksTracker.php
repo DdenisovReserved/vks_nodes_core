@@ -50,6 +50,10 @@ foreach ($CaEventsTmp as $CAVks) {
     if ($CAVks->vks) {
         $CAVks->vks->fromCa = true;
         $CAVks->vks->tbFlag = $CaNotes->checkFlag($CAVks->vks->id);
+
+        $CAVks->vks->start_date_time = $CAVks->vks->start_date_time instanceof DateTime ? $CAVks->vks->start_date_time : date_create($CAVks->vks->start_date_time);
+        $CAVks->vks->end_date_time = $CAVks->vks->end_date_time instanceof DateTime ? $CAVks->vks->end_date_time : date_create($CAVks->vks->end_date_time);
+
         if ($CAVks->vks->tbFlag) {
             $CaEvents[] = $CAVks->vks;
         }
@@ -60,8 +64,8 @@ $events = array_merge($events, $CaEvents);
 //dump($events);
 if (count($events))
     foreach ($events as $event) {
-//        dump($event);
-        if (date_create($event['start_date_time'])->getTimestamp() - $now->getTimestamp() <= 1200) {
+
+        if ($event['start_date_time']->getTimestamp() - $now->getTimestamp() <= 1200) {
             if (isset($event['fromCa'])) {
                 NoticeObs_controller::put("Внимание! до начала важной ВКС в ЦА " . ST::linkToCaVksPage($event['id']) . " осталось менее 20 минут, старт в " . date_create($event['start_date_time'])->format("H:i"), 1);
             } else {
@@ -76,7 +80,7 @@ if (count($events))
                     $text .= ' требующей видеозаписи ';
                 }
 
-                NoticeObs_controller::put("Внимание! до начала {$text} ВКС " . ST::linkToVksPage($event['id']) . " осталось менее 20 минут, старт в " . date_create($event['start_date_time'])->format("H:i"), 1);
+                NoticeObs_controller::put("Внимание! до начала {$text} ВКС " . ST::linkToVksPage($event['id']) . " осталось менее 20 минут, старт в " . $event['start_date_time']->format("H:i"), 1);
             }
 //
         }

@@ -1,0 +1,21 @@
+.g-block {
+    padding: 10px;
+    background-color: #eee;
+    margin: 10px;
+}
+.g-block h4 {
+    margin-left: 3%;
+}
+.g-block hr {
+    background-color: #ccc;
+    height: 1px;
+    margin: 0;
+    margin-bottom: 15px;
+    opacity: 0.4;
+}
+/*.round-mark {*/
+    /*display: block !important;*/
+    /*height: 150px;*/
+    /*behavior: url('js/pie/pie.htc');*/
+    /*border-radius: 150px !important;*/
+/*}*/

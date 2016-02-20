@@ -48,7 +48,7 @@ $stat['simple'] = Vks::approved()->where('is_simple',1)->count();
 
                 <li><p class=""><span class="glyphicon glyphicon-pawn"></span> Cache: <?= App::$instance->cache->instance ? 'On' : "Off" ?></p></li>
                 <li><p class="">
-                        <span class="glyphicon glyphicon-link"></span> <a href='<?= ST::routeToCa('AuthNew/login') ?>' style="color:white">Вход c паролем
+                        <span class="glyphicon glyphicon-link"></span> <a href='<?= ST::routeToCa('AuthNew/login') ?>' style="color:white">Вход по паролю
                         </a>
                     </p>
                 </li>

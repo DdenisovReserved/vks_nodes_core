@@ -1,10 +1,12 @@
 <?php
-header('refresh: 60');
-ST::deployTemplate('heads/ui_timepicker.inc');
-RenderEngine::MenuChanger();
+if (!$partial) {
+    header('refresh: 60');
+    ST::deployTemplate('heads/ui_timepicker.inc');
+    RenderEngine::MenuChanger();
+}
+
 ST::setVarPhptoJS($date, 'currentDate');
 ?>
-</head>
 <!--init calendar -->
 <script>
     $(document).ready(function () {
@@ -17,18 +19,20 @@ ST::setVarPhptoJS($date, 'currentDate');
     })
 </script>
 <!--!init calendar -->
-<div class="container">
+<div style="width: 960px; margin: 0 auto;">
     <h3 class="text-muted">Пул кодов на ресурсах ЦА, дата: <?= $date ?></h3>
     <hr>
+    <?php if (!$partial): ?>
     <div class="col-lg-3">
-        <div class="date-pick pull-right"></div>
+            <div class="date-pick pull-right"></div>
     </div>
-    <div class="col-lg-9">
+    <?php endif ?>
+    <div class="col-lg-<?= $partial ? 12 : 9 ?>">
         <table class="table table-bordered">
             <?php foreach ($collected as $code => $vkses) : ?>
                 <tr>
                     <td class="col-lg-2 alert alert-info text-center"><h4><?= $code ?></h4></td>
-                    <td>
+                    <td class="col-lg-8">
                         <ol>
                             <?php if (count($vkses)): ?>
 
@@ -44,12 +48,10 @@ ST::setVarPhptoJS($date, 'currentDate');
                                              </a>
                                          <?php endif ?>
 
-
-                                        (<?= date_create($vks->start_date_time)->format('H:i') ?> -
+                                        <?= isset($vks->tbVks->id) ? $vks->tbVks->start_date_time->format('H:i') : '' ?> -
+                                         <?= isset($vks->tbVks->id) ? $vks->tbVks->end_date_time->format('H:i') : '' ?>
+                                        (мск: <?= date_create($vks->start_date_time)->format('H:i') ?> -
                                         <?= date_create($vks->end_date_time)->format('H:i') ?>)  <?= $vks->title ?>
-
-
-
                                     </li>
                                 <?php endforeach; ?>
 

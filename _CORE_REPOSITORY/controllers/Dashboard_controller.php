@@ -14,12 +14,12 @@ class Dashboard_controller extends Controller
         $sortedEvents = [];
 
         foreach ($events as $event) {
-            if ($now < date_create($event->start_date_time)) {
+            if ($now < $event->start_date_time) {
                 $sortedEvents['future'][] = $event;
-            } elseif ($now > date_create($event->end_date_time)) {
+            } elseif ($now > $event->end_date_time) {
 //                dump($now, date_create($event->end_date_time));
                 $sortedEvents['past'][] = $event;
-            } elseif ($now > date_create($event->start_date_time) && $now < date_create($event->end_date_time)) {
+            } elseif ($now > $event->start_date_time && $now < $event->end_date_time) {
                 $sortedEvents['now'][] = $event;
             }
         }
@@ -96,28 +96,14 @@ class Dashboard_controller extends Controller
 
     }
 
-    public function showCACodes($date)
+    public function showCACodes($date, $partial=false)
     {
 
-        $tmp['tb'] = MY_NODE;
-        $tmp['date'] = $date;
-
-        $tmp = http_build_query($tmp);
-
-        $context = stream_context_create(array(
-            'http' => array(
-                'method' => 'POST',
-                'header' => 'Content-Type: application/x-www-form-urlencoded',
-                'content' => $tmp
-            )
-        ));
-
-        $ask = utf8_decode(file_get_contents(HTTP_PATH . "?route=VksNoSupport/apiGiveBalanceOnTbPool", false, $context));
-        if ($ask[0] == "?")
-            $ask = substr($ask, 1);
-        $pullFromCa = json_decode($ask);
+        $pullFromCa = $this->aksForCaTransportVksInDate($date);
         $collected = [];
-        $pool = $this->askForPool();
+
+        $pool = App::$instance->callService("vks_ca_negotiator")->askForPool();
+
 
         foreach ($pool as $code) {
 
@@ -132,12 +118,14 @@ class Dashboard_controller extends Controller
         }
 //        dump($collected);
         $date = date_create($date)->format('d.m.Y');
-        $this->render('Dashboards/showCaPoolCodes', compact('collected', 'date'));
+//        dump($collected);
+        $this->render('Dashboards/showCaPoolCodes', compact('collected', 'date', 'partial'));
     }
 
-    public function askForPool()
-    {
+
+    public function aksForCaTransportVksInDate($date) {
         $tmp['tb'] = MY_NODE;
+        $tmp['date'] = $date;
         $tmp = http_build_query($tmp);
         $context = stream_context_create(array(
             'http' => array(
@@ -146,7 +134,8 @@ class Dashboard_controller extends Controller
                 'content' => $tmp
             )
         ));
-        $ask = utf8_decode(file_get_contents(HTTP_PATH . "?route=VksNoSupport/apiGivePool", false, $context));
+
+        $ask = utf8_decode(file_get_contents(HTTP_PATH . "?route=VksNoSupport/apiGiveBalanceOnTbPool", false, $context));
         if ($ask[0] == "?")
             $ask = substr($ask, 1);
         return json_decode($ask);

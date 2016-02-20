@@ -4,7 +4,7 @@
     <meta http-equiv="X-UA-Compatible" content="<?= App::$instance->opt->doctype; ?>"/>
     <title><?= App::$instance->opt->title; ?></title>
     <link rel="stylesheet" type="text/css" href="<?= CORE_REPOSITORY_HTTP_PATH ?>css/build/core.css"/>
-<!--    <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/build/core.js"></script>-->
+    <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/build/core.js"></script>
     <!--        <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>-->
     <!--        <link rel="stylesheet" type="text/css" href="css/core.css"/>-->
     <!--        <link rel="stylesheet" type="text/css" href="css/jquery-ui.css"/>-->
@@ -17,26 +17,26 @@
     <!--    <link rel="stylesheet" type="text/css" href="css/custom-menu.css"/>-->
     <!--        <link rel="stylesheet" type="text/css" href="js/notify/css/bootstrap-notify.css"/>-->
 
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/jquery/jquery-1.11.0.min.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/support/support.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/jquery/jquery-ui-1.10.3.custom.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/jquery-timepicker/jquery-ui-timepicker-addon.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/jquery/jquery.timepicker.min.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/bootstrap.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/modals/Modal.class.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/search/core.class.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/search/clicker.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/core.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/notify/js/soundmanager2-nodebug-jsmin.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/notify/js/bootstrap-notify.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/production/fancybox/source/jquery.fancybox.pack.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/bootstrap-switch.min.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/jquery.fancybox.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/lib/moment.min.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/fullcalendar.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/ru.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/jquery/spinner.js"></script>
-            <script type="text/javascript" src="<?= CORE_REPOSITORY_HTTP_PATH ?>js/jquery/spin.jquery.plugin.js"></script>
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery/jquery-1.11.0.min.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/support/support.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery/jquery-ui-1.10.3.custom.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery-timepicker/jquery-ui-timepicker-addon.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery/jquery.timepicker.min.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/bootstrap.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/modals/Modal.class.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/search/core.class.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/search/clicker.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/core.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/notify/js/soundmanager2-nodebug-jsmin.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/notify/js/bootstrap-notify.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/production/fancybox/source/jquery.fancybox.pack.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/bootstrap-switch.min.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery.fancybox.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/lib/moment.min.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/fullcalendar.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/ru.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery/spinner.js"></script>-->
+<!--            <script type="text/javascript" src="--><?//= CORE_REPOSITORY_HTTP_PATH ?><!--js/jquery/spin.jquery.plugin.js"></script>-->
 
     <!--    <link rel="stylesheet" type="text/css" href="js/color-picker/css/pick-a-color-1.2.3.min.css"/>-->
     <!--    notices-->

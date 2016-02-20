@@ -1,7 +1,6 @@
 <?php
 include_once(CORE_REPOSITORY_REAL_PATH . "views/main-fluid.php");
 ST::setVarPhptoJS($date, 'currentDate');
-// ST::setVarPhptoJS($currentOnGoing, 'currentOnGoing');
 ST::setUserJs("vks/day_calendar.js");
 ?>
 

@@ -5,7 +5,7 @@ ST::setUserCss("attendance/style.css");
 RenderEngine::MenuChanger();
 
 ?>
-<div class="container">
+<div class="container-fluid">
     <div class="col-lg-12">
         <h4>Неутвержденные заявки</h4>
         <hr>
@@ -26,7 +26,7 @@ RenderEngine::MenuChanger();
                 <tr>
                     <td><?= $c ?></td><td class="text-center"><?= $vks->id ?></td>
                     <td><?= $vks->humanized->date ?></td>
-                    <td><?= $vks->humanized->startTime ?> - <?= $vks->humanized->endTime ?></td>
+                    <td class="col-lg-1"><?= $vks->humanized->startTime ?> - <?= $vks->humanized->endTime ?></td>
                     <td><?= $vks->title ?></td>
                     <td><?= $vks->init_customer_fio ?>, тел.<?= $vks->init_customer_phone ?></td>
                     <td><?= date_create($vks->created_at)->format("d.m.Y H:i") ?></td>

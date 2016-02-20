@@ -250,7 +250,6 @@ class ST
         if (isset($_SESSION['backPack'])) {
             unset($_SESSION['backPack']);
         }
-//        dump($result);
         return $result;
     }
 

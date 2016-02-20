@@ -1,1 +1,1 @@
-{"0":{"type":3,"counter":5},"1":{"id":97,"parent_id":95,"name":"337","path":"#\u0410\u0411 - 337","type":0,"free":true},"2":{"id":98,"parent_id":95,"name":"338","path":"#\u0410\u0411 - 338","type":0,"free":true},"3":{"id":96,"parent_id":95,"name":"G002","path":"#\u0410\u0411 - G002","type":0,"free":true},"4":{"id":206,"parent_id":95,"name":"test ","path":"#\u0410\u0411 - test ","type":0,"free":true}}
+{"0":{"type":3,"counter":3},"1":{"id":95,"parent_id":1,"name":"#\u0410\u0411","path":"#\u0410\u0411","type":1,"free":true}}

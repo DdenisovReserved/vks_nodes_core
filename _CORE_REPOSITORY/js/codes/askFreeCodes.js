@@ -4,7 +4,6 @@ function askFreeCodes(element, start, end) {
     var oldVal =  $(element).html();
     $.ajax({
         beforeSend: function () {
-
             $(element).html('Идет анализ, пожалуйста, подождите...');
         },
         type: 'POST',

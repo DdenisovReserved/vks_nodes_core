@@ -3,7 +3,7 @@
     <div class="col-lg-6 col-lg-offset-3 left-border">
         <h3>Генератор отчетов по созданным ВКС</h3>
         <hr>
-        <h4>Зайдайте параметры выборки</h4><hr>
+        <h4>Задайте параметры выборки</h4><hr>
         <form class="form-horizontal" method="post" action="<?= ST::route('Reporter/collect') ?>">
             <div class="form-group">
                 <label for="date_start" class="col-sm-3 control-label">Начало</label>
@@ -65,7 +65,6 @@
                             <input type="checkbox" name="filter[status][<?= VKS_STATUS_DELETED ?>]" checked>Удалена администратором
                         </label>
                     </div>
-
                     <div class="checkbox">
                         <label>
                             <input type="checkbox" name="filter[status][<?= VKS_STATUS_DROP_BY_USER ?>]" checked>Удалена пользователем

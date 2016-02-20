@@ -16,6 +16,8 @@ if (!$app->tbId) {
     App::$instance->MQ->setMessage('Внимание: нет связи с Планировщиком ЦА, вы не получаете события с центрального сервера', 'danger');
 }
 
+require_once(CORE_REPOSITORY_REAL_PATH . 'config/_services.php'); //load services
+
 header($app->opt->header);
 date_default_timezone_set($app->opt->timezone);
 

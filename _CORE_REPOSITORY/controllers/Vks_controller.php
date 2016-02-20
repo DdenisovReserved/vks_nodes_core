@@ -1,6 +1,7 @@
 <?php
 use Illuminate\Database\Capsule\Manager as Capsule;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Process\Exception\LogicException;
 
 class Vks_controller extends Controller
@@ -49,7 +50,6 @@ class Vks_controller extends Controller
      */
     public function create()
     {
-
         if (!Auth::isLogged(App::$instance)) {
             App::$instance->MQ->setMessage('Создавать заявки могут только зарегистрированные пользователи, пожалуйста, войдите в систему или зарегистрируйтесь');
             ST::redirectToRoute('AuthNew/login');
@@ -58,40 +58,37 @@ class Vks_controller extends Controller
         //pull departments & initiators
         $departments = Department::orderBy('prefix')->get();
         $initiators = Initiator::all();;
-        $tbs = json_decode(Curl::get(ST::routeToCa('AttendanceNew/apiGetTbs')));
+        $tbs = CAAttendance::tbs()->get();
 
         $vks = ST::lookAtBackPack();
         $vks = $vks->request;
         if (!$vks->has('inner_participants') && !count($vks->get('inner_participants'))) {
-
             LocalStorage_controller::staticRemove('vks_participants_create');
-
         }
-
         $available_points = Attendance::techSupportable()->get()->toArray();
-
         array_walk($available_points, function (&$e) {
             $e['selectable'] = true;
         });
 
-        if(!count($tbs)) {
-            App::$instance->MQ->setMessage('Не удолось получить список ТБ, создать ВКС ТБ-ТБ не получится. Возможно это временный сбой.', 'danger');
+        if (!count($tbs)) {
+            App::$instance->MQ->setMessage('Не удалось получить список ТБ, создать ВКС ТБ-ТБ не получится. Возможно это временный сбой.', 'danger');
         }
-
         $this->render('vks/create', compact('departments', 'initiators', 'tbs', 'vks', 'available_points'));
     }
 
     public function makeClone($id)
     {
-
         $strict = boolval(intval(Settings_controller::getOther("attendance_strict")));
-
         if (!Auth::isLogged(App::$instance)) {
             App::$instance->MQ->setMessage('Создавать заявки могут только зарегистрированные пользователи, пожалуйста, войдите в систему или зарегистрируйтесь');
             ST::redirectToRoute('AuthNew/login');
         }
         //can this user access it
-        $vks = Vks::full()->findOrFail($id);
+        try {
+            $vks = Vks::full()->findOrFail($id);;
+        } catch (Exception $e) {
+            $this->error('404');
+        }
         $this->humanize($vks);
         if (!$vks->humanized->isCloneable)
             $this->error('no_manipulable');
@@ -105,9 +102,8 @@ class Vks_controller extends Controller
             App::$instance->MQ->setMessage("Данную ВКС клонировать запрещено");
             ST::redirectToRoute("Vks/show/" . $vks->id);
         }
-
         //refill stack
-        $tbs = json_decode(Curl::get(ST::routeToCa('AttendanceNew/apiGetTbs')));
+        $tbs = CAAttendance::tbs()->get();
         $departments = Department::orderBy('prefix')->get();
         LocalStorage_controller::staticRemove('vks_participants_create');
         if (!$strict) {
@@ -116,22 +112,18 @@ class Vks_controller extends Controller
             $vks->in_place_participants_count = 0;
             $vks->participants = null;
         }
-
         $vksbp = ST::lookAtBackPack();
         $vks = count($vksbp->request) ? $vksbp->request : $vks;
 
         if ($vks instanceof Vks) {
-            $vks->date = null;
-            $vks->start_date_time = null;
-            $vks->end_date_time = null;
             $vks->inner_participants = $vks->participants;
             foreach ($vks->toArray() as $key => $val) {
-                $this->request->request->set($key, $val);
+                if (!in_array($key, array("date", "start_date_time", "end_date_time")))
+                    $this->request->request->set($key, $val);
             }
             $vks = $this->request->request;
-
         }
-
+//        dump($vks);
         $this->render('vks/create', compact('vks', 'departments', 'tbs'));
     }
 
@@ -173,7 +165,6 @@ class Vks_controller extends Controller
                     $requestFiltered->request->set('start_time', $date['start_time']);
                     $requestFiltered->request->set('end_time', $date['end_time']);
                     $requestFiltered->request->set('vks_stack_id', $stack->id); //inject stack
-
                 }
                 $result[] = $this->saveRegularVks($requestFiltered, true);
             }
@@ -186,7 +177,6 @@ class Vks_controller extends Controller
                 $requestFiltered->request->set('end_time', $request->get('dates')[1]['end_time']);
             }
             $result[] = $this->saveRegularVks($requestFiltered, true);
-
         }
         //deploy result
         $_SESSION['savedResult_' . App::$instance->main->appkey] = $result;
@@ -198,12 +188,14 @@ class Vks_controller extends Controller
     { //if error occure, save stopped
         $request = $request->request;
         $report = new VksReport($request);
+
         Capsule::beginTransaction();
         $this->validator->validate([
             'Дата' => [$request->get('date'), 'required|date'],
             'Время начала' => [$request->get('start_time'), 'required'],
             'Время окончания' => [$request->get('end_time'), 'required'],
-            'Название' => [$request->get('title'), 'required|max(255)'],
+            'Название' => [$request->get('title'), 'required|max(205)'],
+            'Код в ЦА' => [$request->get('title'), 'max(40)'],
             'ФИО ответственного' => [$request->get('init_customer_fio'), 'required|max(255)'],
             'Почта ответственного' => [$request->get('init_customer_mail'), 'required|max(255)'],
             'Тел. ответственного' => [$request->get('init_customer_phone'), 'required|max(255)'],
@@ -213,84 +205,47 @@ class Vks_controller extends Controller
             'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(160)'],
             'Точка для технической поддержки' => [$request->get('tech_support_att_id'), "int|attendance_is_tech_supportable"],
             'Комментарий для Тех. поддержки' => [$request->get('user_message'), 'max(255)'],
-
         ]);
         //if no passes
 
         //any participants required
-        if (!intval($request->get('in_place_participants_count')) && !count($request->get('inner_participants'))) {
-            $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage('Вы не выбрали внутренних участников (в вашем ТБ) для ВКС', 'danger');
-            ST::redirect("back");
-        }
+        if (!intval($request->get('in_place_participants_count'))
+            && !count($request->get('inner_participants'))
+        ) $this->backWithData('Вы не выбрали внутренних участников (в вашем ТБ) для ВКС');
 
-        if ($request->get('needTB')) {
-
-            $participants = $request->has('participants') ? $request->get('participants') : array();
-
-            $request->set('participants', array_merge($participants, [(string)App::$instance->tbId]));
-
-//            if (count($request->get('participants')) <= 1) {
-//                if ($silent) {
-//                    $report->setErrors(['Вы не указали участников от ТБ']);
-//                    $report->setResult(false);
-//                    return $report;
-//                } else {
-//                    $this->putUserDataAtBackPack($this->request);
-//                    App::$instance->MQ->setMessage('Вы не указали участников от ТБ', 'danger');
-//                    ST::redirect("back");
-//                }
-//
-//            } else { //can create virtual VK in CA
-            $requestClone = clone($request);
-
-            $trVks = $this->createTransitVksOnCA($requestClone);
-
-            if (!isset($trVks->id)) {
-                if ($silent) {
-                    $report->setErrors(['В настоящий момент невозможно создать транзитную ВКС на ресурсах ЦА, все коды заняты или сервер ЦА перегружен, попробуйте позже']);
-                    $report->setResult(false);
-                    return $report;
-                } else {
-                    $this->putUserDataAtBackPack($this->request);
-                    App::$instance->MQ->setMessage('В настоящий момент невозможно создать транзитную ВКС на ресурсах ЦА, все коды заняты или сервер ЦА перегружен, попробуйте позже', 'danger');
-                    ST::redirect("back");
-                }
-            }
-//            }
-        }
-
+        //create new entity
         $vks = new Vks();
 
         if (!$request->get('ca_code')) $request->set('ca_code', Null);
 
-
         $vks->fill($request->all());
-
         $vks->is_private = $request->has('is_private') ? 1 : 0;
-
+        $vks->other_tb_required = $request->get('needTB') ? 1 : 0;
         $vks->record_required = $request->has('record_required') ? 1 : 0;
-
-        $vks->date = date_create($vks->date)->format("Y-m-d");
-
-        $vks->start_date_time
-            = date_create($vks->date . " " . $request->get('start_time'))->format("Y-m-d H:i:s");
-        $vks->end_date_time
-            = date_create($vks->date . " " . $request->get('end_time'))->format("Y-m-d H:i:s");
+        $vks->start_date_time = $request->get('date') . " " . $request->get('start_time');
+        $vks->end_date_time = $request->get('date') . " " . $request->get('end_time');
 
         $this->timeBarrier($vks);
 
-        if (isset($trVks)) {
-            $vks->link_ca_vks_id = $trVks->id;
-            $vks->link_ca_vks_type = VKS_NS;
-            $vks->other_tb_required = 1;
-        }
-
         $vks->comment_for_admin = $request->get('comment_for_admin');
-
         $vks->owner_id = App::$instance->user->id;
         $vks->from_ip = App::$instance->user->ip;
         $vks->save();
+        //relation models
+        $message = "Пользователь " . App::$instance->user->login . " создал ВКС " . ST::linkToVksPage($vks->id);
+
+        if ($request->get('needTB')) {
+            App::$instance->callService('vks_ca_negotiator')->fillRequestWithInputData($this->request);
+            App::$instance->callService('vks_ca_negotiator')->validateCaParticipants($this->request, $this);
+            App::$instance->callService('vks_ca_negotiator')->fillRelationEntity($this->request, $vks);
+
+            if (strlen($request->get('i_know_ca_code'))) {
+                $vks->title = $vks->title . " |&* код в ЦА: " . $request->get('i_know_ca_code');
+                $vks->save();
+            }
+
+            $message .= ", и запрашивает участие других ТБ или ЦА";
+        }
 
         if ($request->get('tech_support_required'))
             TechSupportRequest::create(array(
@@ -311,13 +266,7 @@ class Vks_controller extends Controller
             }
         }
         //create participants
-
-
         $this->createInnerOrPhoneParp($request->get('inner_participants'), $vks);
-
-        $message = "Пользователь " . App::$instance->user->login . " создал ВКС " . ST::linkToVksPage($vks->id);
-
-        $message .= $vks->other_tb_required ? " + создан транспорт в ЦА " . $vks->link_ca_vks_id : "";
 
         NoticeObs_controller::put($message);
 
@@ -336,10 +285,9 @@ class Vks_controller extends Controller
         if (boolval(intval(Settings_controller::getOther('notify_admins')))) {
             $vks = Vks::full()->find($vks->id);
             $this->humanize($vks);
-            $this->sendAdminNotice($vks);
+            App::$instance->callService('vks_report_builder')->sendAdminNotice($vks);
         }
-//        dump($report);
-//        die;
+
         if ($silent) {
             return $report;
         } else {
@@ -374,35 +322,21 @@ class Vks_controller extends Controller
         ]);
         //if no passes
         if (!$this->validator->passes()) {
-            App::$instance->MQ->setMessage($this->validator->errors()->all(), 'danger');
-            $this->putUserDataAtBackPack($this->request);
-            ST::redirect("back");
+            $this->backWithData($this->validator->errors()->all());
         }
 
         $vks = new Vks();
-
         $vks->fill($request->all());
-
         $vks->is_private = $request->has('is_private') ? 1 : 0;
         $vks->record_required = $request->has('record_required') ? 1 : 0;
-
-        $vks->date = date_create($vks->date)->format("Y-m-d");
-        //set proper time
-        $vks->start_date_time
-            = date_create($vks->date . " " . $request->get('start_time'))->format("Y-m-d H:i:s");
-        $vks->end_date_time
-            = date_create($vks->date . " " . $request->get('end_time'))->format("Y-m-d H:i:s");
-
+        $vks->start_date_time = $request->get('date') . " " . $request->get('start_time');
+        $vks->end_date_time = $request->get('date') . " " . $request->get('end_time');
         $vks->owner_id = App::$instance->user->id;
-
         $vks->from_ip = App::$instance->user->ip;
 
         $this->timeBarrier($vks);
-
         $vks->is_simple = 1;
-
         $vks->status = VKS_STATUS_APPROVED;
-
 
         //check blocks
         $blocks = $blctrl->askAtDateTime($vks->start_date_time, $vks->end_date_time, 1);
@@ -410,26 +344,19 @@ class Vks_controller extends Controller
             $blockErrors = array();
             foreach ($blocks as $block) {
                 $blockErrors[] = "Создание ВКС запрещено, {$block->start_at} -  {$block->end_at}, основание: {$block->description}";
-
             }
-            App::$instance->MQ->setMessage($blockErrors, 'danger');
-            $this->putUserDataAtBackPack($this->request);
-            ST::redirect("back");
-        }
 
+            $this->backWithData($blockErrors);
+        }
 
         $vks->save();
 
         if (!in_array($vks->in_place_participants_count, range(2, 10))) {
-            $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage("Ошибка: недопустимое кол-во участников");
-            ST::redirect('back');
+            $this->backWithData("Ошибка: недопустимое кол-во участников");
         }
         //ask simple code
         if (!$simpleCode = $load->giveSimpleCode($vks->start_date_time, $vks->end_date_time)) {
-            $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage("Ошибка: К сожалению сейчас нет свободных комнат для проведения упрощенных ВКС, воспользуйтесь <a href='" . ST::route('Vks/create') . "'>стандартной формой</a>");
-            ST::redirect('back');
+            $this->backWithData("Ошибка: К сожалению сейчас нет свободных комнат для проведения упрощенных ВКС, воспользуйтесь <a href='" . ST::route('Vks/create') . "'>стандартной формой</a>");
         }
 
         ConnectionCode::create([
@@ -437,19 +364,12 @@ class Vks_controller extends Controller
             'value' => $simpleCode
         ]);
 
-//        NoticeObs_controller::put("Пользователь " . App::$instance->user->login . " создал упрощенную ВКС " . ST::linkToVksPage($vks->id));
-
-//        App::$instance->MQ->setImportantMessage("Ваша ВКС #{$vks->id} успешно создана,<br> код подключения: {$simpleCode}<br> В течении 5 минут на ваш почтовый адрес поступит отчет о созданной ВКС");
-
         App::$instance->log->logWrite(LOG_VKSWS_CREATED, "simple VKS " . ST::linkToVksPage($vks->id) . " Created");
 
         if (!$load->isPassedByCapacity($vks->start_date_time, $vks->end_date_time, self::countParticipants($vks->id), 0)) {
-            App::$instance->MQ->setMessage("Ошибка: Заявленное кол-во участников, превышает предельно допустимую нагрузку на сервер ВКС, обратитесь к администраторам системы");
-            $this->putUserDataAtBackPack($this->request);
-            ST::redirect("back");
+            $this->backWithData("Ошибка: Заявленное кол-во участников, превышает предельно допустимую нагрузку на сервер ВКС, обратитесь к администраторам системы");
         }
 
-//        die($vks);
         Capsule::commit();
 
         $report->setObject($vks);
@@ -457,13 +377,11 @@ class Vks_controller extends Controller
         $result[] = $report;
         $_SESSION['savedResult_' . App::$instance->main->appkey] = $result;
         //redirect
-
         $vks = Vks::full()->find($vks->id);
         $this->humanize($vks);
-        $this->sendSimpleMail($vks);
+        App::$instance->callService('vks_report_builder')->sendSimpleMail($vks);
 
         ST::redirectToRoute('vks/checkout');
-
 
     }
 
@@ -486,30 +404,19 @@ class Vks_controller extends Controller
         }
 
         $tbs = json_decode($tbs);
-//        json_decode( $tbs, true, 9 );
-//        $json_errors = array(
-//            JSON_ERROR_NONE => 'No error has occurred',
-//            JSON_ERROR_DEPTH => 'The maximum stack depth has been exceeded',
-//            JSON_ERROR_CTRL_CHAR => 'Control character error, possibly incorrectly encoded',
-//            JSON_ERROR_SYNTAX => 'Syntax error',
-//        );
-//        echo 'Last error : ', $json_errors[json_last_error()], PHP_EOL, PHP_EOL;
         //render
         $vks = ST::lookAtBackPack();
         $vks = $vks->request;
         if (!$vks->has('inner_participants') && !count($vks->get('inner_participants'))) {
-
             LocalStorage_controller::staticRemove('vks_participants_create');
-
         }
-
         $available_points = Attendance::techSupportable()->get()->toArray();
-
         array_walk($available_points, function (&$e) {
             $e['selectable'] = true;
         });
+        $ca_pool_codes = App::$instance->callService("vks_ca_negotiator")->askForPool();
 
-        $this->render('vks/admin/create', compact('departments', 'initiators', 'tbs', 'available_points'));
+        $this->render('vks/admin/create', compact('departments', 'initiators', 'tbs', 'available_points', 'ca_pool_codes', 'vks'));
 
     }
 
@@ -521,7 +428,6 @@ class Vks_controller extends Controller
         $connCtrl = new ConnectionCode_controller();
         $request = $this->request->request;
         $this->fillParticipants("vks_participants_create", $this->request);
-
         Capsule::beginTransaction();
         $this->validator->validate([
             'Дата' => [$request->get('date'), 'required|date'],
@@ -544,31 +450,12 @@ class Vks_controller extends Controller
 
         //if no passes
         if (!$this->validator->passes()) {
-            $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage($this->validator->errors()->all());
-            ST::redirect("back");
-        }
-
-        if ($request->get('needTB')) {
-
-            $participants = $request->has('participants') ? $request->get('participants') : array();
-
-            $request->set('participants', array_merge($participants, [(string)App::$instance->tbId]));
-
-            $trVks = $this->createTransitVksOnCA($request);
-
-            if (!isset($trVks->id)) {
-                $this->putUserDataAtBackPack($this->request);
-                App::$instance->MQ->setMessage('В настоящий момент невозможно создать транзитную ВКС на ресурсах ЦА, все коды заняты или сервер ЦА перегружен, попробуйте позже', 'danger');
-                ST::redirect("back");
-            }
+            $this->backWithData($this->validator->errors()->all());
         }
 
         //any participants required
         if (!intval($request->get('in_place_participants_count')) && !count($request->get('inner_participants'))) {
-            $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage('Вы не выбрали участников для ВКС', 'danger');
-            ST::redirect("back");
+            $this->backWithData('Вы не выбрали участников для ВКС');
         }
 
         $vks = new Vks();
@@ -578,28 +465,26 @@ class Vks_controller extends Controller
         $vks->fill($request->all());
         $vks->is_private = $request->has('is_private') ? 1 : 0;
         $vks->record_required = $request->has('record_required') ? 1 : 0;
-        $vks->date = date_create($vks->date)->format("Y-m-d");
-        //set proper time
-        $vks->start_date_time
-            = date_create($vks->date . " " . $request->get('start_time'))->format("Y-m-d H:i:s");
-        $vks->end_date_time
-            = date_create($vks->date . " " . $request->get('end_time'))->format("Y-m-d H:i:s");
+        $vks->other_tb_required = $request->get('needTB') ? 1 : 0;
+
+        $vks->start_date_time = $request->get('date') . " " . $request->get('start_time');
+        $vks->end_date_time = $request->get('date') . " " . $request->get('end_time');
 
         $this->timeBarrier($vks);
-        if (isset($trVks)) {
-            $vks->link_ca_vks_id = $trVks->id;
-            $vks->link_ca_vks_type = VKS_NS;
-            $vks->other_tb_required = 1;
-        }
 
         $vks->comment_for_admin = $request->get('comment_for_admin');
-
         $vks->owner_id = $request->get('owner_id');
         $vks->from_ip = App::$instance->user->ip;
         $vks->status = VKS_STATUS_APPROVED;
         $vks->approved_by = App::$instance->user->id;
-
         $vks->save();
+        //relation models
+        if ($request->get('needTB')) {
+            App::$instance->callService('vks_ca_negotiator')->fillRequestWithInputData($this->request);
+            App::$instance->callService('vks_ca_negotiator')->validateCaParticipants($this->request, $this);
+            App::$instance->callService('vks_ca_negotiator')->fillRelationEntity($this->request, $vks);
+        }
+
 
         if ($request->get('tech_support_required'))
             TechSupportRequest::create(array(
@@ -616,14 +501,6 @@ class Vks_controller extends Controller
         //create participants
         $this->createInnerOrPhoneParp($request->get('inner_participants'), $vks, true);
 
-        $message = "Администратор " . App::$instance->user->login . " напрямую добавил ВКС " . ST::linkToVksPage($vks->id) . " в расписание";
-
-        $message .= $vks->other_tb_requited ? " + создан транспорт в ЦА " . $vks->link_ca_vks_id : "";
-
-//        NoticeObs_controller::put($message);
-
-        App::$instance->MQ->setMessage("ВКС " . ST::linkToVksPage($vks->id) . " добавлена в расписание");
-
         App::$instance->log->logWrite(LOG_VKSWS_CREATED, "VKS " . ST::linkToVksPage($vks->id) . " Created by admin, direct insert");
 
         if (!$request->has('no-codes')) {
@@ -635,20 +512,27 @@ class Vks_controller extends Controller
                 } else {
                     $checkVks = $connCtrl->isCodeInUse($compiledCode, $vks->start_date_time, $vks->end_date_time);
                 }
-
                 if ($checkVks) {
-                    App::$instance->MQ->setMessage('Ошибка: Код ' . $compiledCode . ' уже используется в ' . ST::linkToVksPage($checkVks->id), 'danger');
-                    ST::redirect("back");
+                    $this->backWithData('Ошибка: Код ' . $compiledCode . ' уже используется в ' . ST::linkToVksPage($checkVks->id));
                 } else {
                     $newCodes[] = ConnectionCode::create([
                         'vks_id' => $vks->id,
                         'value' => $compiledCode,
                         'tip' => $code['tip']
                     ]);
-
                 }
             }
         }
+
+        //vks ca process
+        $transportVksMessage =
+            App::$instance->callService('vks_ca_negotiator')->transportVksProcessor($this->request, $vks);
+
+        if ($transportVksMessage->getStatusCode() != Response::HTTP_OK) {
+            $this->backWithData($transportVksMessage->getContent());
+        }
+
+        App::$instance->MQ->setMessage("ВКС " . ST::linkToVksPage($vks->id) . " добавлена в расписание" . "<p>" . $transportVksMessage->getContent() . "</p>");
 
         Capsule::commit();
 
@@ -707,18 +591,18 @@ class Vks_controller extends Controller
             $vks->ca_linked_vks = $caVks;
 
         }
-//        dump($vks->owner_id);
-//        dump(User::where('id',$vks->owner_id)->first());
+
+        $vks->CaIdParticipants;
+        $vks->CaInPlaceParticipantCount;
+
         $vks = $this->humanize($vks);
 
 //        dump($vks);
-
         if (!$vks->is_simple) {
             $this->render('vks/show', compact('vks', 'partial'));
         } else {
             $this->render('vks/simple-info', compact('vks', 'partial'));
         }
-
 
     }
 
@@ -792,18 +676,16 @@ class Vks_controller extends Controller
         ]);
         //if no passes
         if (!$this->validator->passes()) {
-            App::$instance->MQ->setMessage($this->validator->errors()->all());
-            ST::redirect("back");
+            $this->backWithData($this->validator->errors()->all());
         }
 
         //any participants required
         if (!intval($request->get('in_place_participants_count')) && !count($request->get('inner_participants'))) {
-            $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage('Вы не выбрали участников для ВКС', 'danger');
-            ST::redirect("back");
+            $this->backWithData('Вы не выбрали участников для ВКС');
         }
 
         $vks = Vks::full()->findOrFail($id);
+
         $vCSys = new VksVersion_controller();
         if ($vCSys->create($vks)) {
             if (!$request->get('ca_code')) $request->set('ca_code', Null);
@@ -811,35 +693,26 @@ class Vks_controller extends Controller
             $vks->fill($request->all());
             $vks->is_private = $request->has('is_private') ? 1 : 0;
             $vks->record_required = $request->has('record_required') ? 1 : 0;
-            $vks->date = date_create($request->get('date'))->format(("Y-m-d"));
-            $vks->start_date_time = $vks->date . " " . date_create($request->get('start_time'))->format("H:i:s");
-            $vks->end_date_time = $vks->date . " " . date_create($request->get('end_time'))->format("H:i:s");
+            $vks->start_date_time = $request->get('date') . " " . $request->get('start_time');
+            $vks->end_date_time = $request->get('date') . " " . $request->get('end_time');
+
             $this->timeBarrier($vks);
             //recreate participants
             $this->createInnerOrPhoneParp($request->get("inner_participants"), $vks, true);
-
             //flush old connection code
             $vks->status = VKS_STATUS_PENDING;
             $vks->approved_by = Null;
             $vks->save();
         } else {
-            App::$instance->MQ->setMessage("Ошибка: Не удалось создать версию ВКС", 'danger');
-            ST::redirect('back');
+            $this->backWithData("Ошибка: Не удалось создать версию ВКС");
         }
 
-//        NoticeObs_controller::put("Пользователь " . App::$instance->user->login . " отредактировал ВКС " . ST::linkToVksPage($vks->id));
-
         App::$instance->MQ->setMessage("Успешно отредактировано, вкс передана на согласование администраторам");
-
         App::$instance->log->logWrite(LOG_VKSWS_CREATED, "VKS " . ST::linkToVksPage($vks->id) . " edited by user " . App::$instance->user->login . "");
-
         Capsule::commit();
         //revoke all outlook requests requests
         OutlookCalendarRequest_controller::changeRequestTypeAndPutToResend($vks->id, OutlookCalendarRequest::REQUEST_TYPE_UPDATE);
-
         ST::redirectToRoute('vks/show/' . $vks->id);
-
-
     }
 
     public function adminUpdate($id)
@@ -864,21 +737,18 @@ class Vks_controller extends Controller
             'Комментарий для Пользователя' => [$request->get('comment_for_user'), 'max(160)'],
             'Кол-во участников с рабочих мест (IP телефоны)' => [$request->get('in_place_participants_count'), 'int'],
         ]);
+
         if (!count($request->get('inner_participants')) && $request->get('in_place_participants_count') == 0) {
-            App::$instance->MQ->setMessage("В ВКС обязательно должны быть участники", 'danger');
-            ST::redirect("back");
+            $this->backWithData("В ВКС обязательно должны быть участники");
         }
         //if no passes
         if (!$this->validator->passes()) {
-            App::$instance->MQ->setMessage($this->validator->errors()->all());
-            ST::redirect("back");
+            $this->backWithData($this->validator->errors()->all());
         }
 
         //any participants required
         if (!intval($request->get('in_place_participants_count')) && !count($request->get('inner_participants'))) {
-            $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage('Вы не выбрали участников для ВКС', 'danger');
-            ST::redirect("back");
+            $this->backWithData('Вы не выбрали участников для ВКС');
         }
 
         $vks = vks::full()->findOrFail($id);
@@ -892,23 +762,18 @@ class Vks_controller extends Controller
             $vks->fill($request->all());
             $vks->is_private = $request->has('is_private') ? 1 : 0;
             $vks->record_required = $request->has('record_required') ? 1 : 0;
-            $vks->date = date_create($request->get('date'))->format(("Y-m-d"));
-            $vks->start_date_time = $vks->date . " " . date_create($request->get('start_time'))->format("H:i:s");
-            $vks->end_date_time = $vks->date . " " . date_create($request->get('end_time'))->format("H:i:s");
+            $vks->start_date_time = $request->get('date') . " " . $request->get('start_time');
+            $vks->end_date_time = $request->get('date') . " " . $request->get('end_time');
 
             $this->timeBarrier($vks);
-
             //recreate participants
             $this->createInnerOrPhoneParp($request->get("inner_participants"), $vks, true);
             //check if user change participants list
-
-
             //flush old connection code
             $oldCode = ConnectionCode::where('vks_id', $id)->get();
             if (count($oldCode))
                 foreach ($oldCode as $code)
                     $code->delete();
-
             if ($vks->status == VKS_STATUS_APPROVED) {
                 if (count($request->get('code'))) {
                     foreach ($request->get('code') as $code)
@@ -922,8 +787,6 @@ class Vks_controller extends Controller
             $vks->save();
         }
 
-//        NoticeObs_controller::put("Админ " . App::$instance->user->login . " отредактировал ВКС " . ST::linkToVksPage($vks->id));
-
         App::$instance->MQ->setMessage("Успешно отредактировано");
 
         App::$instance->log->logWrite(LOG_VKSWS_CREATED, "VKS " . ST::linkToVksPage($vks->id) . " edited by admin " . App::$instance->user->login . "");
@@ -933,7 +796,7 @@ class Vks_controller extends Controller
         if ($request->get('notify') == 1) {
             $vks = Vks::full()->find($vks->id);
             $this->humanize($vks);
-            $this->sendEditedMail($vks, false);
+            App::$instance->callService('vks_report_builder')->sendEditedMail($vks, false);
             App::$instance->MQ->setMessage("Успешно отредактировано, пользователю отправлено уведомление");
         }
 
@@ -946,7 +809,6 @@ class Vks_controller extends Controller
 
     public function apiGet($vksId)
     {
-//        $s = ST::microtime_float();
         $cacheName = App::$instance->tbId . ".vks.controller.api.get.{$vksId}";
         $vks = App::$instance->cache->get($cacheName);
 
@@ -955,20 +817,14 @@ class Vks_controller extends Controller
             $cachedObj = new CachedObject($vks, ['tag.' . $cacheName]);
             App::$instance->cache->set($cacheName, $cachedObj, 3600 * 24 * 3);
         }
-
-
-        //ask for VksfromCA
         $caVks = Null;
-
         if ($vks->link_ca_vks_id) {
             if ($vks->link_ca_vks_type == 0) {
                 $caVks = Curl::get(ST::routeToCaApi('getVksWasById/' . $vks->link_ca_vks_id));
             } else {
                 $caVks = Curl::get(ST::routeToCaApi('getVksNsById/' . $vks->link_ca_vks_id));
             }
-//            dump($caVks);
             $caVks = json_decode($caVks);
-
             if ($caVks->status == 200) {
                 $caVks = $caVks->data;
             } else {
@@ -985,12 +841,11 @@ class Vks_controller extends Controller
         }
 
         $vks = $this->humanize($vks);
-
         print $vks->toJson();
 
     }
 
-    protected function createInnerOrPhoneParp($parpList, $vks, $flush = false)
+    protected function createInnerOrPhoneParp($parpList, Vks $vks, $flush = false)
     {
         //init attendance old controller
         if ($flush) {
@@ -1008,9 +863,7 @@ class Vks_controller extends Controller
                         'attendance_id' => intval($parp->id),
                     );
                 } else {
-                    $this->putUserDataAtBackPack($this->request);
-                    App::$instance->MQ->setMessage("Ошибка в данном режиме работы нельзя создать ВКС с участниками которые уже участвуют в других ВКС, выберите участников заново и повторите отправку", 'danger');
-                    ST::redirect("back");
+                    $this->backWithData("Ошибка в данном режиме работы нельзя создать ВКС с участниками которые уже участвуют в других ВКС, выберите участников заново и повторите отправку");
                 }
             } else {
                 if (isset($parp->id))
@@ -1027,9 +880,9 @@ class Vks_controller extends Controller
     {
         $now = date_create()->getTimestamp();
         //check start time
-        $vksStartTime = date_create($vksObject->start_date_time)->getTimestamp();
+        $vksStartTime = $vksObject->start_date_time->getTimestamp();
         //check end time
-        $vksEndTime = date_create($vksObject->end_date_time)->getTimestamp();
+        $vksEndTime = $vksObject->end_date_time->getTimestamp();
 
         return (($vksStartTime - $now) || ($vksEndTime - $now)) < 0 ? true : false;
     }
@@ -1040,13 +893,12 @@ class Vks_controller extends Controller
         return ($vks->owner_id === App::$instance->user->id || Auth::isAdmin(App::$instance)) ? true : false;
     }
 
-    public function humanize(&$vks)
+    public function humanize(Vks &$vks)
     {
-
         $vks->humanized = new stdClass();
-        $vks->humanized->date = date_create($vks->date)->format("d.m.Y");
-        $vks->humanized->startTime = date_create($vks->start_date_time)->format("H:i");
-        $vks->humanized->endTime = date_create($vks->end_date_time)->format("H:i");
+        $vks->humanized->date = $vks->date->format("d.m.Y");
+        $vks->humanized->startTime = $vks->start_date_time->format("H:i");
+        $vks->humanized->endTime = $vks->end_date_time->format("H:i");
 
         $vks->humanized->isEditable = $this->isEditable($vks);
         $vks->humanized->isCloneable = $this->isCloneable($vks);
@@ -1120,16 +972,19 @@ class Vks_controller extends Controller
                 }
             }
         }
-        $vks->humanized->presentation = $vks->presentation ? "Да" : "Нет";
-//        dump($vks->connection_codes);
-        return $vks;
 
+        $vks->humanized->presentation = $vks->presentation ? "Да" : "Нет";
+        return $vks;
     }
 
     public function annulate($vksId)
     {
+        try {
+            $vks = Vks::findorFail($vksId);
+        } catch (Exception $e) {
+            $this->error("404", $e->getMessage());
+        }
 
-        $vks = Vks::findorFail($vksId);
         $this->humanize($vks);
         $this->render('Vks/admin/annulate', compact('vks'));
         //revoke all outlook requests requests
@@ -1139,12 +994,17 @@ class Vks_controller extends Controller
 
     public function cancel($id) //by user
     {
-        $vks = Vks::findorFail($id);
+        try {
+            $vks = Vks::findorFail($id);
+        } catch (Exception $e) {
+            $this->error("404", $e->getMessage());
+        }
+
         if (!Auth::isAdmin(App::$instance)
             && !$this->isThisUserCanEdit($vks)
             && !VKSTimeAnalizator::isManipulatable($vks)
         ) {
-            ST::routeToErrorPage('no_manipulable');
+            $this->error("500", 'Манипулирование этой ВКС запрещено');
         }
         $vks->status = VKS_STATUS_DROP_BY_USER;
         $vks->save();
@@ -1167,8 +1027,12 @@ class Vks_controller extends Controller
 
     public function dropByAdmin($id)
     {
+        try {
+            $vks = Vks::findorFail($id);
+        } catch (Exception $e) {
+            $this->error("404", $e->getMessage());
+        }
 
-        $vks = Vks::findorFail($id);
         $request = $this->request->request;
         $this->validator->validate([
             'Комментарий для пользователя' => [$request->get('comment_for_user'), 'max(160)'],
@@ -1176,24 +1040,20 @@ class Vks_controller extends Controller
 
         //if no passes
         if (!$this->validator->passes()) {
-            $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage($this->validator->errors()->all());
-            ST::redirect("back");
+            $this->backWithData($this->validator->errors()->all());
         }
 
         if ($vks->other_tb_required) {
-            if (!$vks->other_tb_required || $vks->link_ca_vks_type != 1 || !isset($vks->link_ca_vks_id)) {
-                App::$instance->MQ->setMessage("Возникла ошибка, ВКС представлена как использующая транспортную ВКС, однако при проверке этого не обнаружено, обратитесь к разработчику");
-                ST::redirect('back');
+            if ($vks->other_tb_required && $vks->link_ca_vks_type == 1 && isset($vks->link_ca_vks_id)) {
+                //pull from CA
+                $caVks = CAVksNoSupport::findOrFail($vks->link_ca_vks_id);
+                if ($caVks->status != VKS_STATUS_TRANSPORT_FOR_TB) {
+                    App::$instance->MQ->setMessage("Возникла ошибка, ВКС в ТБ {$id} ссылается на ВКС в ЦА {$vks->link_ca_vks_id}, однако ВКС в ЦА, не имеет транспортного статуса, обратитесь к разработчику");
+                    ST::redirect('back');
+                }
+                $caVks->delete();
+                App::$instance->log->logWrite(LOG_VKSWS_CREATED, "VKS + transport" . $vks->id . "({$caVks->id}) deleted by admin " . App::$instance->user->login . "");
             }
-            //pull from CA
-            $caVks = CAVksNoSupport::findOrFail($vks->link_ca_vks_id);
-            if ($caVks->status != VKS_STATUS_TRANSPORT_FOR_TB) {
-                App::$instance->MQ->setMessage("Возникла ошибка, ВКС в ТБ {$id} ссылается на ВКС в ЦА {$vks->link_ca_vks_id}, однако ВКС в ЦА, не имеет транспортного статуса, обратитесь к разработчику");
-                ST::redirect('back');
-            }
-            $caVks->delete();
-            App::$instance->log->logWrite(LOG_VKSWS_CREATED, "VKS + transport" . $vks->id . "({$caVks->id}) deleted by admin " . App::$instance->user->login . "");
         } else {
             App::$instance->log->logWrite(LOG_VKSWS_CREATED, "VKS " . $vks->id . " deleted by admin " . App::$instance->user->login . "");
         }
@@ -1210,7 +1070,7 @@ class Vks_controller extends Controller
         if ($request->has('notificate')) {
             $vks = Vks::full()->find($vks->id);
             $this->humanize($vks);
-            $this->sendDeleteMail($vks, false);
+            App::$instance->callService('vks_report_builder')->sendDeleteMail($vks, false);
         }
 
         //revoke all outlook requests requests
@@ -1233,10 +1093,11 @@ class Vks_controller extends Controller
     {
         Auth::isAdminOrDie(App::$instance);
         $vcc = new VksVersion_controller();
-        $vksList = Vks::notApproved()->take($this->getQlimit())
+        $vksList = Vks::notApproved()->take($this->getQlimit(30))
             ->skip($this->getQOffset())
             ->orderBy($this->getQOrder(), $this->getQVector())
-            ->full()->get();
+            ->full()
+            ->get();
         foreach ($vksList as $vks) {
             $this->humanize($vks);
             $vksLasVersion = $vcc->pullLastVersion($vks->id);
@@ -1244,26 +1105,28 @@ class Vks_controller extends Controller
         }
         $recordsCount = Vks::notApproved()->count();
         //pages
-        $pages = RenderEngine::makePagination($recordsCount, $this->getQlimit(), 'route');
+        $pages = RenderEngine::makePagination($recordsCount, $this->getQlimit(30), 'route');
 
         $this->render("vksSubmissions/index", compact('vksList', 'pages'));
     }
 
     function showNaVks($id)
     {
-        Auth::isAdminOrDie(App::$instance);
+
         $versionCtrl = new VksVersion_controller();
         $load = new Load_controller();
         $sc = new Settings_controller();
-
-
-        $vks = Vks::NotSimple()->full()->findOrFail($id);
+        try {
+            $vks = Vks::NotSimple()->full()->findOrFail($id);
+        } catch (Exception $e) {
+            $this->error('404', $e->getMessage());
+        }
 
         $vks = $this->humanize($vks);
 
         $att = new AttendanceNew_controller();
+
         $check = boolval(intval(Settings_controller::getOther("attendance_check_enable")));
-//        $strict = boolval(intval(Settings_controller::getOther("attendance_strict")));
 
         foreach ($vks->participants as $parp) {
             if ($check) {
@@ -1275,7 +1138,6 @@ class Vks_controller extends Controller
 
         if (!self::isVksCanBeApproved($vks))
             $this->error('500', 'Открыть экран согласования по этой ВКС невозможно, переведите эту ВКС в статус "на согласовании" и попробуйте еще раз');
-
 
         $vks->isPassebByCapacity = $load->isPassedByCapacity($vks->start_date_time, $vks->end_date_time, $this->countParticipants($vks->id), 0);
 
@@ -1293,7 +1155,6 @@ class Vks_controller extends Controller
                 $caVks = Null;
             }
         }
-
         $codes = $sc->getCodeDelivery(true);
         $versions = $versionCtrl->getVersionsList($vks->id);
         $last_version = null;
@@ -1308,58 +1169,82 @@ class Vks_controller extends Controller
             }
         }
 
+        if ($vks->other_tb_required) {
+            $vks->CaInPlaceParticipantCount;
+            $vks->CaIdParticipants;
+        }
+        $codesFiltrated = array();
+        $ca_pool_codes = App::$instance->callService("vks_ca_negotiator")->askForPool();
+
+        $currentVksStart = clone($vks->start_date_time);
+        $currentVksEnd = clone($vks->end_date_time);
+
+        if (count($ca_pool_codes)) {
+            $ca_transport_vkses = App::$instance->callService("vks_ca_negotiator")->aksTransportVksInPeriod($currentVksStart, $currentVksEnd, $ca_pool_codes);
+
+            foreach ($ca_pool_codes as $code) {
+                $codesFiltrated[$code] = array();
+                if (count($ca_transport_vkses))
+                    foreach ($ca_transport_vkses as $ca_tr_vks) {
+                        if ($code == $ca_tr_vks->v_room_num)
+                            $codesFiltrated[$code][] = $ca_tr_vks;
+                    }
+            }
+        }
 
         $graph = $load->pullLoadDataForJs($vks->humanized->date);
 
-
-//        dump($caVks);
-        $this->render('vksSubmissions/approvePage', compact('vks', 'graphUrl', 'caVks', 'versions', 'codes', 'last_version', 'graph'));
+        $this->render('vksSubmissions/approvePage', compact('vks', 'graphUrl', 'caVks', 'versions', 'codes', 'last_version', 'graph', 'codesFiltrated'));
     }
 
     function process($vksId)
     {
 
-        Auth::isAdminOrDie(App::$instance);
-        $connCtrl = new ConnectionCode_controller();
-
-        $vks = Vks::findOrFail($vksId);
-
         Token::checkToken();
+        $connCtrl = new ConnectionCode_controller();
+        try {
+            $vks = Vks::findOrFail($vksId);
+        } catch (Exception $e) {
+            $this->error('404');
+        }
 
         if (!self::isVksCanBeApproved($vks))
-            throw new Exception('this VKS can\'t be approved or declined,change it status to PENDING first');
+            $this->error('500', "Эта ВКС не может быть согласована, т.к. не имеет соответвующего статуса");
 
         $request = $this->request->request;
+
         //validate
         $this->validator->validate([
             'Комментарий для пользователя' => [$request->get('comment_for_user'), 'max(160)'],
             'Статус ВКС' => [$request->get('status'), 'required|between(1,2)'],
         ]);
         //if no passes
-        if (!$this->validator->passes()) {
-            App::$instance->MQ->setMessage($this->validator->errors()->all());
-            ST::redirect("back");
-        }
+        if (!$this->validator->passes())
+            $this->backWithData($this->validator->errors()->all());
 
         /*
          * if declined
          */
-        if ($request->get('status') == 2) {
+        if ($request->get('status') == VKS::APPROVE_STATUS_DECLINED) {
+            $backMessage = "<p>Вкс #{$vks->id}, отказ в проведении</p>";
             $vks->comment_for_user = $request->get('comment_for_user');
             $vks->status = $request->get('status');
             $vks->approved_by = App::$instance->user->id;
             $vks->save();
 
+            //delete related VKS in CA
             if ($vks->other_tb_required && $vks->link_ca_vks_type == 1 && isset($vks->link_ca_vks_id)) {
                 $caVks = CAVksNoSupport::find($vks->link_ca_vks_id);
                 if ($caVks->status == VKS_STATUS_TRANSPORT_FOR_TB) {
+                    App::$instance->log->logWrite(LOG_OTHER_EVENTS, "Транспортная ВКС " . $caVks->id . " удалена");
+                    $backMessage .= "<p>Транспортная ВКС " . $caVks->id . " удалена</p>";
                     $caVks->delete();
                 }
             }
 
             $vks = Vks::full()->find($vks->id);
             $this->humanize($vks);
-            $this->sendDeclineMail($vks, false);
+            App::$instance->callService('vks_report_builder')->sendDeclineMail($vks, false);
             //revoke all outlook requests requests
             OutlookCalendarRequest_controller::changeRequestTypeAndPutToResend($vks->id, OutlookCalendarRequest::REQUEST_TYPE_DELETE);
 
@@ -1369,24 +1254,20 @@ class Vks_controller extends Controller
                         $request->status = TechSupportRequest::STATUS_VKS_REFUSED;
                         $request->save();
                     }
-
                 }
-
-            App::$instance->MQ->setMessage("Вкс #{$vks->id}, отказ в проведении");
-//            NoticeObs_controller::put("Администратор выдал отказ по вкс " . ST::linkToVksPage($vks->id));
+            App::$instance->MQ->setMessage($backMessage);
             ST::redirect(ST::route("Vks/notApproved"));
-
         }
 
         if (!$request->has('no-codes') && !count($request->get('code')))
-            throw new LogicException('bad params combined');
-
+            $this->error('500', 'bad params combined');
 
         /*
          * if no codes
          *
          */
         if ($request->has('no-codes')) {
+            $backMessage = "<p>Вкс #{$vks->id} согласована без кода подключения</p>";
             //delete old
             $oldCodes = ConnectionCode::where('vks_id', $vks->id)->get();
             if (count($oldCodes))
@@ -1398,15 +1279,18 @@ class Vks_controller extends Controller
             //set admin id
             $vks->approved_by = App::$instance->user->id;
             $vks->save();
+            //vks ca process
+            $transportVksMessage = App::$instance->callService('vks_ca_negotiator')->transportVksProcessor($this->request, $vks);
+            if ($transportVksMessage->getStatusCode() != Response::HTTP_OK) {
+                $this->backWithData($transportVksMessage->getContent());
+            }
 
             $vks = Vks::full()->find($vks->id);
             $this->humanize($vks);
-            $this->sendReportMail($vks, false);
-
-            App::$instance->MQ->setMessage("Вкс #{$vks->id} согласована без кода подключения");
-//            NoticeObs_controller::put("Администратор принял решение по вкс " . ST::linkToVksPage($vks->id));
-
+            App::$instance->callService('vks_report_builder')->sendReportMail($vks, false);
+            App::$instance->MQ->setMessage($backMessage . $transportVksMessage->getContent());
             ST::redirect(ST::route("Vks/notApproved"));
+
         }
 
         /*
@@ -1415,44 +1299,24 @@ class Vks_controller extends Controller
 
         //validate codes
         if (!count($request->get('code')))
-            throw new LogicException('no code was passed, error!');
-
-//        //all codes must be unique
-//        $uniqueCodes = [];
-//
-//        foreach ($request->get('code') as $code) {
-//            $compiledCode = $code['postfix'];
-//            if (!in_array($compiledCode, $uniqueCodes)) {
-//                $uniqueCodes[] = $compiledCode;
-//            } else {
-//                //if no passes
-//                App::$instance->MQ->setMessage('Ошибка: Все коды в наборе должны быть уникальны', 'danger');
-//                ST::redirect("back");
-//            }
-//        }
+            $this->error('500', 'no code was passed, error!');
 
         foreach ($request->get('code') as $code) {
-
             $this->validator->validate([
                 'Префикс' => [$code['prefix'], 'required|max(160)'],
                 'Постфикс' => [$code['postfix'], 'required|max(4)'],
                 'Подсказка' => [$code['tip'], 'max(255)'],
             ]);
             //if no passes
-            if (!$this->validator->passes()) {
-                App::$instance->MQ->setMessage($this->validator->errors()->all());
-                ST::redirect("back");
-            }
+            if (!$this->validator->passes())
+                $this->backWithData($this->validator->errors()->all());
         }
 
         Capsule::beginTransaction();
-
-
         $oldCodes = ConnectionCode::where('vks_id', $vks->id)->get();
         if (count($oldCodes))
             foreach ($oldCodes as $oldCode)
                 $oldCode->delete();
-
 
         foreach ($request->get('code') as $code) {
             $compiledCode = $code['prefix'] . $code['postfix'];
@@ -1462,8 +1326,6 @@ class Vks_controller extends Controller
             } else {
                 $checkVks = $connCtrl->isCodeInUse($code['postfix'], $vks->start_date_time, $vks->end_date_time);
             }
-//            dump($checkVks);
-//            die;
             if ($checkVks) {
                 App::$instance->MQ->setMessage('Ошибка: Код ' . $code['postfix'] . ' уже используется в ' . ST::linkToVksPage($checkVks->id), 'danger');
                 ST::redirect("back");
@@ -1473,7 +1335,6 @@ class Vks_controller extends Controller
                     'value' => $compiledCode,
                     'tip' => $code['tip']
                 ]);
-
             }
         }
 
@@ -1482,7 +1343,11 @@ class Vks_controller extends Controller
         //set admin id
         $vks->approved_by = App::$instance->user->id;
         $vks->save();
-
+        //vks ca process
+        $transportVksMessage = App::$instance->callService('vks_ca_negotiator')->transportVksProcessor($this->request, $vks);
+        if ($transportVksMessage->getStatusCode() != Response::HTTP_OK) {
+            $this->backWithData($transportVksMessage->getContent());
+        }
 
         Capsule::commit();
 
@@ -1492,13 +1357,13 @@ class Vks_controller extends Controller
         if ($vks->status == VKS_STATUS_APPROVED) {
             $vks = Vks::full()->find($vks->id);
             $this->humanize($vks);
-            $this->sendReportMail($vks, false);
+            App::$instance->callService('vks_report_builder')->sendReportMail($vks, false);
             //revoke all outlook requests requests
             OutlookCalendarRequest_controller::changeRequestTypeAndPutToResend($vks->id, OutlookCalendarRequest::REQUEST_TYPE_UPDATE);
         }
 
         if ($vks->status == VKS_STATUS_APPROVED) {
-            App::$instance->MQ->setMessage("ВКС {$vks->id} согласована ");
+            App::$instance->MQ->setMessage("<p>ВКС {$vks->id} согласована </p>" . $transportVksMessage->getContent());
             if (count($vks->tech_support_requests))
                 foreach ($vks->tech_support_requests as $request) {
                     if ($request->status == TechSupportRequest::STATUS_WAIT_VKS_DECISION) {
@@ -1517,23 +1382,16 @@ class Vks_controller extends Controller
                 }
         }
 
-
-//        NoticeObs_controller::put("Администратор принял решение по ВКС " . ST::linkToVksPage($vks->id));
-
         ST::redirect(ST::route("Vks/notApproved"));
     }
 
     public function timeBarrier(Vks $vks)
     {
         if ($vks->start_date_time == $vks->end_date_time) {
-            $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage('Ошибка: ВКС не может начаться и тут же закончиться');
-            ST::redirect("back");
+            $this->backWithData('Ошибка: ВКС не может начаться и тут же закончиться');
         }
         if ($vks->start_date_time > $vks->end_date_time) {
-            $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage('Ошибка: ВКС не может начаться раньше времени окончания');
-            ST::redirect("back");
+            $this->backWithData('Ошибка: ВКС не может начаться раньше времени окончания');
         }
     }
 
@@ -1619,7 +1477,7 @@ class Vks_controller extends Controller
 
         $referral = $request->get('referrer');
 
-        if ($this->isAlreadyEnd($caVks->end_date_time)) {
+        if ($this->isAlreadyEnd(date_create($caVks->end_date_time))) {
             App::$instance->MQ->setMessage("Приглашение {$request->get('referrer')}  не действительно, ВКС уже закончилась", 'danger');
             ST::redirectToRoute("Vks/select");
         }
@@ -1631,15 +1489,11 @@ class Vks_controller extends Controller
 
         $departments = Department::orderBy('prefix')->get();
 
-
         $vks = ST::lookAtBackPack();
         $vks = $vks->request;
         if (!$vks->has('inner_participants') && !count($vks->get('inner_participants'))) {
-
             LocalStorage_controller::staticRemove('vks_participants_create');
-
         }
-
 
         $available_points = Attendance::techSupportable()->get()->toArray();
 
@@ -1648,7 +1502,6 @@ class Vks_controller extends Controller
         });
 
         $this->render('vks/joinCa', compact('vks', 'caVks', 'departments', 'referral', 'flag', 'available_points'));
-
     }
 
     public function  joinCaStore($referral)
@@ -1673,16 +1526,12 @@ class Vks_controller extends Controller
         ]);
         //if no passes
         if (!$this->validator->passes()) {
-            $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage($this->validator->errors()->all());
-            ST::redirect("back");
+            $this->backWithData($this->validator->errors()->all());
         }
 
         //any participants required
         if (!intval($request->get('in_place_participants_count')) && !count($request->get('inner_participants'))) {
-            $this->putUserDataAtBackPack($this->request);
-            App::$instance->MQ->setMessage('Вы не выбрали участников для ВКС', 'danger');
-            ST::redirect("back");
+            $this->backWithData('Вы не выбрали участников для ВКС');
         }
 
         Capsule::beginTransaction();
@@ -1691,19 +1540,21 @@ class Vks_controller extends Controller
         $caNS = CAVksNoSupport::where('referral', $referral)->first();
 
         if (!$caWS && !$caNS) {
-            App::$instance->MQ->setMessage("Приглашение {$request->get('referrer')}  не действительно");
-            ST::redirect("back");
+            $this->backWithData("Приглашение {$request->get('referrer')}  не действительно");
         }
         $caVKSType = $caWS ? VKS_WAS : VKS_NS;
         $caVks = $caWS ? $caWS : $caNS;
+        $this->convertToLocalTime($caVks);
 
         $vks = new Vks();
         $vks->is_private = $request->has('is_private') ? 1 : 0;
         $vks->record_required = $request->has('record_required') ? 1 : 0;
         $vks->title = $caVks->title;
-        $vks->date = date_create($caVks->date, new DateTimeZone(App::$instance->opt->ca_timezone))->setTimezone(new DateTimeZone(App::$instance->opt->timezone))->format("Y-m-d");
-        $vks->start_date_time = date_create($caVks->start_date_time, new DateTimeZone(App::$instance->opt->ca_timezone))->setTimezone(new DateTimeZone(App::$instance->opt->timezone))->format("Y-m-d H:i:s");
-        $vks->end_date_time = date_create($caVks->end_date_time, new DateTimeZone(App::$instance->opt->ca_timezone))->setTimezone(new DateTimeZone(App::$instance->opt->timezone))->format("Y-m-d H:i:s");
+
+        $vks->date = $caVks->local->start_date_time->format("Y-m-d");
+        $vks->start_date_time = $caVks->local->start_date_time;
+        $vks->end_date_time = $caVks->local->end_date_time;;
+
         $vks->presentation = isset($caVks->presentation) ? $caVks->presentation : 0;
         $vks->department = $request->get('department');
         $vks->initiator = 1; //always CA
@@ -1717,6 +1568,8 @@ class Vks_controller extends Controller
         $vks->from_ip = App::$instance->user->ip;
         $vks->ca_code = isset($caVks->connectionCode->value) ? $caVks->connectionCode->value : $caVks->v_room_num;
         $vks->in_place_participants_count = $request->get('in_place_participants_count');
+
+//        die(dump($vks));
         $vks->save();
 
         if ($request->get('tech_support_required'))
@@ -1738,9 +1591,9 @@ class Vks_controller extends Controller
 
         Capsule::commit();
         //refill for report
-        $this->request->request->set("date", date_create($vks->date)->format("d.m.Y"));
-        $this->request->request->set("start_time", date_create($vks->start_date_time)->format("H:i"));
-        $this->request->request->set("end_time", date_create($vks->end_date_time)->format("H:i"));
+        $this->request->request->set("date", $vks->date->format("d.m.Y"));
+        $this->request->request->set("start_time", $vks->start_date_time->format("H:i"));
+        $this->request->request->set("end_time", $vks->end_date_time->format("H:i"));
         $report->setObject($vks);
         $report->setResult(true);
         $result[] = $report;
@@ -1751,7 +1604,11 @@ class Vks_controller extends Controller
     public function mark($vksId)
     {
         Auth::isAdminOrDie(App::$instance);
-        $vks = Vks::findOrFail($vksId);
+        try {
+            $vks = Vks::findorFail($vksId);
+        } catch (Exception $e) {
+            $this->error("404", $e->getMessage());
+        }
         $vks->flag = 1;
         $vks->save();
         App::$instance->MQ->setMessage("Вкс {$vks->id} отмечена флагом");
@@ -1761,7 +1618,11 @@ class Vks_controller extends Controller
     public function unmark($vksId)
     {
         Auth::isAdminOrDie(App::$instance);
-        $vks = Vks::findOrFail($vksId);
+        try {
+            $vks = Vks::findorFail($vksId);
+        } catch (Exception $e) {
+            $this->error("404", $e->getMessage());
+        }
         $vks->flag = 0;
         $vks->save();
         App::$instance->MQ->setMessage("Вкс {$vks->id}, флаг снят");
@@ -1778,9 +1639,14 @@ class Vks_controller extends Controller
         }
     }
 
-    public function publicStatusChange($VksId)
+    public function publicStatusChange($vksId)
     {
-        $vks = Vks::findOrFail($VksId);
+        try {
+            $vks = Vks::findorFail($vksId);
+        } catch (Exception $e) {
+            $this->error("404", $e->getMessage());
+        }
+
         if (!$this->isThisUserCanEdit($vks))
             $this->error('403');
 
@@ -1794,7 +1660,6 @@ class Vks_controller extends Controller
         ST::redirect('back');
     }
 
-
     public function showLocalVks($caVksId)
     {
         Auth::isAdminOrDie(App::$instance);
@@ -1805,20 +1670,17 @@ class Vks_controller extends Controller
         $this->render('Vks/showLocalRelativeToCa', compact('vkses', 'caVksId'));
     }
 
-    private function inPast($vksStartDate)
+    private function inPast(DateTime $vksStartDate)
     {
-        return date_create() > date_create($vksStartDate, new DateTimeZone(App::$instance->opt->ca_timezone))->setTimezone(new DateTimeZone(App::$instance->opt->timezone)) ? true : false;
-
+        return date_create() > $vksStartDate->setTimezone(new DateTimeZone(App::$instance->opt->timezone)) ? true : false;
     }
 
-    private function isAlreadyEnd($vksEndDate)
+    private function isAlreadyEnd(DateTime $vksEndDate)
     {
-
-        return date_create() > date_create($vksEndDate, new DateTimeZone(App::$instance->opt->ca_timezone))->setTimezone(new DateTimeZone(App::$instance->opt->timezone)) ? true : false;
-
+        return date_create() > $vksEndDate->setTimezone(new DateTimeZone(App::$instance->opt->timezone)) ? true : false;
     }
 
-    private function isEditable($vksObject)
+    private function isEditable(Vks $vksObject)
     {
         if (!Auth::isLogged(App::$instance)) {
             return false;
@@ -1847,7 +1709,7 @@ class Vks_controller extends Controller
         }
     }
 
-    private function isDeletable($vksObject)
+    private function isDeletable(Vks $vksObject)
     {
 
         $result = $this->isEditable($vksObject);
@@ -1872,11 +1734,12 @@ class Vks_controller extends Controller
         return $result;
     }
 
-    private function isCloneable($vksObject)
+    private function isCloneable(Vks $vksObject)
     {
         if (!Auth::isLogged(App::$instance)
             || $vksObject->is_simple
-            || ($vksObject->link_ca_vks_id && !$vksObject->other_tb_required
+            || ($vksObject->link_ca_vks_id
+                && !$vksObject->other_tb_required
 //                || $vksObject->owner_id != App::$instance->user->id
             )
         ) {
@@ -1886,11 +1749,11 @@ class Vks_controller extends Controller
         }
     }
 
-    private function isOutlookable($vksObject)
+    private function isOutlookable(Vks $vksObject)
     {
 
         if (Auth::isLogged(App::$instance)
-            && date_create($vksObject->end_date_time) > date_create()
+            && $vksObject->end_date_time > date_create()
             && $vksObject->status == VKS_STATUS_APPROVED
         ) {
 
@@ -1902,10 +1765,10 @@ class Vks_controller extends Controller
 
     }
 
-    private function isTechSupportable($vksObject)
+    private function isTechSupportable(Vks $vksObject)
     {
         if (Auth::isLogged(App::$instance)
-            && date_create($vksObject->end_date_time) > date_create()
+            && $vksObject->end_date_time > date_create()
             && in_array($vksObject->status, array(VKS_STATUS_APPROVED, VKS_STATUS_PENDING))
             && !$vksObject->is_simple
         ) {
@@ -1917,18 +1780,17 @@ class Vks_controller extends Controller
     }
 
 
-    private
-    function isCodePublicable($vksObject)
+    private function isCodePublicable(Vks $vksObject)
     {
         if (Auth::isAdmin(App::$instance)
-            && date_create($vksObject->start_date_time)->setTime(0, 0) >= date_create()->setTime(0, 0)
+            && $vksObject->start_date_time->setTime(0, 0) >= date_create()->setTime(0, 0)
         ) {
             return true;
         }
 
         if (Auth::isLogged(App::$instance)
             && $vksObject->status == VKS_STATUS_APPROVED
-            && date_create($vksObject->start_date_time)->setTime(0, 0) >= date_create()->setTime(0, 0)
+            && $vksObject->start_date_time->setTime(0, 0) >= date_create()->setTime(0, 0)
             && $vksObject->owner_id == App::$instance->user->id
         ) {
             return true;
@@ -1937,181 +1799,15 @@ class Vks_controller extends Controller
         }
     }
 
-    private
-    function sendReportMail(Vks $vks, $toRequester = true)
-    {
-
-        $vks->link = ST::linkToVksPage($vks->id, false, true);
-        $vksArray = $vks->toArray();
-        $vksCa = ($vks->other_tb_required && !empty($vks->link_ca_vks_id)) ? CAVksNoSupport::with('participants')->find($vks->link_ca_vks_id) : false;
-//        dump($vksCa);
-        $message = App::$instance->twig->render('mails/v2/vksWs-report.twig', array(
-            'vks' => $vksArray,
-            'http_path' => HTTP_BASE_PATH,
-            'appHttpPath' => NODE_HTTP_PATH,
-            'vksCa' => $vksCa
-        ));
-        if (!$toRequester) {
-            Mail::sendMailToStack($vks->owner->email, "ВКС #{$vks['id']} | {$vks['title']}", $message);
-        } else {
-            Mail::sendMailToStack(App::$instance->user->email, "ВКС #{$vks['id']} | {$vks['title']}", $message);
-        }
-        if (mb_strtolower($vks->owner->email) != mb_strtolower($vks->init_customer_mail) && mb_strtolower($vks->init_customer_mail) != 'не указано') {
-            Mail::sendMailToStack($vks->init_customer_mail, "ВКС #{$vks->id} | {$vks['title']}, в которой вы заявлены как ответственный, одобрена", $message);
-        }
-        App::$instance->log->logWrite(LOG_MAIL_SENDED, "VKS WS #{$vks['id']} | {$vks['title']}, одобрена");
-    }
-
-    private
-    function sendSimpleMail($vks, $toRequester = true)
-    {
-        $vks->link = ST::linkToVksPage($vks->id, false, true);
-        $message = App::$instance->twig->render('mails/v2/vkssimple-report.twig', array(
-            'vks' => $vks,
-            'http_path' => HTTP_BASE_PATH,
-            'appHttpPath' => NODE_HTTP_PATH
-        ));
-        if (!$toRequester) {
-            Mail::sendMailToStack($vks->owner->email, "ВКС #{$vks['id']} | {$vks['title']}, создана", $message);
-        } else {
-            Mail::sendMailToStack(App::$instance->user->email, "ВКС #{$vks['id']} | {$vks['title']}, создана", $message);
-        }
-
-        App::$instance->log->logWrite(LOG_MAIL_SENDED, "VKS WS #{$vks['id']} | {$vks['title']}, создана");
-    }
-
-    private
-    function sendDeclineMail($vks, $toRequester = true)
-    {
-
-        $vks->link = ST::linkToVksPage($vks->id, false, true);
-        $vksArray = $vks->toArray();
-        $message = App::$instance->twig->render('mails/v2/vksWs-refuse.twig', array(
-            'vks' => $vksArray,
-            'http_path' => HTTP_BASE_PATH,
-            'appHttpPath' => NODE_HTTP_PATH
-        ));
-        if (!$toRequester) {
-            Mail::sendMailToStack($vks->owner->email, "ВКС #{$vks['id']} отказ", $message);
-        } else {
-            Mail::sendMailToStack(App::$instance->user->email, "ВКС #{$vks['id']} отказ", $message);
-        }
-        App::$instance->log->logWrite(LOG_MAIL_SENDED, "VKS WS #{$vks['id']} отказ");
-    }
-
-    private
-    function sendEditedMail($vks, $toRequester = true)
-    {
-
-        $vks->link = ST::linkToVksPage($vks->id, false, true);
-        $vksArray = $vks->toArray();
-        $vksCa = ($vks->other_tb_required && !empty($vks->link_ca_vks_id)) ? CAVksNoSupport::with('participants')->find($vks->link_ca_vks_id) : false;
-        $message = App::$instance->twig->render('mails/v2/vksWs-edited.twig', array(
-            'vks' => $vksArray,
-            'http_path' => HTTP_BASE_PATH,
-            'appHttpPath' => NODE_HTTP_PATH,
-            'vksCa' => $vksCa
-        ));
-        if (!$toRequester) {
-            Mail::sendMailToStack($vks->owner->email, "ВКС #{$vks['id']} | {$vks['title']}, отредактирована администратором", $message);
-        } else {
-            Mail::sendMailToStack(App::$instance->user->email, "ВКС #{$vks['id']} | {$vks['title']}, отредактирована администратором", $message);
-        }
-
-        if (mb_strtolower($vks->owner->email) != mb_strtolower($vks->init_customer_mail)) {
-            Mail::sendMailToStack($vks->init_customer_mail, "ВКС #{$vks->id} | {$vks['title']}, в которой вы заявлены как ответственный, отредактирована администратором", $message);
-        }
-
-        App::$instance->log->logWrite(LOG_MAIL_SENDED, "VKS WS #{$vks['id']} | {$vks['title']}, отредактирована администратором");
-    }
-
-    private
-    function sendDeleteMail($vks, $toRequester = true)
-    {
-        $vks->link = ST::linkToVksPage($vks->id, false, true);
-        $vksArray = $vks->toArray();
-        $message = App::$instance->twig->render('mails/v2/vks-delete.twig', array(
-            'vks' => $vksArray,
-            'http_path' => HTTP_BASE_PATH,
-            'appHttpPath' => NODE_HTTP_PATH
-        ));
-        if (!$toRequester) {
-            Mail::sendMailToStack($vks->owner->email, "Ваша ВКС #{$vks['id']} аннулирована", $message);
-        } else {
-            Mail::sendMailToStack(App::$instance->user->email, "ВКС #{$vks['id']} аннулирована", $message);
-        }
-        App::$instance->log->logWrite(LOG_MAIL_SENDED, "VKS WS #{$vks['id']} аннулирована");
-    }
-
-    private
-    function sendAdminNotice(Vks $vks)
-    {
-        $vksArray = $vks->toArray();
-
-        $admins = User::whereIn('role', [ROLE_ADMIN, ROLE_ADMIN_MODERATOR])->get(['login', 'email']);
-        if (count($admins))
-            foreach ($admins as $admin) {
-                $message = App::$instance->twig->render('mails/v2/newVksAdminNotificate.twig', array(
-                    'vks' => $vksArray,
-                    'http_path' => HTTP_BASE_PATH,
-                    'appHttpPath' => NODE_HTTP_PATH
-                ));
-
-                Mail::sendMailToStack($admin->email, "Новая заявка на ВКС #{$vks['id']}", $message);
-                App::$instance->log->logWrite(LOG_MAIL_SENDED, "Новая заявка на ВКС #{$vks['id']}");
-            }
-    }
-
-
-    private
-    function createTransitVksOnCA($request)
-    {
-        $tmp = [];
-        $tmp['title'] = $request->get('title');
-        $tmp['participants'] = $request->get('participants');
-//        dump($request);
-        $tmp['date'] = date_create($request->get('date') . "" . $request->get('start_time'))->setTimezone(new DateTimeZone(App::$instance->opt->ca_timezone))->format("d.m.Y");
-        $tmp['start_time'] = date_create($request->get('start_time'))->setTimezone(new DateTimeZone(App::$instance->opt->ca_timezone))->format("H:i");
-        $tmp['end_time'] = date_create($request->get('end_time'))->setTimezone(new DateTimeZone(App::$instance->opt->ca_timezone))->format("H:i");
-        $tmp['tb'] = MY_NODE;
-        $tmp['ip'] = App::$instance->user->ip;
-        $tmp['location'] = TB_PATTERN . " банк";
-        $tmp['ca_participants'] = $request->get('ca_participants');
-        $tmp['owner_id'] = App::$instance->user->id;
-//        dump($tmp);
-
-        $tmp = http_build_query($tmp);
-
-        $curl = curl_init();
-        curl_setopt($curl, CURLOPT_POST, 1);
-        curl_setopt($curl, CURLOPT_URL, HTTP_PATH . "?route=VksNoSupport/apiMakeTransportVks");
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_POSTFIELDS, $tmp);
-        curl_setopt($curl, CURLOPT_HTTPHEADER, array("X-Requested-With: XMLHttpRequest"));
-        $ask = curl_exec($curl);
-        curl_close($curl);
-
-        if (0 === strpos(bin2hex($ask), 'efbbbf')) {
-            $ask = substr($ask, 3);
-        }
-        $ask = json_decode($ask);
-        return $ask;
-    }
-
     static public function convertToLocalTime($vksObject)
     {
         $vksObject->local = new stdClass();
-        $vksObject->local->start_date_time = date_create($vksObject->start_date_time, new DateTimeZone(App::$instance->opt->ca_timezone))->setTimezone(new DateTimeZone(App::$instance->opt->timezone));
-        $vksObject->local->end_date_time = date_create($vksObject->end_date_time, new DateTimeZone(App::$instance->opt->ca_timezone))->setTimezone(new DateTimeZone(App::$instance->opt->timezone));
-    }
-
-    public function test()
-    {
-        $cc = new ConnectionCode_controller();
-
-        $vks = Vks::full()->find(55);
-        dump($cc->codesToString($vks->connection_codes));
-
+        $vksObject->local->start_date_time =
+            date_create($vksObject->start_date_time, new DateTimeZone(App::$instance->opt->ca_timezone))
+                ->setTimezone(new DateTimeZone(App::$instance->opt->timezone));
+        $vksObject->local->end_date_time =
+            date_create($vksObject->end_date_time, new DateTimeZone(App::$instance->opt->ca_timezone))
+                ->setTimezone(new DateTimeZone(App::$instance->opt->timezone));
     }
 
     public function reSubmitFromResults($reportNum)
@@ -2197,10 +1893,8 @@ class Vks_controller extends Controller
         print true;
     }
 
-    public function day($date) {
-       
-
-        return $this->render("vks/dayGraph",compact('date'));
-
+    public function day($date)
+    {
+        return $this->render("vks/dayGraph", compact('date'));
     }
 }

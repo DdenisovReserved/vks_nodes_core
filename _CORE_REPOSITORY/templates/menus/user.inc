@@ -111,12 +111,12 @@ global $_TB_IDENTITY;
                 </li>
             <?php else : ?>
             <li class='<?= ST::ifActiveMarkIt(['authnew/login', 'authnew/showrecallpwd']) ?>'>
-                <a href='<?= ST::routeToDomainGate() ?>'>Вход
+                <a href='<?= ST::routeToCa('AuthNew/login') ?>'>Вход
                 </a>
             </li>
-            <li class=''><a
-                    href='<?= HTTP_PATH . "?route=AuthNew/register" ?>'>Регистрация</a>
-            </li>
+<!--            <li class=''><a-->
+<!--                    href='--><?//= HTTP_PATH . "?route=AuthNew/register" ?><!--'>Регистрация</a>-->
+<!--            </li>-->
         </ul>
         <?php endif; ?>
 

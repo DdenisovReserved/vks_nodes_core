@@ -1,0 +1,109 @@
+.nopadding {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.plank {
+    width: 90%;
+
+    cursor: pointer;
+    color: #337ab7;
+
+}
+.plank:hover {
+    background-color: #ccd5e3;
+}
+.breadcrumb {
+    margin-bottom: 0 !important;
+}
+.oDirect {
+    color: #808080 !important;
+}
+
+.plank .col-sm-10 {
+    padding-left: 5px;
+    margin-bottom: 15px !important;
+}
+.plank span {
+    /*border-bottom: 1px dashed #000000;*/
+
+}
+.plank span:hover {
+    color: #ff8a00;
+    /*border-bottom: 1px dashed #0000ff;*/
+
+
+}
+.plank-container {
+    font: Helvetica;
+    font-size: 16px;
+ }
+
+
+
+.plank-point {
+
+}
+
+.plank-point-deactivated span {
+    color: #dc0007;
+    /*border-bottom: 1px dashed #00002a;*/
+    cursor: not-allowed;
+
+}
+.plank-point-deactivated span:hover {
+    color: #dc6903;
+    cursor: not-allowed;
+}
+
+
+.order {
+    font-size: 10px;
+    height: 22px !important;
+    padding: 3px;
+    margin: 3px;
+    border:none;
+    background:#fff;
+    text-align: left;
+}
+
+.plank-select-all {
+    /*color: gray;*/
+    font-size: 11px;
+    margin-left: 10px;
+    text-decoration: none;
+    margin-top: 5px;
+
+}
+
+.plank-select-all:hover {
+    text-decoration: none;
+    color: #ffffff !important;
+    background-color: #ee901f !important;
+}
+#stack-content div {
+    margin-bottom: 5px;
+}
+#stack-content div:hover {
+    color: #ee901f;
+
+}
+#search-block {
+    background-color: #f5f5f5 !important;
+    height: 50px;
+    padding-top: 8px;
+    text-align: left;
+}
+#search-block label {
+    color: #337ab7
+}
+#search-block #search-input {
+    width: 40%;
+}
+#search-block #search-button {
+    color: #337ab7;
+    font-weight: bold;
+}
+.container-name {
+
+    font-size: 18px !important;
+}

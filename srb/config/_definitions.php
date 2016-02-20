@@ -26,7 +26,7 @@ define("NODE_HTTP_PATH", $server_ip . $nodes_dir . $current_tb_dir);
 
 define("NODE_PUBLIC_MESSAGE", "СРБ");
 
-define('NODE_TIME_ZONE', 'Etc/GMT-3');
+define('NODE_TIME_ZONE', 'Etc/GMT-5');
 
 
 

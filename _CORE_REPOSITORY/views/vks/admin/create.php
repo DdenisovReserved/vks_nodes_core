@@ -61,14 +61,14 @@ ST::setUserJs('codes/askFreeCodes.js');
                             <label>
                                 <h4>Время начала</h4>
                             </label>
-                            <input name='start_time' id='start_time' class='form-control' disabled
+                            <input name='start_time' id='start_time' class='form-control' <?= $vks->get('start_time')? '' : 'disabled' ?>
                                    value="<?= $vks->get('start_time') ?>"/>
                         </div>
                         <div class='col-md-4'>
                             <label>
                                 <h4>Время окончания</h4>
                             </label>
-                            <input name='end_time' id='end_time' class='form-control' disabled
+                            <input name='end_time' id='end_time' class='form-control' <?= $vks->get('end_time') ? '' : 'disabled' ?>
                                    value="<?= $vks->get('end_time') ?>"/>
                         </div>
                     </div>
@@ -91,7 +91,7 @@ ST::setUserJs('codes/askFreeCodes.js');
                 <div class="form-group alert alert-info">
                     <div class="checkbox">
                         <label>
-                            <input type='checkbox' name='needTB' <?=!count($tbs) ? 'disabled' : ''   ?>
+                            <input type='checkbox' name='needTB' <?= !count($tbs) ? 'disabled' : '' ?>
                                    data-checked='<?= $vks->get('needTB') ? '1' : '0' ?>' <?= $vks->get('needTB') ? 'checked' : '' ?>>Подключить
                             другой ТБ/ЦА
                         </label>
@@ -123,8 +123,8 @@ ST::setUserJs('codes/askFreeCodes.js');
                         </ul>
                     </div>
                 </div>
-                <div class=" no-left-padding col-lg-5 col-lg-offset-1">
-                    <div class="form-group hidden alert alert-warning" id="ca_participants">
+                <div class=" no-left-padding col-lg-5 col-lg-offset-1 hidden" id="ca_participants">
+                    <div class="form-group  alert alert-warning">
                         <select name="ca_participants">
                             <option value="0">0</option>
                             <?php $range = range(1, 10); ?>
@@ -136,6 +136,29 @@ ST::setUserJs('codes/askFreeCodes.js');
                             <?php endforeach; ?>
                         </select>
                         <label>Ожидаемое кол-во участников в ЦА</label>
+                    </div>
+                    <div class="form-group">
+                        <?php if (count($ca_pool_codes)): ?>
+                            <label>Выберите код из вашего пула <span id="show-ca-pool" class="btn btn-default btn-sm">Показать пул</span></label>
+                            <select class="form-control" name="ca_transport_code">
+                                <option value="">
+                                    --Выберите--
+                                </option>
+                                <?php foreach ($ca_pool_codes as $ca_code): ?>
+                                    <option
+                                        value="<?= $ca_code ?>" <?=  $vks->get('ca_transport_code') == $ca_code ? 'selected' : '' ?>><?= $ca_code ?> </option>
+                                <?php endforeach ?>
+                            </select>
+                        <?php endif; ?>
+                    </div>
+                    <div class="form-group text-info">
+                        <div class="checkbox">
+                            <label>
+                                <input name="ca_transport_no_create" <?=  $vks->get('ca_transport_no_create') ? 'checked' : '' ?>  type="checkbox"/>&nbsp<b>Не создавать транспортную
+                                    ВКС
+                                    (В ЦА)</b>
+                            </label>
+                        </div>
                     </div>
 
                 </div>
@@ -196,18 +219,31 @@ ST::setUserJs('codes/askFreeCodes.js');
                     </div>
                 </div>
                 <div class="form-group">
-                    <div class="vks-points-list-display"><i>Список участников пуст</i></div>
+                    <div class="vks-points-list-display">
+                        <?php if ($vks->has('inner_participants') || $vks->has('in_place_participants_count')): ?>
+                            <ol class="list-unstyled">
+                                <li class="in_place_plank">Количество участников с рабочих мест: <span
+                                        class="label label-as-badge label-default"><?= $vks->has('in_place_participants_count') ? $vks->get('in_place_participants_count') : 0 ?></span>
+                                </li>
+                                <li>Количество участников из справочника точек: <span
+                                        class="label label-as-badge label-default"><?= count($vks->get('inner_participants')) ?></span>
+                                </li>
+                            </ol>
+                        <?php else: ?>
+                            <i>Список участников пуст</i>
+                        <?php endif ?>
+                    </div>
                 </div>
                 <hr>
 
                 <div class="form-group">
                     <label><h4>Комментарий для админа</h4></label>
                         <textarea name="comment_for_admin" id="comment_for_admin" maxlength="160"
-                                  class="form-control"></textarea>
+                                  class="form-control"><?= $vks->get('comment_for_admin' )?></textarea>
                 </div>
                 <div class="form-group">
                     <label><h4>Комментарий для пользователя</h4></label>
-                    <textarea name="comment_for_user" maxlength="160" class="form-control"></textarea>
+                    <textarea name="comment_for_user" maxlength="160" class="form-control"><?= $vks->get('comment_for_user' )?></textarea>
                 </div>
                 <div class="form-group">
                     <label class=" control-label"><h4>Владелец</h4></label>
@@ -304,5 +340,18 @@ ST::setUserJs('codes/askFreeCodes.js');
     </div>
 </div>
 </body>
+<script>
+    $(document).ready(function () {
+        var modal = new Modal();
+        $(document).on("click", "#show-ca-pool", function () {
+            var dateVal = $("#date-with-support").val();
+            if (dateVal.length) {
+                modal.showPageInModal("?route=Dashboard/showCACodes/" + dateVal + "/true");
+            } else {
+                alert("Выберите дату");
+            }
+        })
+    })
+</script>
 
 

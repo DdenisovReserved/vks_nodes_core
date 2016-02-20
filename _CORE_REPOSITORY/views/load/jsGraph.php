@@ -13,7 +13,7 @@ $asrt->init();
 </script>
 <div class="container">
     <div class="col-lg-12" style="margin-bottom: 200px;">
-        <h3>График нагрузки на <?= date_create(FrontController::getParams())->format("d.m.Y") ?><span class="pull-right"><input id="dp_another_date" disabled/><button type="button" class="btn btn-default btn-sm" id="btn_another_date">Другая дата</button> </span></h3>
+        <h3>График нагрузки на <?= date_create(FrontController::getParams())->format("d.m.Y") ?><span class="pull-right"><input id="dp_another_date" class="hidden" disabled/><button type="button" class="btn btn-default btn-sm" id="btn_another_date">Другая дата</button> </span></h3>
         <hr>
         <div class="demo-container">
 

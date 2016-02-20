@@ -125,8 +125,8 @@ class Mail
             // 'UID:'.date("Ymd\TGis", strtotime($startTime)).rand()."@".$domain."\r\n" .
             'UID:' . md5($vks->id . App::$instance->main->appkey) . "\r\n" .
             'DTSTAMP:' . date("Ymd\TGis") . "\r\n" .
-            'DTSTART:' . date("Ymd\THis", date_create($vks->start_date_time)->getTimestamp()) . "\r\n" .
-            'DTEND:' . date("Ymd\THis", date_create($vks->end_date_time)->getTimestamp()) . "\r\n" .
+            'DTSTART:' . date("Ymd\THis", $vks->start_date_time->getTimestamp()) . "\r\n" .
+            'DTEND:' . date("Ymd\THis", $vks->end_date_time->getTimestamp()) . "\r\n" .
             'TRANSP:OPAQUE' . "\r\n" .
             'SEQUENCE:' . date_create()->getTimestamp() . "\r\n" .
             'SUMMARY:' . $vks->title . "\r\n" .

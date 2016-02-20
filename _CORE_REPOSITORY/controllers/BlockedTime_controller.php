@@ -179,11 +179,10 @@ class BlockedTime_controller extends Controller
 
     }
 
-    public function askAtDateTime($startDateTime, $endDateTime, $vks_blocked_type) {
-        $dateStart = date_create($startDateTime);
-        $dateEnd = date_create($endDateTime);
-        $blocks = BlockedTime::where('end_at',">=", $dateStart)
-            ->where('start_at', '<=', $dateEnd)
+    public function askAtDateTime(DateTime $startDateTime,DateTime $endDateTime, $vks_blocked_type) {
+
+        $blocks = BlockedTime::where('end_at',">=", $startDateTime)
+            ->where('start_at', '<=', $endDateTime)
             ->where('vks_type_blocked', intval($vks_blocked_type))
             ->get();
 

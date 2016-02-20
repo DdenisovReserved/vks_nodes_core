@@ -207,12 +207,10 @@ class __TwigTemplate_0041acc2d930349051b7aa9a693ffbcbd4ff250dd95c6c4dbc8d8e6c0c6
         if ($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "owner", array())) {
             // line 96
             echo "                ";
-            echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "owner", array()), "login", array()), "html", null, true);
-            echo " (";
             echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "owner", array()), "fio", array()), "html", null, true);
             echo ", ";
             echo twig_escape_filter($this->env, $this->getAttribute($this->getAttribute((isset($context["vks"]) ? $context["vks"] : null), "owner", array()), "phone", array()), "html", null, true);
-            echo ")
+            echo "
             ";
         } else {
             // line 98
@@ -237,7 +235,7 @@ class __TwigTemplate_0041acc2d930349051b7aa9a693ffbcbd4ff250dd95c6c4dbc8d8e6c0c6
 
     public function getDebugInfo()
     {
-        return array (  223 => 100,  219 => 98,  209 => 96,  207 => 95,  200 => 90,  196 => 88,  192 => 86,  190 => 85,  185 => 82,  178 => 77,  176 => 76,  166 => 68,  162 => 66,  159 => 65,  150 => 62,  147 => 61,  142 => 60,  140 => 59,  134 => 56,  128 => 52,  124 => 49,  122 => 48,  120 => 47,  118 => 46,  111 => 43,  102 => 39,  91 => 35,  84 => 30,  80 => 28,  74 => 26,  72 => 25,  65 => 20,  61 => 18,  53 => 16,  51 => 15,  43 => 10,  35 => 5,  31 => 3,  28 => 2,  11 => 1,);
+        return array (  221 => 100,  217 => 98,  209 => 96,  207 => 95,  200 => 90,  196 => 88,  192 => 86,  190 => 85,  185 => 82,  178 => 77,  176 => 76,  166 => 68,  162 => 66,  159 => 65,  150 => 62,  147 => 61,  142 => 60,  140 => 59,  134 => 56,  128 => 52,  124 => 49,  122 => 48,  120 => 47,  118 => 46,  111 => 43,  102 => 39,  91 => 35,  84 => 30,  80 => 28,  74 => 26,  72 => 25,  65 => 20,  61 => 18,  53 => 16,  51 => 15,  43 => 10,  35 => 5,  31 => 3,  28 => 2,  11 => 1,);
     }
 }
 /* {% extends "mails/base.twig" %}*/
@@ -335,7 +333,7 @@ class __TwigTemplate_0041acc2d930349051b7aa9a693ffbcbd4ff250dd95c6c4dbc8d8e6c0c6
 /*         <td>Владелец</td>*/
 /*         <td>*/
 /*             {% if  vks.owner %}*/
-/*                 {{ vks.owner.login }} ({{ vks.owner.fio }}, {{ vks.owner.phone }})*/
+/*                 {{ vks.owner.fio }}, {{ vks.owner.phone }}*/
 /*             {% else %}*/
 /*                 -*/
 /*             {% endif %}*/

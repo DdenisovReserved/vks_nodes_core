@@ -110,7 +110,7 @@ class Load_controller extends Controller
         }
     }
 
-    public function isPassedByCapacity($startTime, $endTime, $attendanceCount, $serverNum)
+    public function isPassedByCapacity(DateTime $startTime, DateTime $endTime, $attendanceCount, $serverNum)
     {
 
         $serverCap = $this->getServerCapacity($serverNum);
@@ -119,8 +119,9 @@ class Load_controller extends Controller
 
     }
 
-    public function giveSimpleCode($vksStart, $vksEnd)
+    public function giveSimpleCode(DateTime $vksStart, DateTime $vksEnd)
     { //pull data from request
+
         $settings = new Settings_controller();
         $params = $settings->getSimpleVksCodeParams();
 
@@ -132,8 +133,8 @@ class Load_controller extends Controller
 
             $foundedCodes = ConnectionCode::where('value', (String)$code)->with(['vks' => function ($query) use ($vksStart, $vksEnd) {
                 $query->where('is_simple', 1)
-                    ->where('start_date_time', '<=', date_create($vksEnd)->modify("+" . Settings_controller::getOther('pause_gap') . " minutes"))
-                    ->where('end_date_time', '>=', date_create($vksStart)->modify("-" . Settings_controller::getOther('pause_gap') . " minutes"))
+                    ->where('start_date_time', '<=', $vksEnd->modify("+" . Settings_controller::getOther('pause_gap') . " minutes"))
+                    ->where('end_date_time', '>=', $vksStart->modify("-" . Settings_controller::getOther('pause_gap') . " minutes"))
                     ->where('status', VKS_STATUS_APPROVED);
             }])->get();
 
@@ -333,16 +334,15 @@ class Load_controller extends Controller
         return $result;
     }
 
-    private function pullDataAtPeriod($timeSpot1, $timeSpot2, $whitchServer)
+    private function pullDataAtPeriod(DateTime $timeSpot1, DateTime $timeSpot2, $whitchServer)
     {
-
+//        dump($timeSpot1);
+//        dump($timeSpot2);
         $settings = new Settings_controller();
         $getServerData = $settings->getServerParam($whitchServer);
         $serverMaxLoad = $getServerData['capacity'];
-
-        $timeSpot1 = date_create($timeSpot1);
         //define end of the day
-        $endOfTheDay = date_create($timeSpot2);
+        $endOfTheDay = clone($timeSpot2);
         if ($timeSpot1 > $endOfTheDay) {
             throw New Exception('start time bigger than end time');
         }

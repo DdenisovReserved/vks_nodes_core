@@ -158,8 +158,8 @@ RenderEngine::MenuChanger();
                         </ul>
                     </div>
                 </div>
-                <div class=" no-left-padding col-lg-5 col-lg-offset-1">
-                    <div class="form-group hidden alert alert-warning" id="ca_participants">
+                <div class="no-left-padding col-lg-5 hidden col-lg-offset-1" id="ca_participants">
+                    <div class="form-group alert alert-warning" >
                         <select name="ca_participants">
                             <option value="0">0</option>
                             <?php $range = range(1, 10); ?>
@@ -172,6 +172,12 @@ RenderEngine::MenuChanger();
                         </select>
                         <label>Ожидаемое кол-во участников в ЦА</label>
                     </div>
+                    <div class="form-group  alert alert-info">
+                       <label>Код в ЦА:</label>
+                       <input class="form-control" name="i_know_ca_code" value="<?= $vks->get('i_know_ca_code') ? $vks->get('i_know_ca_code') : '' ?>" maxlength="40"/>
+                       <span class="help-block">*Если у вас есть код подключения к конференции в ЦА, введите его в это поле</span>
+                    </div>
+
 
                 </div>
             </div>

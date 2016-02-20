@@ -190,10 +190,11 @@ class User_controller extends Controller
         $originOld = $user->origin;
 
         if($request->get('origin') == CA_CA) {
-            if($user->is_from_domain && explode("\\", $user->login)[0]  == 'ALPHA') {
+            if($user->is_from_domain
+                && in_array(explode("\\", App::$instance->user->login)[0], array('ALPHA', 'OMEGA'))) {
                 $user->origin = $request->get('origin');
             }else {
-                $this->error('500');
+                $this->error('500', 'Нельзя переместиться в этот ТБ');
             }
         } else {
 

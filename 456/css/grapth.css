@@ -1,0 +1,99 @@
+.grapth-container {
+/*border: 1px solid #ccc;*/
+    /*padding: 15px;*/
+    width: 940px;
+    margin: 0 auto;
+    /*margin-left: -50px ;*/
+    /*background-color: #f0ad4e;*/
+
+}
+.grapth-table {
+    border-collapse: separate;
+}
+.grapth-table td {
+    /*width: 50px;*/
+    /*border: 1px solid #ffffff;*/
+    vertical-align: bottom;
+    font-size: 12px;
+    text-align: center;
+    vertical-align: middle;
+    height:75px;
+
+}
+.timeline-container {
+    padding: 20px;
+    background-color: #f0f0f0;
+    margin-top: 25px;
+    /*margin-left: 25px;*/
+    height: 135px;
+    overflow: auto;
+}
+.grapth-col {
+    width: 17px !important;
+    height:93px;
+    /*border: 1px solid #ffffff;*/
+    margin-right: 1px;
+    float: left;
+    /*font-size: 6px;*/
+
+}
+.grapth-col-active {
+    cursor:pointer;
+    background-color: green;
+    /*background-image: url("http://10.170.225.193/dev/videoconf-ca-dev/images/scale/free.png");*/
+    /*background-repeat: no-repeat;*/
+
+
+}
+.grapth-col-active:hover {
+    /*border-top: 1px solid #ff9300;*/
+    /*background-image: url("../images/scale/hover.png");*/
+    /*background-image: url("images/scale/hover.png");*/
+    /*background-repeat: no-repeat;*/
+}
+.grapth-col-noavaliable {
+    background-color: red;
+    /*background-image: url("../images/scale/busy.png");*/
+    /*background-image: url("http://10.170.225.193/dev/videoconf-ca-dev/images/scale/busy.png");*/
+    /*background-repeat: no-repeat;*/
+
+}
+.chosen-begin,.chosen-end,.selected {
+    /*background-image: url("../images/scale/checked.png") !important;*/
+    /*background-image: url("http://10.170.225.193/dev/videoconf-ca-dev/images/scale/checked.png") !important;*/
+    /*background-repeat: no-repeat;*/
+    background-color: blue !important;
+}
+
+.blocked {
+    /*background-image: url("../images/scale/inactive.png");*/
+    /*background-image: url("http://10.170.225.193/dev/videoconf-ca-dev/images/scale/inactive.png");*/
+    /*background-repeat: no-repeat;*/
+    background-color: #ccc;
+    cursor: default;
+}
+.blocked:hover {
+    /*background-image: url("http://10.170.225.193/dev/videoconf-ca-dev/images/scale/inactive.png") !important;*/
+    background-color: #ccc !important;
+    cursor: default;
+}
+
+.time-scale {
+    background-color: red;
+}
+.time-tip,.time-tip-tmp {
+    font-size: 12px;
+    padding: 1px;
+    background-color: #ffcc33;
+    position: absolute;
+    top:0px;
+    left:0px;
+    /*behavior: url("js/pie/pie.htc");*/
+    /*border-right-radius: 10px;*/
+}
+.delete-batch {
+    cursor: pointer;
+}
+.delete-batch:hover{
+    color: blue;
+}

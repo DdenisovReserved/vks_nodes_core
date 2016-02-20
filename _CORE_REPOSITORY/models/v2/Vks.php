@@ -6,8 +6,14 @@ class Vks extends Eloquent
     const TYPE_REGULAR = 0;
     const TYPE_SIMPLE = 1;
 
+    const APPROVE_STATUS_CONFIRMED = 1;
+    const APPROVE_STATUS_DECLINED = 2;
+
+
     protected $table = 'vks_store';
+
     protected $appends = array('is_applyable', 'is_tech_supportable', 'participants_count');
+
     protected $fillable = [
         'title', 'date', 'start_date_time', 'end_date_time',
         'department', 'initiator',
@@ -24,9 +30,40 @@ class Vks extends Eloquent
 
     ];
 
+    public function getDateAttribute($value)
+    {
+        return $value instanceof DateTime ? $value : date_create($value);
+    }
+
+    public function setDateAttribute($value)
+    {
+        $this->attributes['date'] = $value instanceof DateTime ? $value : date_create($value);
+    }
+
+    public function getStartDateTimeAttribute($value)
+    {
+        return $value instanceof DateTime ? $value : date_create($value);
+    }
+
+    public function setStartDateTimeAttribute($value)
+    {
+        return $this->attributes['start_date_time'] = $value instanceof DateTime ? $value : date_create($value);
+    }
+
+    public function getEndDateTimeAttribute($value)
+    {
+        return $value instanceof DateTime ? $value : date_create($value);
+    }
+
+    public function setEndDateTimeAttribute($value)
+    {
+        return $this->attributes['end_date_time'] = $value instanceof DateTime ? $value : date_create($value);
+    }
+
+
     public function getIsApplyableAttribute()
     {
-        if (date_create() < date_create($this->end_date_time)
+        if (date_create() < $this->end_date_time
             && in_array($this->status, array(VKS_STATUS_APPROVED, VKS_STATUS_PENDING))
             && !$this->is_simple
         ) {
@@ -38,7 +75,7 @@ class Vks extends Eloquent
 
     public function getIsTechSupportableAttribute()
     {
-        if (date_create($this->end_date_time) > date_create()
+        if ($this->end_date_time > date_create()
             && in_array($this->status, array(VKS_STATUS_APPROVED, VKS_STATUS_PENDING))
             && !$this->is_simple
         ) {
@@ -141,6 +178,17 @@ class Vks extends Eloquent
         return $this->hasOne('User', 'id', 'approved_by');
     }
 
+    public function CaInPlaceParticipantCount()
+    {
+        return $this->hasOne('VksToCAInPlaceParticipant', 'vks_id', 'id');
+    }
+
+    public function CaIdParticipants()
+    {
+        return $this->hasMany('VksToCAIdParticipant', 'vks_id', 'id');
+    }
+
+
     public function tech_support_requests()
     {
         return $this->hasMany('TechSupportRequest', 'vks_id', 'id');
@@ -150,6 +198,16 @@ class Vks extends Eloquent
     {
         return $this->hasOne('VksStack', 'id', 'vks_stack_id');
     }
+
+    public function compileCaTransportIdsParticipants() {
+        $result = [];
+        if (count($this->CaIdParticipants))
+            foreach($this->CaIdParticipants as $parp) {
+                $result[] = $parp->ca_att_id;
+            }
+        return $result;
+    }
+
 
     public static function boot()
     {

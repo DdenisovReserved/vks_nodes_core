@@ -173,7 +173,7 @@ $(document).ready(function () {
 
         $.get('?route=Vks/apiGet/' + vksId, function (data) {
             data = $.parseJSON(data);
-            $.get('?route=ConnectionCode/isCodeInUse/' + codeVal + "/" + data.start_date_time + "/" + data.end_date_time, function (data) {
+            $.get('?route=ConnectionCode/isCodeInUse/' + codeVal + "/" + data.start_date_time.date + "/" + data.end_date_time.date, function (data) {
                 data = $.parseJSON(data);
                 if (data) {
                     data = $.parseJSON(data)

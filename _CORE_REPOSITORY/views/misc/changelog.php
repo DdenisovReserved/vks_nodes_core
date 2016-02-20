@@ -6,7 +6,8 @@ RenderEngine::MenuChanger();
 <div class="container">
     <div class="col-lg-2 col-lg-offset-1">
         <ul class="list-unstyled">
-            <a class="btn btn-default" href="#040b">v. 0.4.33</a>
+            <a class="btn btn-default" href="#045b">v. 0.4.5</a>
+            <a class="btn btn-default" href="#0433b">v. 0.4.33</a>
             <a class="btn btn-default" href="#040b">v. 0.4.0</a>
             <a class="btn btn-default" href="#033b">v. 0.3.3</a>
             <a class="btn btn-default" href="#022b">v. 0.2.2</a>
@@ -19,6 +20,12 @@ RenderEngine::MenuChanger();
     <div class="col-lg-6 left-border">
         <h3 class="text-primary">Change log АС ВКС для ТБ (VIMS)</h3>
         <hr>
+        <h4 class="text-info" id="045b">v. 0.4.5 beta</h4>
+        <ul>
+            <li>Новый маханизм создания транспортных ВКС в ЦА</li>
+            <li>Рефакторинг функций работающих с датой и временем + перепилена модель ВКС</li>
+            <li>Добавлен DI контейнер + сервисы</li>
+        </ul>
         <h4 class="text-info" id="0433b">v. 0.4.33 beta</h4>
         <ul>
             <li>Новый график нагрузки</li>

@@ -10,6 +10,11 @@ class CAAttendance extends Model
         'name','parent_id','container','verifiable','tech_supp_mail','is_tb'
     ];
 
+
+    public function scopeTbs($query) {
+        return $query->where('is_tb', 1);
+    }
+
     public function childs ()
     {
         return $this->hasMany('CAAttendance','parent_id','id');

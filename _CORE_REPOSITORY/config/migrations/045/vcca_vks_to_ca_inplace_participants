@@ -1,0 +1,109 @@
+CREATE TABLE `videoconf_node_srb`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+CREATE TABLE `videoconf_node_cchb`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+
+CREATE TABLE `videoconf_node_bb`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+CREATE TABLE `videoconf_node_vvb`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+CREATE TABLE `videoconf_node_vsb`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+
+CREATE TABLE `videoconf_node_dvb`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+CREATE TABLE `videoconf_node_zsb`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+CREATE TABLE `videoconf_node_zub`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+
+CREATE TABLE `videoconf_node_pb`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+CREATE TABLE `videoconf_node_sb`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+CREATE TABLE `videoconf_node_szb`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+
+CREATE TABLE `videoconf_node_skb`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+CREATE TABLE `videoconf_node_sib`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+CREATE TABLE `videoconf_node_ub`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');
+
+
+CREATE TABLE `videoconf_node_uzb`.`vcca_vks_to_ca_inplace_participants` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '',
+  `vks_id` INT UNSIGNED NOT NULL COMMENT '',
+  `participants_count` INT UNSIGNED NOT NULL COMMENT '',
+  PRIMARY KEY (`id`)  COMMENT '',
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC)  COMMENT '');

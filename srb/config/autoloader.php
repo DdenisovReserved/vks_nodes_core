@@ -14,6 +14,7 @@ function spk_autoloader($class)
     @include CORE_REPOSITORY_REAL_PATH . 'asserts/' . $class . '.php';
     @include CORE_REPOSITORY_REAL_PATH . 'exceptions/' . $class . '.php';
     @include CORE_REPOSITORY_REAL_PATH . 'class/pChart/class/' . $class . '.class.php';
+    @include CORE_REPOSITORY_REAL_PATH . 'service/' . $class . '.php'; //service loader
 
 }
 

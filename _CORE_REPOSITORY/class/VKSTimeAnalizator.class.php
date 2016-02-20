@@ -138,27 +138,24 @@ class VKSTimeAnalizator
         }
         return $result;
     }
-    static function isManipulatable ($vksObject) {
+    static function isManipulatable (Vks $vksObject) {
         //define current time
         $now = date_create();
-        //define vks start time
-        $start = date_create($vksObject->start_date_time);
-        $end = date_create($vksObject->end_date_time);
         //check if vks in past and then return false, can't manipulate
-        if ($now > $end) return false;
+        if ($now > $vksObject->end_date_time) return false;
         //check for begin is more than 1 hour
-        if (( $start->getTimestamp()-$now->getTimestamp() ) >=1800) {
+        if (( $vksObject->start_date_time->getTimestamp()-$now->getTimestamp() ) >=1800) {
             return true;
         } else {
             return false;
         }
 
     }
-    static function is24ForBegin ($vksObject) {
+    static function is24ForBegin (Vks $vksObject) {
 
         return (
             (self::isManipulatable($vksObject)
-            && (date_create()->getTimestamp() - date_create($vksObject->start_date_time)->getTimestamp()) <= 86400)
+            && (date_create()->getTimestamp() - $vksObject->start_date_time->getTimestamp()) <= 86400)
             && $vksObject->is_verified_by_user == USER_VERIFICATION_NONE || $vksObject->is_verified_by_user == USER_VERIFICATION_MAIL_SENDED
         ) ? true : false;
 

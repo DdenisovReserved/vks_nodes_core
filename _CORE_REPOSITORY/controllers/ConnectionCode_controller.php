@@ -66,19 +66,21 @@ class ConnectionCode_controller extends Controller
     {
 
         $use = false;
+        $period_start = $period_start instanceof DateTime ? $period_start : date_create($period_start);
+        $period_end = $period_end instanceof DateTime ? $period_end : date_create($period_end);
+//        dump($period_start, $period_end);
         $vc = new Vks_controller();
         //how much digits in num
         $digits = strlen((String)$code);
-//        dump(Vks::with('connectionCode')
-//            ->where('start_date_time', '<=', date_create($period_end)->modify("+".Settings_controller::getOther('pause_gap')." minutes"))
-//            ->where('end_date_time', '>=', date_create($period_start)->modify("-".Settings_controller::getOther('pause_gap')." minutes"))
-//            ->approved()
-//            ->get(['id', 'title', 'start_date_time', 'end_date_time', 'date']));
-        foreach (Vks::with('connection_codes')
-                     ->where('start_date_time', '<=', date_create($period_end)->modify("+" . Settings_controller::getOther('pause_gap') . " minutes"))
-                     ->where('end_date_time', '>=', date_create($period_start)->modify("-" . Settings_controller::getOther('pause_gap') . " minutes"))
-                     ->approved()
-                     ->get(['id', 'title', 'start_date_time', 'end_date_time', 'date']) as $vks) {
+        $vkses = Vks::with('connection_codes')
+            ->where('start_date_time', '<=', $period_end->modify("+" . Settings_controller::getOther('pause_gap') . " minutes"))
+            ->where('end_date_time', '>=', $period_start->modify("-" . Settings_controller::getOther('pause_gap') . " minutes"))
+            ->approved()
+            ->get(['id', 'title', 'start_date_time', 'end_date_time', 'date']);
+
+//        dump($vkses);
+
+        foreach ($vkses as $vks) {
 
 
             if (count($vks->connection_codes)) {

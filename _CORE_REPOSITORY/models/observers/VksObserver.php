@@ -18,11 +18,11 @@ class VksObserver
 
     public function saved($model)
     {
-
+        $date = $model->date instanceof DateTime ? $model->date : date_create($model->date);
         App::$instance->cache->renewTag("tag.".App::$instance->tbId.".vks.events.calendar");
         App::$instance->cache->renewTag("tag.".App::$instance->tbId.".vks.events.calendar_counters");
         App::$instance->cache->renewTag("tag.".App::$instance->tbId.".vks.controller.api.get.{$model->id}");
-        App::$instance->cache->renewTag("tag.".App::$instance->tbId . ".vks.events.calendar_load.{" . date_create($model->date)->getTimestamp() . "}");
+        App::$instance->cache->renewTag("tag.".App::$instance->tbId . ".vks.events.calendar_load.{" . $date->getTimestamp() . "}");
 
     }
 

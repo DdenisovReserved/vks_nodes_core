@@ -94,14 +94,6 @@ if (!$partial) {
                     <td><?= $vks->init_customer_fio ?>, тел. <?= $vks->init_customer_phone ?> </td>
                 </tr>
                 <tr>
-                    <td>Подключать другой ТБ/ЦА</td>
-                    <td><?= $vks->other_tb_required ? 'Да' : 'Нет' ?> </td>
-                </tr>
-                <!--                <tr>-->
-                <!--                    <td>Код ЦА</td>-->
-                <!--                    <td>--><?php // echo  $vks->ca_code ? $vks->ca_code : '-' ?><!-- </td>-->
-                <!--                </tr>-->
-                <tr>
                     <td>Согласовал</td>
                     <td>
                         <?php if (isset($vks->approver)): ?>
@@ -162,6 +154,35 @@ if (!$partial) {
                     </td>
                 </tr>
                 <tr>
+                    <td>Подключать другой ТБ/ЦА</td>
+                    <td><?= $vks->other_tb_required ? 'Да' : 'Нет' ?> </td>
+                </tr>
+                <?php if($vks->other_tb_required && !is_numeric($vks->link_ca_vks_id) && $vks->status == VKS_STATUS_APPROVED): ?>
+                    <tr>
+                        <td>Участники в ЦА и других ТБ (Без транспортной ВКС)</td>
+                        <td>
+                            <?php if(isset($vks->CaIdParticipants) && count($vks->CaIdParticipants)): ?>
+                            <p>
+                            С рабочих мест в ЦА: <span
+                                class="label label-as-badge label-default"><?= $vks->CaInPlaceParticipantCount->participants_count ?></span>
+                        </p>
+                        <p>
+                            Заявленные ТБ:
+                        <ol>
+                            <?php foreach ($vks->CaIdParticipants as $ca_id): ?>
+                                <li><span
+                                        class="glyphicon glyphicon-facetime-video text-success"></span> <?= CAAttendance::find($ca_id->ca_att_id)->name ?>
+                                </li>
+                            <?php endforeach ?>
+                        </ol>
+                        </p>
+                        <?php else: ?>
+                        <p>Не определено</p>
+                        <?php endif ?>
+                        </td>
+                    </tr>
+                <?php endif ?>
+                <tr class="hidden">
                     <td>Тех. поддержка в точках</td>
                     <td>
                         <ol class="">

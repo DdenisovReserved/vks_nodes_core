@@ -22,7 +22,7 @@ class TemplateBuilder
             include_once(CORE_REPOSITORY_REAL_PATH."views/".$viewName.".php");
         else {
             $sc = new Controller();
-            $sc->error('template-not-found');
+            $sc->error('template-not-found', $viewName);
         }
 
     }

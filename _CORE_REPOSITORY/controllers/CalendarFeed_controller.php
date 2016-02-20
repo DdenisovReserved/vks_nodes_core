@@ -6,7 +6,6 @@ class CalendarFeed_controller extends Controller
 
     public function feedMain()
     {
-
         $CaNotes = new NotesCa_controller();
         $start = $this->request->query->get('start');
         $end = $this->request->query->get('end');
@@ -14,7 +13,7 @@ class CalendarFeed_controller extends Controller
         //get local events
         $cacheName = App::$instance->tbId . ".vks.events.calendar.{$start}.{$end}";
         $events = App::$instance->cache->get($cacheName);
-//      dump($events);
+
         if (!$events) {
             $events =
                 Vks::where('start_date_time', ">=", $start)
@@ -22,22 +21,22 @@ class CalendarFeed_controller extends Controller
                     ->whereIn('status', [VKS_STATUS_PENDING, VKS_STATUS_APPROVED])
                     ->get();
             $cachedObj = new CachedObject($events, ['tag.' . $cacheName, "tag." . App::$instance->tbId . ".vks.events.calendar"]);
-//            dump($cachedObj);
+
             App::$instance->cache->set($cacheName, $cachedObj, 3600 * 24 * 3);
         }
         //get events from central server
         if (Auth::isAdmin(App::$instance)) {
-            //pull from central server=
+            //pull from central
             $getFromCA = Curl::get(ST::routeToCaApi("getVksWasInPeriodForTb/" . App::$instance->tbId . "/" . $start . "/" . $end));
+
             $getFromCA = json_decode($getFromCA);
-//            dump($getFromCA->status);
+
             if ($getFromCA && $getFromCA->status == 200) {
                 $getFromCA = $getFromCA->data;
             } else {
                 $getFromCA = array();
             }
             //add to events container
-//            dump($getFromCA);
             foreach ($getFromCA as $CAVks) {
                 $CAVks->fromCa = true;
                 $CAVks->tbFlag = $CaNotes->checkFlag($CAVks->id);
@@ -46,12 +45,7 @@ class CalendarFeed_controller extends Controller
             }
         }
 
-        //!get event
-        //event customization
         $events = $this->prepareEvents($events);
-        //end foreach
-        //!event customization
-
 
         print json_encode($events); //output
 
@@ -63,7 +57,6 @@ class CalendarFeed_controller extends Controller
         $vks = new Vks();
         $start = date_create($this->request->query->get('start'));
         $end = date_create($this->request->query->get('end'));
-        $events = [];
         $db = App::$instance->capsule->getConnection();
         //get local events
         $cacheName = App::$instance->tbId . ".vks.events.calendar_counters.{$start->getTimestamp()}.{$end->getTimestamp()}";
@@ -115,24 +108,14 @@ class CalendarFeed_controller extends Controller
 
             //cache it
             $cachedObj = new CachedObject($events, ['tag.' . $cacheName, "tag." . App::$instance->tbId . ".vks.events.calendar_counters"]);
-//            dump($cachedObj);
             App::$instance->cache->set($cacheName, $cachedObj, 3600 * 24 * 3);
         }
 
         print json_encode($events); //output
     }
 
-    public function feedInPeriod($start, $end)
+    public function feedInPeriod(DateTime $start, DateTime $end)
     {
-        //get event
-        $start = $start instanceof DateTime ? $start : date_create($start);
-        $end = $end instanceof DateTime ? $end : date_create($end);
-        $start = $start->format("Y-m-d H:i:s");
-        $end = $end->format("Y-m-d H:i:s");
-//        dump(ST::routeToCaApi("getVksWasInPeriodForTb/" . App::$instance->tbId . "/" . $start . "/" . $end));
-//        die;
-//        dump($start, $end);
-//        die;
         $events =
             Vks::where('start_date_time', ">=", $start)
                 ->where('start_date_time', '<=', $end)
@@ -142,28 +125,27 @@ class CalendarFeed_controller extends Controller
                 ->get(['id', 'start_date_time', 'end_date_time', 'title', 'status', 'approved_by', 'owner_id', 'is_simple', 'flag']);
 
         //pull from central server
-        $getFromCA = Curl::get(ST::routeToCaApi("getVksWasInPeriodForTb/" . App::$instance->tbId . "/" . $start . "/" . $end));
+        $getFromCA = Curl::get(ST::routeToCaApi("getVksWasInPeriodForTb/" . App::$instance->tbId . "/" . $start->format("Y-m-d H:i:s") . "/" . $end->format("Y-m-d H:i:s")));
 
         $getFromCA = json_decode($getFromCA);
-//            dump($getFromCA->data);
+
         if ($getFromCA && $getFromCA->status == 200) {
             $getFromCA = $getFromCA->data;
         } else {
             $getFromCA = array();
         }
+
         //add to events container
-//            dump($getFromCA);
         foreach ($getFromCA as $CAVks) {
             $CAVks->fromCa = true;
             $events[] = $CAVks;
         }
-
-
         //!get event
         //event customization
         foreach ($events as $event) {
-            $start = date_create($event->start_date_time);
-            $end = date_create($event->end_date_time);
+            $start =
+                $event->start_date_time instanceof DateTime ? $event->start_date_time:  date_create($event->start_date_time);
+            $end = $event->end_date_time instanceof DateTime ? $event->end_date_time:  date_create($event->end_date_time);
             $event->start_time = $start->format("H:i");
             $event->end_time = $end->format("H:i");
             $event->date = $start->format("d.m.Y");
@@ -254,12 +236,18 @@ class CalendarFeed_controller extends Controller
     {
         if (count($events))
             foreach ($events as $event) {
-                $start = date_create($event->start_date_time);
-                $end = date_create($event->end_date_time);
+                $start = $event->start_date_time;
+                $end = $event->end_date_time;
 //
                 if (isset($event->fromCa)) {
-                    $start = date_create($event->start_date_time, new DateTimeZone(App::$instance->opt->ca_timezone));
-                    $end = date_create($event->end_date_time, new DateTimeZone(App::$instance->opt->ca_timezone));
+                    $event->start_date_time =
+                        $event->start_date_time instanceof DateTime ? $event->start_date_time : date_create($event->start_date_time);
+
+                    $event->end_date_time =
+                        $event->end_date_time instanceof DateTime ? $event->end_date_time : date_create($event->end_date_time);
+
+                    $start = $event->start_date_time->setTimeZone(new DateTimeZone(App::$instance->opt->ca_timezone));
+                    $end = $event->end_date_time->setTimeZone(new DateTimeZone(App::$instance->opt->ca_timezone));
                     $mskStart = clone($start);
                     $mskEnd = clone($end);
                     $start->setTimezone(new DateTimeZone(App::$instance->opt->timezone));
@@ -356,9 +344,6 @@ class CalendarFeed_controller extends Controller
 
                 $event->titleCustom .= $event->start_time . " - " . $event->end_time;
 
-//            if (isset($event->fromCa)) {
-//                $event->titleCustom .= "<div class='plank-title'>мск(" .$event->mks_start_time . " - " . $event->mks_end_time . ")</div>";
-//            }
                 $event->titleCustom .= "<div class='plank-title'>" . $event->title . "</div>";
                 $event->title = null; //костыль
             }
