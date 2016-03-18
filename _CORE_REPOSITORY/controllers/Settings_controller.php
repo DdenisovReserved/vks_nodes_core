@@ -402,6 +402,7 @@ class Settings_controller extends Controller
 <option name='attendance_check_enable' value='1' description='Проверять точки ВКС на занятость в других ВКС'/>
 <option name='attendance_strict' value='0' description='Строгий режим проверки занятости точек ВКС'/>
 <option name='notify_admins' value='1' description='Уведомлять админов по почте о новых ВКС'/>
+<option name='global_vks_limit' value='30' description=\"Кол-во учасников у ВКС для получения флага 'Глобальная'\"/>
 </root>");
         }
     }

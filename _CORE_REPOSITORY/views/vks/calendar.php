@@ -8,6 +8,7 @@ ST::setUserJs("vks/calendar.js");
     <?php include_once(CORE_REPOSITORY_REAL_PATH . "views/pleaseEnter.php"); ?>
 </div>
 <div class="container">
+
     <div class="clearfix"></div>
     <div id='calendar' style="min-height: 640px; margin-top: 25px;"></div>
     <div style='clear:both'></div>

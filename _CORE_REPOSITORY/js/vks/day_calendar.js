@@ -57,8 +57,15 @@ $(document).ready(function () {
 
 
             element.attr("event-id", event.id);
+            var title = '';
+            if (event.is_global)
+                title += "<span class='label label-danger'>Global</span>";
+            if (event.flag)
+                title += "<span class='label label-danger'>Важная!</span>";
 
-            element.find(".fc-time").html("<div>" + event.titleCustom + "</div>");
+            title += event.titleCustom;
+
+            element.find(".fc-time").html("<div>" + title + "</div>");
         },
         eventAfterAllRender: function () {
             
@@ -81,12 +88,13 @@ $(document).ready(function () {
             } else if (minutes < 15 && minutes >=0) {
                 currentOnGoing = moment([year, mounth, day, hours, 0]).format("DD.MM.YYYY HH:mm");
             }
-
+            //console.log(currentOnGoing);
             var s = $(".timerow[data-datetime='" + currentOnGoing + "']");
 
             if (s.length) {
 
                 var o = s.offset();
+
                 var compile = $("<div/>").prop("id", "current_time");
 
                 compile.css({

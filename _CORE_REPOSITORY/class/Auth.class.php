@@ -26,10 +26,17 @@ class Auth
             }
         }
 
-        $this->ip = isset($_SERVER["HTTP_X_FORWARDED_FOR"]) ? $_SERVER["HTTP_X_FORWARDED_FOR"] : isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : '127.0.0.1';
+
+
         $user = new User_controller();
         $colors = $user->initColors($this);
         $this->colors = $colors;
+
+        $this->ip = isset($_SERVER["REMOTE_ADDR"]) ? $_SERVER["REMOTE_ADDR"] : '127.0.0.1';
+        if (isset($_SERVER["HTTP_X_FORWARDED_FOR"])) {
+            $this->ip = $_SERVER["HTTP_X_FORWARDED_FOR"];
+        }
+
         $_SESSION['my_home'] = NODE_HTTP_PATH;
 
     }

@@ -280,7 +280,7 @@ ST::setVarPhptoJS(true, "editLogic");
                 </div>
                 <div class="form-group">
                     <label>Комментарий для пользователя</label>
-                    <textarea name="comment_for_user" id="comment_for_admin" maxlength="255"
+                    <textarea name="comment_for_user" id="comment_for_user" maxlength="255"
                               class="form-control"/><?= $vks->comment_for_user ?></textarea>
                 </div>
                 <div class="form-group">

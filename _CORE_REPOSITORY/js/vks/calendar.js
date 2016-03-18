@@ -62,11 +62,23 @@ $(document).ready(function () {
                 'class': 'text-center',
                 'id': 'counters_container'
             });
+            var marker = "alert-info";
+            var text = "text-primary";
+            //is today?
+            if ( moment().format("YYYYMMDD") == event.start.format("YYYYMMDD")) {
+                marker = "alert-danger";
+                text = 'text-danger';
+            }
+            //is this month?
+            if ( moment().format("MM") != event.start.format("MM")) {
+                marker = "well";
+                text = 'text-muted';
+            }
+            //console.log(marker);
             container_counters.append(
                 $("<span/>", {
-                    'class': 'alert alert-info',
-                    'style': 'background-color: #EFEFEF; border-color: #EFEFEF;',
-                    'html': "<span class='text-primary'><b>" + event.counters[1] + "</b></span>/<span class='text-muted'>" + event.counters[0] + "</span>"
+                    'class': 'alert  ' + marker,
+                    'html': "<span class='" + text + "'>" + event.start.format("D") + "</span>"
                 })
             );
 
@@ -86,6 +98,17 @@ $(document).ready(function () {
                     'html': "<img title='Показать ВКС на графике' data-date='" + event.php_date + "' class='icon pointer' src='../_CORE_REPOSITORY/images/graph-icon-nohover.png'/>"
                 })
             );
+
+            //add counters
+            if ( moment().format("YYYYMMDD") == event.start.format("YYYYMMDD")) {
+                $(".fc-day-number[data-date='" +event.php_date+"']")
+                    .html("<div class='pull-right'><span class='text-muted' style='font-size: 8px;'>(Сегодня) " + event.counters[1] + "/"+  event.counters[0]+"</span></div>");
+            } else {
+                $(".fc-day-number[data-date='" +event.php_date+"']")
+                    .html("<div class='pull-right'><span class='text-muted' style='font-size: 8px;'>" + event.counters[1] + "/"+  event.counters[0]+"</span></div>");
+
+            }
+
             element.append(container_main.append(container_counters).append(container_actions));
         }
     });

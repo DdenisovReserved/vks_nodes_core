@@ -219,5 +219,5 @@ ST::setVarPhptoJS($origVks['id'], 'vksId');
     </div>
 </div>
 <br><br>
-<?php ST::deployTemplate('footer/mainFooter.inc'); ?>
+
 

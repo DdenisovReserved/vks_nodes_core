@@ -202,7 +202,7 @@ class Vks_controller extends Controller
             'Подразделение' => [$request->get('department'), 'required|int'],
             'Участники в ЦА' => [$request->get('ca_participants'), 'int|between(0,10)'],
             'Участники ВКС' => [$request->get('inner_participants'), 'array'],
-            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(160)'],
+            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(255)'],
             'Точка для технической поддержки' => [$request->get('tech_support_att_id'), "int|attendance_is_tech_supportable"],
             'Комментарий для Тех. поддержки' => [$request->get('user_message'), 'max(255)'],
         ]);
@@ -440,8 +440,8 @@ class Vks_controller extends Controller
             'Подразделение' => [$request->get('department'), 'required|int'],
             'Участники в ЦА' => [$request->get('ca_participants'), 'int|between(0,10)'],
             'Владелец' => [$request->get('owner_id'), 'required|int'],
-            'Комментарий для пользователя' => [$request->get('comment_for_user'), 'max(160)'],
-            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(160)'],
+            'Комментарий для пользователя' => [$request->get('comment_for_user'), 'max(255)'],
+            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(255)'],
             'Участники ВКС' => [$request->get('inside_participants'), 'array'],
             'Кол-во участников с рабочих мест (IP телефоны)' => [$request->get('in_place_participants_count'), 'int'],
             'Точка для технической поддержки' => [$request->get('tech_support_att_id'), "int|attendance_is_tech_supportable"],
@@ -597,7 +597,6 @@ class Vks_controller extends Controller
 
         $vks = $this->humanize($vks);
 
-//        dump($vks);
         if (!$vks->is_simple) {
             $this->render('vks/show', compact('vks', 'partial'));
         } else {
@@ -670,7 +669,7 @@ class Vks_controller extends Controller
             'Почта ответственного' => [$request->get('init_customer_mail'), 'required|max(255)'],
             'Тел. ответственного' => [$request->get('init_customer_phone'), 'required|max(255)'],
             'Подразделение' => [$request->get('department'), 'required|int'],
-            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(160)'],
+            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(255)'],
             'Кол-во участников с рабочих мест (IP телефоны)' => [$request->get('in_place_participants_count'), 'int'],
             'Участники ВКС' => [$request->get('inner_participants'), 'array'],
         ]);
@@ -733,8 +732,8 @@ class Vks_controller extends Controller
             'Подразделение' => [$request->get('department'), 'required|int'],
             'Владелец' => [$request->get('owner_id'), 'required|int'],
             'Участники ВКС' => [$request->get('inner_participants'), 'array'],
-            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(160)'],
-            'Комментарий для Пользователя' => [$request->get('comment_for_user'), 'max(160)'],
+            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(255)'],
+            'Комментарий для Пользователя' => [$request->get('comment_for_user'), 'max(255)'],
             'Кол-во участников с рабочих мест (IP телефоны)' => [$request->get('in_place_participants_count'), 'int'],
         ]);
 
@@ -1035,7 +1034,7 @@ class Vks_controller extends Controller
 
         $request = $this->request->request;
         $this->validator->validate([
-            'Комментарий для пользователя' => [$request->get('comment_for_user'), 'max(160)'],
+            'Комментарий для пользователя' => [$request->get('comment_for_user'), 'max(255)'],
         ]);
 
         //if no passes
@@ -1215,7 +1214,7 @@ class Vks_controller extends Controller
 
         //validate
         $this->validator->validate([
-            'Комментарий для пользователя' => [$request->get('comment_for_user'), 'max(160)'],
+            'Комментарий для пользователя' => [$request->get('comment_for_user'), 'max(255)'],
             'Статус ВКС' => [$request->get('status'), 'required|between(1,2)'],
         ]);
         //if no passes
@@ -1276,6 +1275,7 @@ class Vks_controller extends Controller
 
             $vks->comment_for_user = $request->get('comment_for_user');
             $vks->status = $request->get('status');
+            $vks->flag = $request->get('flag') ? 1 : 0;
             //set admin id
             $vks->approved_by = App::$instance->user->id;
             $vks->save();
@@ -1340,6 +1340,7 @@ class Vks_controller extends Controller
 
         $vks->comment_for_user = $request->get('comment_for_user');
         $vks->status = $request->get('status');
+        $vks->flag = $request->get('flag') ? 1 : 0;
         //set admin id
         $vks->approved_by = App::$instance->user->id;
         $vks->save();
@@ -1522,7 +1523,7 @@ class Vks_controller extends Controller
             'Участники ВКС' => [$request->get('inner_participants'), 'array'],
             'Точка для технической поддержки' => [$request->get('tech_support_att_id'), "int|attendance_is_tech_supportable"],
             'Комментарий для Тех. поддержки' => [$request->get('user_message'), 'max(255)'],
-            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(160)'],
+            'Комментарий для Администратора' => [$request->get('comment_for_admin'), 'max(255)'],
         ]);
         //if no passes
         if (!$this->validator->passes()) {

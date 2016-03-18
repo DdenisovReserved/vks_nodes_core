@@ -259,7 +259,7 @@ RenderEngine::MenuChanger();
                                                                     data-element="comment_for_admin"
                                                                     class="glyphicon glyphicon-question-sign text-muted pointer get_help_button"
                                                                     title="Подсказка"></span></h4></label>
-                        <textarea name="comment_for_admin" id="comment_for_admin" maxlength="160" rows="4"
+                        <textarea name="comment_for_admin" id="comment_for_admin" maxlength="255" rows="4"
                                   class="form-control"/><?= $vks->get('comment_for_admin') ?></textarea>
                 </div>
                 <div class="form-group">

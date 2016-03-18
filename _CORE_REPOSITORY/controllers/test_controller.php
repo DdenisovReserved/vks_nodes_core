@@ -103,8 +103,9 @@ class test_controller extends Controller
         echo $comments;
     }
 
-    function t5() {
-        $this->solution('кот','ксот');
+    function t5()
+    {
+        $this->solution('кот', 'ксот');
     }
 
 
@@ -115,8 +116,8 @@ class test_controller extends Controller
             return false;
         }
         //make collections
-        $aCharCollection = preg_split('//u',$aString,-1,PREG_SPLIT_NO_EMPTY);
-        $bCharCollection = preg_split('//u',$bString,-1,PREG_SPLIT_NO_EMPTY);
+        $aCharCollection = preg_split('//u', $aString, -1, PREG_SPLIT_NO_EMPTY);
+        $bCharCollection = preg_split('//u', $bString, -1, PREG_SPLIT_NO_EMPTY);
         //count
         $aCharCount = count($aCharCollection);
         $bCharCount = count($bCharCollection);
@@ -142,16 +143,17 @@ class test_controller extends Controller
         }
     }
 
-    function insertAssertion(array $input, array $target) {
+    function insertAssertion(array $input, array $target)
+    {
 
         for ($i = 0; $i <= count($input); $i++) {
-            foreach (range(chr(0xE0),chr(0xFF)) as $ruChar) {
+            foreach (range(chr(0xE0), chr(0xFF)) as $ruChar) {
                 $compiledChars = array();
-                $ruChar = iconv('CP1251','UTF-8',$ruChar);
+                $ruChar = iconv('CP1251', 'UTF-8', $ruChar);
                 $compiledChars[$i] = $ruChar;
-                foreach($input as $k=>$val) {
+                foreach ($input as $k => $val) {
                     if ($k >= $i) {
-                        $compiledChars[$k+1] = $val;
+                        $compiledChars[$k + 1] = $val;
                     } else {
                         $compiledChars[$k] = $val;
                     }
@@ -166,38 +168,159 @@ class test_controller extends Controller
         return false;
     }
 
-    function deleteAssertion(array $input, array $target) {
+    function deleteAssertion(array $input, array $target)
+    {
 
         for ($i = 0; $i < count($input); $i++) {
-                $compiledChars = $input;
-                $delChar = $compiledChars[$i];
-                unset($compiledChars[$i]);
-                if (implode($compiledChars) === implode($target)) {
-                    return 'УДАЛИТЬ ' . $delChar;
-                }
+            $compiledChars = $input;
+            $delChar = $compiledChars[$i];
+            unset($compiledChars[$i]);
+            if (implode($compiledChars) === implode($target)) {
+                return 'УДАЛИТЬ ' . $delChar;
             }
+        }
         return false;
     }
 
-    function switchAssertion(array $input, array $target) {
-       //count chars
+    function switchAssertion(array $input, array $target)
+    {
+        //count chars
         $inpCharsCount = array_count_values($input);
         $targetCharsCount = array_count_values($target);
         ksort($inpCharsCount);
         ksort($targetCharsCount);
         if ($inpCharsCount === $targetCharsCount) {
             //begin switches
-            for($i = 0; $i < count($input)-1; $i++) {
+            for ($i = 0; $i < count($input) - 1; $i++) {
                 $compiledChars = $input;
                 $t = $compiledChars[$i];
-                $compiledChars[$i] = $compiledChars[$i+1];
-                $compiledChars[$i+1] = $t;
+                $compiledChars[$i] = $compiledChars[$i + 1];
+                $compiledChars[$i + 1] = $t;
                 if (implode($compiledChars) === implode($target)) {
-                    return "ПОМЕНЯТЬ ".$t ." ".$compiledChars[$i];
+                    return "ПОМЕНЯТЬ " . $t . " " . $compiledChars[$i];
                 }
             }
         }
     }
+
+    /**
+     * @param $jsonString
+     * @return string
+     * Duplicates will be saved, will not remove
+     */
+    function jsonLowestScoreCleaner($jsonString)
+    {
+
+        $resultMap = array(); //result
+
+        $analizedMap = array(); //for lowest element search
+
+        function JsonGenerator($jsonString)
+        {
+            $rawString = json_decode($jsonString);
+            $count = count($rawString);
+            for ($i = 0; $i < $count; $i++) {
+                (yield $rawString[$i]);
+            }
+        };
+
+        $jsonGenerator = JsonGenerator($jsonString);
+
+        foreach ($jsonGenerator as $userValue) {
+            if ($userValue->type === 'xxx') {
+                $resultMap[] = $userValue;
+            } else if ($userValue->type === 'yyy') {
+                $analizedMap[$userValue->user][] = $userValue;
+            }
+        }
+
+        foreach ($analizedMap as &$userDataArray) {
+
+            $comparedEqualsCounter = 0; //all element equals counter
+
+            if (count($userDataArray) > 1) {
+                $lowest = 0;
+
+                for ($i = 1; $i < count($userDataArray); $i++) {
+                    if (intval($userDataArray[$lowest]->score) > intval($userDataArray[$i]->score)) {
+                        $lowest = $i;
+                    } else if (intval($userDataArray[$lowest]->score) == intval($userDataArray[$i]->score)) {
+                        $comparedEqualsCounter++;
+                    }
+                }
+
+                //if all equals operation == compared operation, don't delete element
+                if ($comparedEqualsCounter != count($userDataArray) - 1)
+                    unset($userDataArray[$lowest]);
+            }
+            $resultMap = array_merge($resultMap, $userDataArray);
+        }
+
+        usort($resultMap, function ($a, $b) {
+            if ($a->user == $b->user) {
+                return 0;
+            }
+            return ($a->user < $b->user) ? -1 : 1;
+        });
+
+        return json_encode($resultMap);
+
+    }
+
+
+    /**
+     * @param $jsonString
+     * @return string
+     * duplicates will be deleted
+     */
+    function lowerActivityCleaner($jsonString)
+    {
+
+        $resultMap = array(); //result
+
+        function JsonGenerator($jsonString)
+        {
+            $rawString = json_decode($jsonString);
+            $count = count($rawString);
+            for ($i = 0; $i < $count; $i++) {
+                (yield $rawString[$i]);
+            }
+        };
+
+        $jsonGenerator = JsonGenerator($jsonString);
+
+        foreach ($jsonGenerator as $entity) {
+            $smallestKey = null;
+            for ($i = 0; $i < count($entity->occupations); $i++) {
+                if ($entity->occupations[$i]->activityLevel == 0) {
+                    if (is_null($smallestKey)) $smallestKey = $i;
+                    if (floatval($entity->occupations[$i]->time) < floatval($entity->occupations[$smallestKey]->time)) {
+                        $smallestKey = $i;
+                    }
+                }
+            }
+            if (!is_null($smallestKey)) {
+                //find duplicates and delete them
+
+                for ($i = 0; $i < count($entity->occupations); $i++) {
+
+                    if ($i != $smallestKey
+                        && $entity->occupations[$i]->activityLevel == 0
+                        && floatval($entity->occupations[$i]->time) == floatval($entity->occupations[$smallestKey]->time)
+                    ) {
+                        unset($entity->occupations[$i]);
+                    }
+
+                }
+
+                unset($entity->occupations[$smallestKey]);
+            }
+
+            $resultMap[] = $entity;
+        }
+        return json_encode($resultMap);
+    }
+
 
 }
 

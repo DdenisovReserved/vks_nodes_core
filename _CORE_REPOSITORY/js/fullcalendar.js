@@ -7671,8 +7671,8 @@
             classes = this.dayGrid.getDayClasses(date);
             classes.unshift('fc-day-number');
 //        var t = "&nbsp<a href='?r=views/misc/auto&date="+date+"'><span class='glyphicon glyphicon-list text-muted'></span></a>&nbsp";
-            var t = '';
-            t += date.date();
+            var t = '&nbsp';
+
             return '' +
                 '<td class="' + classes.join(' ') + '" data-date="' + date.format() + '">' +
                 t +

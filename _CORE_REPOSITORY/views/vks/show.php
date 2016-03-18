@@ -8,7 +8,8 @@ if (!$partial) {
         <div class="col-lg-12">
             <div class='action-buttons'>
                 <div class="col-lg-6 no-left-padding">
-                    <h4>Данные ВКС</h4>
+                    <h4>Данные по ВКС
+                        </h4>
                 </div>
                 <div class="col-lg-6 no-right-padding">
                     <div class="text-right">
@@ -43,7 +44,10 @@ if (!$partial) {
 
                 <tr>
                     <td>Название</td>
-                    <td><?= $vks->title ?></td>
+                    <td>
+                        <?= $vks->is_global ? "<span class='label label-danger'>Global</span>" : '' ?>
+                        <?= $vks->flag ? "<span class='label label-danger'>Важная!</span>" : '' ?>
+                        <?= $vks->title ?></td>
                 </tr>
                 <tr>
                     <td>Код подключения</td>

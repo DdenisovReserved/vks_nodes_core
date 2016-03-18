@@ -8,7 +8,7 @@
                 <label class="control-label col-lg-3">Комментарий для пользователя</label>
 
                 <div class="col-lg-6">
-                    <textarea name="comment_for_user" class="form-control" rows="5"></textarea>
+                    <textarea name="comment_for_user" class="form-control" rows="5" maxlength="255"></textarea>
                 </div>
             </div>
             <div class="form-group ">

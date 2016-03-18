@@ -12,7 +12,7 @@ class Vks extends Eloquent
 
     protected $table = 'vks_store';
 
-    protected $appends = array('is_applyable', 'is_tech_supportable', 'participants_count');
+    protected $appends = array('is_applyable', 'is_tech_supportable', 'participants_count', 'is_global');
 
     protected $fillable = [
         'title', 'date', 'start_date_time', 'end_date_time',
@@ -71,6 +71,16 @@ class Vks extends Eloquent
         } else {
             return false;
         }
+    }
+
+    public function getIsGlobalAttribute() {
+        if($this->participants_count >= intval
+            (App::$instance->callService("settings_controller")
+                ->getOther('global_vks_limit'))
+        ) {
+            return true;
+        }
+        return false;
     }
 
     public function getIsTechSupportableAttribute()
@@ -207,7 +217,6 @@ class Vks extends Eloquent
             }
         return $result;
     }
-
 
     public static function boot()
     {

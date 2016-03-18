@@ -453,13 +453,25 @@ ST::setUserJs('codes/askFreeCodes.js');
                         </label>
                     </div>
                 </div>
+
                 <?php endif ?>
 
             </div>
             <div class="well padding25">
                 <div class="form-group">
                     <label>Комментарий для пользователя</label>
-                    <textarea name="comment_for_user" maxlength="160" rows="4" class="form-control"><?= $vks->comment_for_user ?></textarea>
+                    <textarea name="comment_for_user" maxlength="255" rows="4"
+                              class="form-control"><?= $vks->comment_for_user ?></textarea>
+                </div>
+            </div>
+            <div class="well padding25">
+                <div class="form-group">
+                    <div class="checkbox">
+                        <label>
+                            <input type='checkbox' name='flag' <?= $vks->flag ? "checked" : '' ?>> <b>Выдать флаг
+                                (Важная ВКС)</b>
+                        </label>
+                    </div>
                 </div>
             </div>
 

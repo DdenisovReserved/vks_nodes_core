@@ -701,12 +701,12 @@ a.fc-more:hover {
     text-align: left !important;
     padding-left: 10px !important;
     border-style: solid !important;
-    border-width: 1px !important;
-    border-color: #eee !important;
+    /*border-width: 1px !important;*/
+    /*border-color: #eee !important;*/
 }
 
 .fc-today {
-    background-color: #f7f7f7;
+    /*background-color: #e6ffec;*/
 }
 
 /* AgendaView all-day area

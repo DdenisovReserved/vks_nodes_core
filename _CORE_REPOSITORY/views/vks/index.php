@@ -17,10 +17,13 @@ ST::setVarPhptoJS($date, 'currentDate');
     })
 </script>
 <div class="col-lg-12">
-    <h3 class="text-center"><input class="hidden" id="dp_another_date" disabled/><button type="button" class="btn btn-info btn-sm pull-left" id="btn_another_date">Другая дата</button>Список ВКС на <b><?= $date ?></b><a class="pull-right btn btn-default btn-sm"
-                                                         href="<?= ST::route('Index/index') ?>">Вернуться
-            в
-            календарь</a></h3>
+    <h3 class="text-center"><input class="hidden" id="dp_another_date" disabled/><button type="button" class="btn btn-info btn-sm pull-left" id="btn_another_date">Другая дата</button>Список ВКС на <b><?= $date ?></b>
+        <div class="btn-group pull-right">
+            <a class="btn btn-default btn-sm" href="<?= ST::route('Vks/day/' . date_create($date)->format("Y-m-d")) ?>">
+                К графику</a>
+            <a class="btn btn-default btn-sm" href="<?= ST::route('Index/index') ?>">
+                На главную</a>
+        </div></h3>
     <hr>
 </div>
 <div class="col-md-12">
@@ -44,7 +47,10 @@ ST::setVarPhptoJS($date, 'currentDate');
                     <td class="text-left">
                         <?= $vks->humanized->startTime ?> - <?= $vks->humanized->endTime ?>
                     </td>
-                    <td class="text-left"><?= $vks->title ?></td>
+                    <td class="text-left">
+                        <?= $vks->is_global ? "<span class='label label-danger'>Global</span>" : '' ?>
+                        <?= $vks->flag ? "<span class='label label-danger'>Важная!</span>" : '' ?>
+                        <?= $vks->title ?></td>
 
                     <td class="text-left">
                         <?php if (count($vks->connection_codes)): ?>

@@ -238,12 +238,12 @@ ST::setUserJs('codes/askFreeCodes.js');
 
                 <div class="form-group">
                     <label><h4>Комментарий для админа</h4></label>
-                        <textarea name="comment_for_admin" id="comment_for_admin" maxlength="160"
+                        <textarea name="comment_for_admin" id="comment_for_admin" maxlength="255"
                                   class="form-control"><?= $vks->get('comment_for_admin' )?></textarea>
                 </div>
                 <div class="form-group">
                     <label><h4>Комментарий для пользователя</h4></label>
-                    <textarea name="comment_for_user" maxlength="160" class="form-control"><?= $vks->get('comment_for_user' )?></textarea>
+                    <textarea name="comment_for_user" maxlength="255" class="form-control"><?= $vks->get('comment_for_user' )?></textarea>
                 </div>
                 <div class="form-group">
                     <label class=" control-label"><h4>Владелец</h4></label>

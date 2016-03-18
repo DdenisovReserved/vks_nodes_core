@@ -5,3 +5,5 @@ App::$instance->registerService("vks_ca_negotiator", "CaVksNegotiator");
 App::$instance->registerService("vks_report_builder", "VksMailReportBuilder");
 //standart controller
 App::$instance->registerService("standart_controller", "Controller");
+//settings controller
+App::$instance->registerService("settings_controller", "Settings_controller");
